@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "pinwheel_test",
+  "version": "${version}",
+  "name": "Pinwheel Test",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/pinwheel_test/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "nordmods.pinwheel_test.client.PinwheelTestClient"
+    ],
+    "main": [
+      "nordmods.pinwheel_test.PinwheelTest"
+    ]
+  },
+  "mixins": [
+    "pinwheel_test.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "*"
+  }
+}
