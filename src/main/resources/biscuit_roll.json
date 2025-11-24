@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "nordmods.pinwheel_test.mixin",
+  "package": "nordmods.biscuit_roll.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],

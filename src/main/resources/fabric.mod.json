@@ -1,24 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "pinwheel_test",
+  "id": "biscuit_roll",
   "version": "${version}",
-  "name": "Pinwheel Test",
+  "name": "Biscuit Roll Lib",
   "description": "",
   "authors": [],
   "contact": {},
   "license": "All-Rights-Reserved",
-  "icon": "assets/pinwheel_test/icon.png",
+  "icon": "assets/biscuit_roll/icon.png",
+  "accessWidener" : "biscuit_roll.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "nordmods.pinwheel_test.client.PinwheelTestClient"
+      "nordmods.biscuit_roll.client.BiscuitRollClient"
     ],
     "main": [
-      "nordmods.pinwheel_test.PinwheelTest"
+      "nordmods.biscuit_roll.BiscuitRoll"
     ]
   },
   "mixins": [
-    "pinwheel_test.mixins.json"
+    "biscuit_roll.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
