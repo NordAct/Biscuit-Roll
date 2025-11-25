@@ -15,10 +15,12 @@ repositories {
         name = "JitPack"
         url = "https://jitpack.io"
     }
+    flatDir(dirs: "libs")
     maven {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
+
 }
 
 dependencies {
@@ -30,7 +32,8 @@ dependencies {
     implementation include("com.github.MoonflowerTeam:pinwheel:77565323f7"){
         exclude(module: "gg.moonflower:molang-compiler")
     }
-    implementation include("gg.moonflower:molang-compiler:3.1.1.19")
+    //implementation include("gg.moonflower:molang-compiler:3.1.1.19")
+    implementation include("gg.moonflower:molang-compiler:3.1.1-but_i_fixed_one_thing")
 }
 
 processResources {

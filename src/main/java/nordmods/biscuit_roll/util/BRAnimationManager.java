@@ -2,14 +2,12 @@ package nordmods.biscuit_roll.util;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.AnimationParser;
-import gg.moonflower.pinwheel.api.geometry.GeometryModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
