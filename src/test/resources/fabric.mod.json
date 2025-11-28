@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "testmod",
+  "version": "1.0.0",
+  "name": "Biscuit Roll Test Mod",
+  "description": "Test Mod",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "nordmods.testmod.client.TestModClient"
+    ],
+    "main": [
+      "nordmods.testmod.TestMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": "*",
+    "biscuit_roll": "*"
+  }
+}

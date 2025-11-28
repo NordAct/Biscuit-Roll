@@ -22,7 +22,7 @@
     "biscuit_roll.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": "*",
     "fabric": "*",
     "minecraft": "*"
   }
