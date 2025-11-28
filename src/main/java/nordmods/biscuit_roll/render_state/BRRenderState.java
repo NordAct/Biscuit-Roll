@@ -1,6 +1,5 @@
 package nordmods.biscuit_roll.render_state;
 
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -8,22 +7,22 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface BRRenderState {
-    Map<Identifier, StateData.Holder<?>> getDataMap();
+    Map<StateDataType<?>, StateDataType.Holder<?>> getDataMap();
 
     @NotNull
-    default <T> Optional<T> getStateData(@NotNull StateData<T> stateData) {
-        return Optional.ofNullable((T)getDataMap().get(stateData.getIdentifier()));
+    default <T> Optional<T> getStateData(@NotNull StateDataType<T> stateDataType) {
+        return Optional.ofNullable((T)getDataMap().get(stateDataType));
     }
 
-    default <T> void setStateData(@NotNull StateData<T> stateData, T value) {
-        getDataMap().put(stateData.getIdentifier(), stateData.createHolder(value));
+    default <T> void setStateData(@NotNull StateDataType<T> stateDataType, T value) {
+        getDataMap().put(stateDataType, stateDataType.createHolder(value));
     }
 
     class Impl implements BRRenderState {
-        private final Map<Identifier, StateData.Holder<?>> dataMap = new HashMap<>();
+        private final Map<StateDataType<?>, StateDataType.Holder<?>> dataMap = new HashMap<>();
 
         @Override
-        public Map<Identifier, StateData.Holder<?>> getDataMap() {
+        public Map<StateDataType<?>, StateDataType.Holder<?>> getDataMap() {
             return dataMap;
         }
     }

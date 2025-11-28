@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
-    private static final Map<Identifier, AnimationData[]> ANIMATION_REGISTRY = new HashMap<>();
+public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
 
     @Override
@@ -47,17 +46,17 @@ public class BRAnimationManager extends SimplePreparableReloadListener<Map<Ident
 
     @Override
     protected void apply(Map<Identifier, AnimationData[]> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        ANIMATION_REGISTRY.clear();
-        ANIMATION_REGISTRY.putAll(map);
+        getHolderMap().clear();
+        getHolderMap().putAll(map);
     }
 
     @Nullable
-    public static AnimationData[] getAnimations(@NotNull Identifier animationId) {
-        return ANIMATION_REGISTRY.get(animationId);
+    public AnimationData[] getAnimations(@NotNull Identifier animationId) {
+        return getHolderMap().get(animationId);
     }
 
     @Nullable
-    public static AnimationData getAnimation(@NotNull Identifier animationId, @NotNull String animationName) {
+    public AnimationData getAnimation(@NotNull Identifier animationId, @NotNull String animationName) {
         AnimationData[] data = getAnimations(animationId);
         return Arrays
                 .stream(data)
@@ -65,4 +64,6 @@ public class BRAnimationManager extends SimplePreparableReloadListener<Map<Ident
                 .findFirst()
                 .orElseThrow();
     }
+
+    protected abstract Map<Identifier, AnimationData[]> getHolderMap();
 }

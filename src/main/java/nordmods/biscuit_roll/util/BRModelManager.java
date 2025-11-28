@@ -10,7 +10,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.model.BRModel;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, GeometryModel>>{
-    private static final Map<Identifier, GeometryModel> MODEL_REGISTRY = new HashMap<>();
+public abstract class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, GeometryModel>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
 
     @Override
@@ -54,12 +52,14 @@ public class BRModelManager extends SimplePreparableReloadListener<Map<Identifie
 
     @Override
     protected void apply(Map<Identifier, GeometryModel> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        MODEL_REGISTRY.clear();
-        MODEL_REGISTRY.putAll(map);
+        getHolderMap().clear();
+        getHolderMap().putAll(map);
     }
 
     @Nullable
-    public static GeometryModel getModel(@NotNull Identifier modelId) {
-        return MODEL_REGISTRY.get(modelId);
+    public GeometryModel getModel(@NotNull Identifier modelId) {
+        return getHolderMap().get(modelId);
     }
+
+    protected abstract Map<Identifier, GeometryModel> getHolderMap();
 }
