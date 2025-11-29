@@ -1,6 +1,6 @@
 package nordmods.biscuit_roll.mixin;
 
-import gg.moonflower.pinwheel.api.transform.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -16,7 +16,7 @@ public abstract class SubmitNodeStorageMixin implements BRModelSubmitStorage {
     public abstract SubmitNodeCollection order(int i);
 
     @Override
-    public <S extends BRState> void biscuit_roll$submit(MatrixStack matrixStack, BRModel<S> model, S state, RenderType renderType) {
-        order(0).biscuit_roll$submit(matrixStack, model, state, renderType);
+    public <S extends BRState> void biscuit_roll$submit(PoseStack.Pose pose, BRModel<S> model, S state, RenderType renderType) {
+        order(0).biscuit_roll$submit(pose, model, state, renderType);
     }
 }

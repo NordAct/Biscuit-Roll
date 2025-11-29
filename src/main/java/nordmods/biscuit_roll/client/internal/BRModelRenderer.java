@@ -1,10 +1,10 @@
 package nordmods.biscuit_roll.client.internal;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
-import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
@@ -13,20 +13,18 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.util.Mth;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 @ApiStatus.Internal
 public class BRModelRenderer {
+    private final PoseStack stack = new PoseStack();
     public void render(
             SubmitNodeCollection submitNodeCollection,
             MultiBufferSource.BufferSource bufferSource,
@@ -78,26 +76,31 @@ public class BRModelRenderer {
             OutlineBufferSource outlineBufferSource,
             MultiBufferSource.BufferSource bufferSource
     ) {
-        MatrixStack matrixStack = submit.matrixStack();
+        stack.pushPose();
+        stack.last().set(submit.pose());
+        stack.scale(1, -1, -1);
 
-        matrixStack.pushMatrix();
+        PoseStack.Pose pose = stack.last().copy();
+
         BRModel<S> model = submit.model();
         VertexConsumer vertexConsumer2 = submit.sprite() == null ? vertexConsumer : submit.sprite().wrap(vertexConsumer);
         model.animate(submit.state());
-        model.render(((matrixStack1, polygon) -> {
-            renderPolygon(matrixStack1, polygon, vertexConsumer2, submit);
-        }), matrixStack);
+
+        model.render(((matrixStack, polygon) -> {
+            renderPolygon(pose, polygon, vertexConsumer2, submit);
+        }), stack);
+
         if (submit.outlineColor() != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {
             outlineBufferSource.setColor(submit.outlineColor());
             VertexConsumer vertexConsumer3 = outlineBufferSource.getBuffer(renderType);
-            model.render(((matrixStack1, polygon) -> {
+            model.render(((matrixStack, polygon) -> {
                 renderPolygon(
-                        matrixStack1,
+                        pose,
                         polygon,
                         submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
                         submit
                 );
-            }), matrixStack);
+            }), stack);
         }
 
         if (submit.crumblingOverlay() != null && renderType.affectsCrumbling()) {
@@ -106,46 +109,49 @@ public class BRModelRenderer {
                     submit.crumblingOverlay().cameraPose(),
                     1.0F
             );
-            model.render(((matrixStack1, polygon) -> {
+            model.render(((matrixStack, polygon) -> {
                 renderPolygon(
-                        matrixStack1,
+                        pose,
                         polygon,
                         submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
                         submit
                 );
-            }), matrixStack);
+            }), stack);
         }
 
-        matrixStack.popMatrix();
+        stack.popPose();
     }
 
-    private <S extends BRState> void renderPolygon(MatrixStack matrixStack, Polygon polygon, VertexConsumer vertexConsumer, Submit<S> submit) {
-        Vertex[] vertices = polygon.vertices();
-        Vector3fc[] normals = polygon.normals();
+    private <S extends BRState> void renderPolygon(PoseStack.Pose pose, Polygon polygon, VertexConsumer vertexConsumer, Submit<S> submit) {
+        Matrix4f matrix4f = pose.pose();
+        Vector3f vector3f = new Vector3f();
 
-        Matrix4f positionMat = matrixStack.position();
-        Matrix3f normalMat = matrixStack.normal();
+        for (int i = 0; i < 4; i ++) {
+            Vector3f normal = pose.transformNormal(polygon.normals()[i], vector3f);
+            float normalX = normal.x();
+            float normalY = normal.y();
+            float normalZ = normal.z();
 
-        for (int i = 0; i < 4; i++) {
-            int index = Mth.clamp(i, 0, vertices.length - 1);
-            Vertex vertex = vertices[index];
-            Vector3fc normal = normals[index];
+            Vertex vertex = polygon.vertices()[i];
+            float vertexX = vertex.x();
+            float vertexY = vertex.y();
+            float vertexZ = vertex.z();
 
-            normalMat.transform(new Vector3f(normal));
+            Vector3f pos = matrix4f.transformPosition(vertexX, vertexY, vertexZ, vector3f);
 
-            Vector3f pos = new Vector3f(vertex.x(), vertex.y(), vertex.z());
-            positionMat.transformPosition(vertex.x(), vertex.y(), vertex.z(), pos);
-
-            vertexConsumer.addVertex(vertex.x(), vertex.y(), vertex.z(),
+            vertexConsumer.addVertex(
+                    pos.x(), pos.y(), pos.z(),
                     submit.color(),
                     vertex.u(), vertex.v(),
                     submit.overlay(), submit.light(),
-                    normal.x(), normal.y(), normal.z());
+                    normalX, normalY, normalZ);
         }
     }
 
+
+
     public record Submit<S extends BRState>(
-            MatrixStack matrixStack,
+            PoseStack.Pose pose,
             BRModel<S> model,
             S state,
             int light,
@@ -171,7 +177,7 @@ public class BRModelRenderer {
             if (renderType.pipeline().getBlendFunction().isEmpty()) {
                 opaque.computeIfAbsent(renderType, renderTypex -> new ArrayList<>()).add(submit);
             } else {
-                Vector3f vector3f = submit.matrixStack().position().transformPosition(new Vector3f());
+                Vector3f vector3f = submit.pose().pose().transformPosition(new Vector3f());
                 translucent.add(new TranslucentSubmit<>(submit, renderType, vector3f));
             }
         }

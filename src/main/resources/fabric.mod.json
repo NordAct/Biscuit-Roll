@@ -30,7 +30,8 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_11788": ["nordmods/biscuit_roll/client/internal/BRModelSubmitCollection"],
       "net/minecraft/class_11661": ["nordmods/biscuit_roll/client/internal/BRModelSubmitStorage"],
-      "net/minecraft/class_10017": ["nordmods/biscuit_roll/common/state/BRState"]
+      "net/minecraft/class_10017": ["nordmods/biscuit_roll/common/state/BRState"],
+      "net/minecraft/class_4587": ["gg/moonflower/pinwheel/api/transform/MatrixStack"]
     }
   }
 }

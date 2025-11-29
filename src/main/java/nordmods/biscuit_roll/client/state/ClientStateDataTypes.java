@@ -2,6 +2,7 @@ package nordmods.biscuit_roll.client.state;
 
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.state.StateDataType;
 
@@ -12,4 +13,6 @@ public class ClientStateDataTypes {
     public static final StateDataType<Integer> COLOR = new StateDataType<>(BiscuitRoll.id("color"));
     public static final StateDataType<Integer> LIGHT = new StateDataType<>(BiscuitRoll.id("light"));
     public static final StateDataType<TextureAtlasSprite> TEXTURE_ATLAS_SPRITE = new StateDataType<>(BiscuitRoll.id("texture_atlas_sprite"));
+    public static final StateDataType<Float> TICK_DELTA = new StateDataType<>(BiscuitRoll.id("tick_delta"));
+    public static final StateDataType<Vec3> CAMERA_OFFSET = new StateDataType<>(BiscuitRoll.id("camera_offset"));
 }

@@ -1,7 +1,9 @@
 package nordmods.biscuit_roll.client.renderer;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.vertex.PoseStack;
-import gg.moonflower.pinwheel.api.transform.MatrixStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
@@ -26,14 +29,14 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     }
 
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        submitNodeCollector.submitCustomGeometry(poseStack, getRenderType(state, modelProvider.getTextureId(state)), (pose, vertexConsumer) -> {
-            ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
-                    (MatrixStack) poseStack,
-                    getModel(state),
-                    state,
-                    getRenderType(state, getModelProvider().getTextureId(state))
-            );
-        });
+        poseStack.pushPose();
+        ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
+                poseStack.last().copy(),
+                getModel(state),
+                state,
+                getRenderType(state, getModelProvider().getTextureId(state))
+        );
+        poseStack.popPose();
         super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 
@@ -49,8 +52,10 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         super.extractRenderState(entity, state, tickDelta);
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
+
+        state.setStateData(ClientStateDataTypes.CAMERA_OFFSET, new Vec3(state.x, state.y, state.z));
         if (state instanceof LivingEntityRenderState livingState) {
-            state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, tickDelta));
+            state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, 0));
         }
     }
 }
