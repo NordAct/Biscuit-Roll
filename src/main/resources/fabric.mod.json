@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Biscuit Roll Lib",
   "description": "",
-  "authors": [],
+  "authors": ["Nord_Act"],
   "contact": {},
   "license": "All-Rights-Reserved",
   "icon": "assets/biscuit_roll/icon.png",

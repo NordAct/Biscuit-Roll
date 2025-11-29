@@ -1,11 +1,29 @@
-package nordmods.biscuit_roll.client.util;
+package nordmods.biscuit_roll.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class BRPoseStack extends PoseStack implements MatrixStack {
+@Mixin(PoseStack.class)
+public abstract class PoseStackMixin implements MatrixStack {
+    @Shadow
+    public abstract boolean isEmpty();
+
+    @Shadow
+    public abstract void popPose();
+
+    @Shadow
+    public abstract void setIdentity();
+
+    @Shadow
+    public abstract void pushPose();
+
+    @Shadow
+    public abstract PoseStack.Pose last();
+
     @Override
     public void reset() {
         while (isEmpty()) {

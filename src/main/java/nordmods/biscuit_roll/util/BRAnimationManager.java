@@ -8,6 +8,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
+@ApiStatus.Internal
+public abstract class BRAnimationManager extends SimplePreparableReloadListener<@NotNull Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
 
     @Override

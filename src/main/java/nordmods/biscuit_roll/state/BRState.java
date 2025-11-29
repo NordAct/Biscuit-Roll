@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.render_state;
+package nordmods.biscuit_roll.state;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public interface BRRenderState {
+public interface BRState {
     Map<StateDataType<?>, StateDataType.Holder<?>> getDataMap();
 
     @NotNull
@@ -18,7 +18,7 @@ public interface BRRenderState {
         getDataMap().put(stateDataType, stateDataType.createHolder(value));
     }
 
-    class Impl implements BRRenderState {
+    class Impl implements BRState {
         private final Map<StateDataType<?>, StateDataType.Holder<?>> dataMap = new HashMap<>();
 
         @Override
