@@ -52,8 +52,6 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         super.extractRenderState(entity, state, tickDelta);
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
-
-        state.setStateData(ClientStateDataTypes.CAMERA_OFFSET, new Vec3(state.x, state.y, state.z));
         if (state instanceof LivingEntityRenderState livingState) {
             state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, 0));
         }

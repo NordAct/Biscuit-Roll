@@ -11,16 +11,15 @@ base {
 }
 
 repositories {
-    maven {
-        name = "JitPack"
-        url = "https://jitpack.io"
-    }
     flatDir(dirs: "libs")
-    maven {
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-
+    //maven {
+    //    name = "JitPack"
+    //    url = "https://jitpack.io"
+    //}
+    //maven {
+    //    name = "Jared's maven"
+    //    url = "https://maven.blamejared.com/"
+    //}
 }
 
 dependencies {
@@ -29,9 +28,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    implementation include("com.github.MoonflowerTeam:pinwheel:77565323f7"){
-        exclude(module: "gg.moonflower:molang-compiler")
-    }
+    //todo fix face rotation bug
+    implementation include("gg.moonflower:pinwheel:1.3.0-cube_rot_fix") // based upon commit 77565323f7
     implementation include("gg.moonflower:molang-compiler:3.1.1-but_i_fixed_one_thing") // based upon ver 3.1.1.19
 }
 

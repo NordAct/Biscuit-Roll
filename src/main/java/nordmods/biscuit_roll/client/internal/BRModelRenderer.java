@@ -148,8 +148,6 @@ public class BRModelRenderer {
         }
     }
 
-
-
     public record Submit<S extends BRState>(
             PoseStack.Pose pose,
             BRModel<S> model,
