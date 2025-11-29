@@ -12,13 +12,12 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import nordmods.biscuit_roll.client.internal.BRModelSubmits;
+import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
-import nordmods.biscuit_roll.model.BRModelProvider;
-import nordmods.biscuit_roll.state.BRState;
+import nordmods.biscuit_roll.common.model.BRModelProvider;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderState & BRState> extends EntityRenderer<@NotNull E, @NotNull S> implements BRRenderer<S>{
+public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderState> extends EntityRenderer<@NotNull E, @NotNull S> implements BRRenderer<S>{
     private final BRModelProvider<S> modelProvider;
 
     protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider) {
@@ -28,7 +27,7 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
 
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         submitNodeCollector.submitCustomGeometry(poseStack, getRenderType(state, modelProvider.getTextureId(state)), (pose, vertexConsumer) -> {
-            ((BRModelSubmits)submitNodeCollector).biscuit_roll$submit(
+            ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
                     (MatrixStack) poseStack,
                     getModel(state),
                     state,

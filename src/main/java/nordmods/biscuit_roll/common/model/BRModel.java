@@ -1,10 +1,10 @@
-package nordmods.biscuit_roll.model;
+package nordmods.biscuit_roll.common.model;
 
 import gg.moonflower.pinwheel.api.geometry.*;
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import nordmods.biscuit_roll.state.BRState;
+import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.state;
+package nordmods.biscuit_roll.common.state;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,8 @@ public interface BRState {
 
     @NotNull
     default <T> Optional<T> getStateData(@NotNull StateDataType<T> stateDataType) {
-        return Optional.ofNullable((T)getDataMap().get(stateDataType));
+        StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().getOrDefault(stateDataType, null);
+        return holder == null ? Optional.empty() : Optional.ofNullable(holder.value());
     }
 
     default <T> void setStateData(@NotNull StateDataType<T> stateDataType, T value) {

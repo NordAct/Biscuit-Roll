@@ -16,6 +16,8 @@
       "nordmods.testmod.TestMod"
     ]
   },
+  "mixins": [
+  ],
   "depends": {
     "fabricloader": "*",
     "fabric": "*",

@@ -1,9 +1,9 @@
 package nordmods.biscuit_roll.client.util;
 
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.model.BRModel;
-import nordmods.biscuit_roll.state.BRState;
-import nordmods.biscuit_roll.util.BRModelManager;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.util.BRModelManager;
 
 import java.util.HashMap;
 import java.util.Map;

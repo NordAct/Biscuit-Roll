@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.state;
+package nordmods.biscuit_roll.common.state;
 
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;

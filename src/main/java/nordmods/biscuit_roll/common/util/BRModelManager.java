@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.util;
+package nordmods.biscuit_roll.common.util;
 
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelParser;
@@ -8,8 +8,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
-import nordmods.biscuit_roll.model.BRModel;
-import nordmods.biscuit_roll.state.BRState;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

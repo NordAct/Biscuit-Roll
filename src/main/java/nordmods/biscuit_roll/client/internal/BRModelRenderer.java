@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.util.Mth;
-import nordmods.biscuit_roll.model.BRModel;
-import nordmods.biscuit_roll.state.BRState;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -33,7 +33,7 @@ public class BRModelRenderer {
             OutlineBufferSource outlineBufferSource,
             MultiBufferSource.BufferSource bufferSource2
     ) {
-        Storage storage = ((BRModelSubmits)submitNodeCollection).biscuit_roll$getSubmitStorage();
+        Storage storage = submitNodeCollection.biscuit_roll$getSubmitStorage();
         renderOpaque(bufferSource, outlineBufferSource, storage.opaque, bufferSource2);
         storage.translucent.sort(Comparator.comparingDouble(translucentModelSubmit -> -translucentModelSubmit.position().lengthSquared()));
         renderTranslucent(bufferSource, outlineBufferSource, storage.translucent, bufferSource2);

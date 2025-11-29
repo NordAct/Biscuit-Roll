@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.util;
+package nordmods.biscuit_roll.common.util;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.AnimationParser;

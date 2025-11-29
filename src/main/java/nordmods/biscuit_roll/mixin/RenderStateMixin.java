@@ -1,8 +1,8 @@
 package nordmods.biscuit_roll.mixin;
 
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import nordmods.biscuit_roll.state.BRState;
-import nordmods.biscuit_roll.state.StateDataType;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataType;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.HashMap;

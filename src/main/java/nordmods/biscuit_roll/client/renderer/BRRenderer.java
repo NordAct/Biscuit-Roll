@@ -1,9 +1,9 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import nordmods.biscuit_roll.client.util.ClientModelManager;
-import nordmods.biscuit_roll.model.BRModel;
-import nordmods.biscuit_roll.model.BRModelProvider;
-import nordmods.biscuit_roll.state.BRState;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal

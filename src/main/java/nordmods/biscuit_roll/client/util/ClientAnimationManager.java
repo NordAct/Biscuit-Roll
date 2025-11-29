@@ -2,7 +2,7 @@ package nordmods.biscuit_roll.client.util;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.util.BRAnimationManager;
+import nordmods.biscuit_roll.common.util.BRAnimationManager;
 
 import java.util.HashMap;
 import java.util.Map;

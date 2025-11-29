@@ -4,12 +4,13 @@
   "package": "nordmods.biscuit_roll.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "FeatureRenderDispatcherMixin",
     "PoseStackMixin",
     "RenderStateMixin",
-    "SubmitNodeCollectionMixin",
-    "FeatureRenderDispatcherMixin"
+    "SubmitNodeCollectionMixin"
   ],
   "client": [
+    "SubmitNodeStorageMixin"
   ],
   "injectors": {
     "defaultRequire": 1
