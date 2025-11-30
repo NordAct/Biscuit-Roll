@@ -8,7 +8,7 @@ import nordmods.testmod.client.TestModClient;
 
 public class DragonModelProvider implements BRModelProvider<LivingEntityRenderState> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "dragon.geo");
-    private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "drone.animation");
+    private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "dragon.animation");
     private static final Identifier TEXTURE_GREEN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/dragon_green.png");
     private static final Identifier TEXTURE_BROWN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/dragon_brown.png");
 

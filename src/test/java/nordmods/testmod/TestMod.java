@@ -39,5 +39,6 @@ public class TestMod implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Hello from Biscuit Roll Test Mod");
         FabricDefaultAttributeRegistry.register(DRONE, Mob.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(DRAGON, Mob.createMobAttributes());
     }
 }
