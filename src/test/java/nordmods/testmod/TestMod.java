@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import nordmods.testmod.common.Dragon;
 import nordmods.testmod.common.Drone;
+import nordmods.testmod.common.WaterDragon;
 import org.slf4j.Logger;
 
 public class TestMod implements ModInitializer {
@@ -35,10 +36,19 @@ public class TestMod implements ModInitializer {
                     .sized(2f, 2.9f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "dragon")))
     );
+    public static final EntityType<WaterDragon> WATER_DRAGON = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "water_dragon"),
+            EntityType.Builder
+                    .of(WaterDragon::new, MobCategory.MISC)
+                    .sized(2.9f, 1.5f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "water_dragon")))
+    );
     @Override
     public void onInitialize() {
         LOGGER.info("Hello from Biscuit Roll Test Mod");
         FabricDefaultAttributeRegistry.register(DRONE, Mob.createMobAttributes());
         FabricDefaultAttributeRegistry.register(DRAGON, Mob.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(WATER_DRAGON, Mob.createMobAttributes());
     }
 }

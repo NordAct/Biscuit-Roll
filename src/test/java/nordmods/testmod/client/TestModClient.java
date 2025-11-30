@@ -7,6 +7,7 @@ import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.renderer.DragonRenderer;
 import nordmods.testmod.client.renderer.DroneRenderer;
+import nordmods.testmod.client.renderer.WaterDragonRenderer;
 
 public class TestModClient implements ClientModInitializer {
     public static final StateDataType<Boolean> IS_DRAGON_BROWN = new StateDataType<>(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "is_dragon_brown"));
@@ -15,5 +16,6 @@ public class TestModClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityRenderers.register(TestMod.DRONE, DroneRenderer::new);
         EntityRenderers.register(TestMod.DRAGON, DragonRenderer::new);
+        EntityRenderers.register(TestMod.WATER_DRAGON, WaterDragonRenderer::new);
     }
 }
