@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import nordmods.testmod.common.Dragon;
 import nordmods.testmod.common.Drone;
 import org.slf4j.Logger;
 
@@ -25,6 +26,14 @@ public class TestMod implements ModInitializer {
                     .of(Drone::new, MobCategory.MISC)
                     .sized(1, 1)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "drone")))
+    );
+    public static final EntityType<Dragon> DRAGON = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "dragon"),
+            EntityType.Builder
+                    .of(Dragon::new, MobCategory.MISC)
+                    .sized(2f, 2.9f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "dragon")))
     );
     @Override
     public void onInitialize() {

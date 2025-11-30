@@ -1,4 +1,4 @@
-package nordmods.testmod.client;
+package nordmods.testmod.client.model_provider;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
