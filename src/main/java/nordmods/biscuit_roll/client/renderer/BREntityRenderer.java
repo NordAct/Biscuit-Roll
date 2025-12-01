@@ -34,7 +34,7 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     }
 
     protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider) {
-        this(context, modelProvider, 45f);
+        this(context, modelProvider, 90f);
     }
 
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
