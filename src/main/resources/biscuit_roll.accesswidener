@@ -1,2 +1,2 @@
 accessWidener	v2 named
-accessible field net/minecraft/client/gui/components/DebugScreenOverlay frameTimeLogger Lnet/minecraft/util/debugchart/LocalSampleLogger;
+accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer getWhiteOverlayProgress (Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;)F

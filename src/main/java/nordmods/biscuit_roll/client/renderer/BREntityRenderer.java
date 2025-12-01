@@ -57,7 +57,7 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
-            state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, 0));
+            state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, livingEntityStateGetter.getWhiteOverlayProgress(livingState)));
         }
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
@@ -81,6 +81,10 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
 
         public void fillRenderState(T entity, S state, float tickDelta) {
             renderer.extractRenderState(entity, state, tickDelta);
+        }
+
+        public float getWhiteOverlayProgress(S state) {
+            return renderer.getWhiteOverlayProgress(state);
         }
     }
 
