@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientModelManager<S extends BRState> extends BRModelManager<S> {
-    private static final ClientModelManager<?> INSTANCE = new ClientModelManager();
+    private static final ClientModelManager<?> INSTANCE = new ClientModelManager<>();
     private final Map<Identifier, BRModel<S>> modelRegistry = new HashMap<>();
 
     private ClientModelManager() {

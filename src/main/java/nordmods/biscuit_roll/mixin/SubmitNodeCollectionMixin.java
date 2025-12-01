@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.rendertype.RenderType;

@@ -9,7 +9,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -20,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
-public abstract class BRAnimationManager extends SimplePreparableReloadListener<@NotNull Map<Identifier, AnimationData[]>>{
+public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
 
     @Override
@@ -32,7 +31,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
         for(Map.Entry<Identifier, Resource> entry: resourceMap.entrySet()) {
             Identifier fileId = entry.getKey();
 
-            try (InputStream stream = resourceManager.getResource(fileId).get().open()) {
+            try (InputStream stream = resourceManager.getResource(fileId).orElseThrow().open()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
                 AnimationData[] data = AnimationParser.parse(inputStreamReader);
                 String path = fileId.getPath();
@@ -53,12 +52,12 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     }
 
     @Nullable
-    public AnimationData[] getAnimations(@NotNull Identifier animationId) {
+    public AnimationData[] getAnimations(Identifier animationId) {
         return getHolderMap().get(animationId);
     }
 
     @Nullable
-    public AnimationData getAnimation(@NotNull Identifier animationId, @NotNull String animationName) {
+    public AnimationData getAnimation(Identifier animationId, String animationName) {
         AnimationData[] data = getAnimations(animationId);
         return Arrays
                 .stream(data)

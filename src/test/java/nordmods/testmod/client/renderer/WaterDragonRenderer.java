@@ -6,9 +6,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
-import nordmods.testmod.client.model_provider.DroneModelProvider;
 import nordmods.testmod.client.model_provider.WaterDragonModelProvider;
-import nordmods.testmod.common.Drone;
 import nordmods.testmod.common.WaterDragon;
 import org.jetbrains.annotations.NotNull;
 

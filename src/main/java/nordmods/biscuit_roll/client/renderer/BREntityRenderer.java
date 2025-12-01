@@ -64,11 +64,9 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     }
 
     @ApiStatus.Internal
-    private static final class LivingRenderStateGetter<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
-        private final LivingEntityRenderer<T, S, M> renderer;
-
-        private LivingRenderStateGetter(EntityRendererProvider.Context context) {
-            this.renderer = new LivingEntityRenderer<>(context, null, 0) {
+    private record LivingRenderStateGetter<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>(LivingEntityRenderer<T, S, M> renderer) {
+        private LivingRenderStateGetter(EntityRendererProvider.Context renderer) {
+            this(new LivingEntityRenderer<>(renderer, null, 0) {
                 @Override
                 public Identifier getTextureLocation(LivingEntityRenderState livingEntityRenderState) {
                     return null;
@@ -78,7 +76,7 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
                 public S createRenderState() {
                     return null;
                 }
-            };
+            });
         }
 
         public void fillRenderState(T entity, S state, float tickDelta) {
@@ -87,11 +85,9 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     }
 
     @ApiStatus.Internal
-    private static final class MobRenderStateGetter<T extends Mob, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
-        private final MobRenderer<T, S, M> renderer;
-
-        private MobRenderStateGetter(EntityRendererProvider.Context context) {
-            this.renderer = new MobRenderer<>(context, null, 0) {
+    private record MobRenderStateGetter<T extends Mob, S extends LivingEntityRenderState, M extends EntityModel<? super S>>(MobRenderer<T, S, M> renderer) {
+        private MobRenderStateGetter(EntityRendererProvider.Context renderer) {
+            this(new MobRenderer<>(renderer, null, 0) {
                 @Override
                 public Identifier getTextureLocation(LivingEntityRenderState livingEntityRenderState) {
                     return null;
@@ -101,7 +97,7 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
                 public S createRenderState() {
                     return null;
                 }
-            };
+            });
         }
 
         public void fillRenderState(T entity, S state, float tickDelta) {

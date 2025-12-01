@@ -86,21 +86,17 @@ public class BRModelRenderer {
         VertexConsumer vertexConsumer2 = submit.sprite() == null ? vertexConsumer : submit.sprite().wrap(vertexConsumer);
         model.animate(submit.state());
 
-        model.render(((matrixStack, polygon) -> {
-            renderPolygon(pose, polygon, vertexConsumer2, submit);
-        }), stack);
+        model.render(((matrixStack, polygon) -> renderPolygon(pose, polygon, vertexConsumer2, submit)), stack);
 
         if (submit.outlineColor() != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {
             outlineBufferSource.setColor(submit.outlineColor());
             VertexConsumer vertexConsumer3 = outlineBufferSource.getBuffer(renderType);
-            model.render(((matrixStack, polygon) -> {
-                renderPolygon(
-                        pose,
-                        polygon,
-                        submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
-                        submit
-                );
-            }), stack);
+            model.render(((matrixStack, polygon) -> renderPolygon(
+                    pose,
+                    polygon,
+                    submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
+                    submit
+            )), stack);
         }
 
         if (submit.crumblingOverlay() != null && renderType.affectsCrumbling()) {
@@ -109,14 +105,12 @@ public class BRModelRenderer {
                     submit.crumblingOverlay().cameraPose(),
                     1.0F
             );
-            model.render(((matrixStack, polygon) -> {
-                renderPolygon(
-                        pose,
-                        polygon,
-                        submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
-                        submit
-                );
-            }), stack);
+            model.render(((matrixStack, polygon) -> renderPolygon(
+                    pose,
+                    polygon,
+                    submit.sprite() == null ? vertexConsumer3 : submit.sprite().wrap(vertexConsumer3),
+                    submit
+            )), stack);
         }
 
         stack.popPose();

@@ -11,7 +11,6 @@ import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -21,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
-public abstract class BRModelManager<S extends BRState> extends SimplePreparableReloadListener<@NotNull Map<Identifier, BRModel<S>>>{
+public abstract class BRModelManager<S extends BRState> extends SimplePreparableReloadListener<Map<Identifier, BRModel<S>>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
 
     @Override
-    protected Map<Identifier, BRModel<S>> prepare(ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+    protected Map<Identifier, BRModel<S>> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         Map<Identifier, BRModel<S>> holder = new HashMap<>();
 
         Map<Identifier, Resource> resourceMap = resourceManager.listResources(FOLDER, path -> path.getPath().endsWith(".json"));
@@ -33,7 +32,7 @@ public abstract class BRModelManager<S extends BRState> extends SimplePreparable
         for(Map.Entry<Identifier, Resource> entry: resourceMap.entrySet()) {
             Identifier fileId = entry.getKey();
 
-            try (InputStream stream = resourceManager.getResource(fileId).get().open()) {
+            try (InputStream stream = resourceManager.getResource(fileId).orElseThrow().open()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
                 GeometryModelData[] data = GeometryModelParser.parseModel(inputStreamReader);
                 String path = fileId.getPath();
@@ -53,13 +52,13 @@ public abstract class BRModelManager<S extends BRState> extends SimplePreparable
     }
 
     @Override
-    protected void apply(Map<Identifier, BRModel<S>> map, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, BRModel<S>> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         getHolderMap().clear();
         getHolderMap().putAll(map);
     }
 
     @Nullable
-    public BRModel<S> getModel(@NotNull Identifier modelId) {
+    public BRModel<S> getModel(Identifier modelId) {
         return getHolderMap().get(modelId);
     }
 
