@@ -76,8 +76,8 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         super.extractRenderState(entity, state, tickDelta);
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
-            livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
+            else livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
             state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, livingEntityStateGetter.getWhiteOverlayProgress(livingState)));
             state.setStateData(StateDataTypes.BODY_YAW, livingState.bodyRot);
             state.setStateData(StateDataTypes.SCALE, livingState.scale * livingState.ageScale);
@@ -105,10 +105,6 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
                     return deathFlipDegrees;
                 }
             });
-        }
-
-        private LivingRenderStateGetter(EntityRendererProvider.Context context) {
-            this(context, 90f);
         }
 
         public void fillRenderState(T entity, S state, float tickDelta) {
