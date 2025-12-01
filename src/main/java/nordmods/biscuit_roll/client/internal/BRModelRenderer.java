@@ -78,7 +78,6 @@ public class BRModelRenderer {
     ) {
         stack.pushPose();
         stack.last().set(submit.pose());
-        stack.scale(1, -1, -1);
 
         PoseStack.Pose pose = stack.last().copy();
 

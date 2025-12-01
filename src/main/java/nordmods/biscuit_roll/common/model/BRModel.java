@@ -53,5 +53,6 @@ public class BRModel<S extends BRState> implements GeometryModel {
     }
 
     public void animate(S state) {
+        resetTransformation();
     }
 }

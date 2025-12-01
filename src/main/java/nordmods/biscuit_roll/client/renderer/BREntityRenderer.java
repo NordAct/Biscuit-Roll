@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Mob;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S>{
@@ -25,21 +26,27 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter;
     private final MobRenderStateGetter<Mob, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> mobRenderStateGetter;
 
-    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider) {
+    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider, float deathFlipDegrees) {
         super(context);
         this.modelProvider = modelProvider;
-        this.livingEntityStateGetter = new LivingRenderStateGetter<>(context);
+        this.livingEntityStateGetter = new LivingRenderStateGetter<>(context, deathFlipDegrees);
         this.mobRenderStateGetter = new MobRenderStateGetter<>(context);
+    }
+
+    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider) {
+        this(context, modelProvider, 45f);
     }
 
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
+        beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
         ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
                 poseStack.last().copy(),
                 getModel(state),
                 state,
                 getRenderType(state, getModelProvider().getTextureId(state))
         );
+        afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
         poseStack.popPose();
         super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
@@ -51,13 +58,29 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
 
     public abstract RenderType getRenderType(S state, Identifier texture);
 
+    public void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        float scale = state.getStateData(StateDataTypes.SCALE).orElse(1f);
+        poseStack.scale(scale);
+        if (state instanceof LivingEntityRenderState livingState) {
+            livingEntityStateGetter.rotate(livingState, poseStack, state.getStateData(StateDataTypes.BODY_YAW).orElse(0f), scale);
+        }
+        poseStack.scale(-1, -1, 1);
+    }
+
+    public void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+
+    }
+
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
         super.extractRenderState(entity, state, tickDelta);
+        state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
             state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, livingEntityStateGetter.getWhiteOverlayProgress(livingState)));
+            state.setStateData(StateDataTypes.BODY_YAW, livingState.bodyRot);
+            state.setStateData(StateDataTypes.SCALE, livingState.scale * livingState.ageScale);
         }
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
@@ -65,8 +88,8 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
 
     @ApiStatus.Internal
     private record LivingRenderStateGetter<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>(LivingEntityRenderer<T, S, M> renderer) {
-        private LivingRenderStateGetter(EntityRendererProvider.Context renderer) {
-            this(new LivingEntityRenderer<>(renderer, null, 0) {
+        private LivingRenderStateGetter(EntityRendererProvider.Context context, float deathFlipDegrees) {
+            this(new LivingEntityRenderer<>(context, null, 0) {
                 @Override
                 public Identifier getTextureLocation(LivingEntityRenderState livingEntityRenderState) {
                     return null;
@@ -76,7 +99,16 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
                 public S createRenderState() {
                     return null;
                 }
+
+                @Override
+                protected float getFlipDegrees() {
+                    return deathFlipDegrees;
+                }
             });
+        }
+
+        private LivingRenderStateGetter(EntityRendererProvider.Context context) {
+            this(context, 90f);
         }
 
         public void fillRenderState(T entity, S state, float tickDelta) {
@@ -86,12 +118,16 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         public float getWhiteOverlayProgress(S state) {
             return renderer.getWhiteOverlayProgress(state);
         }
+
+        public void rotate(S livingEntityRenderState, PoseStack poseStack, float bodyYaw, float scale) {
+            renderer.setupRotations(livingEntityRenderState, poseStack, bodyYaw, scale);
+        }
     }
 
     @ApiStatus.Internal
     private record MobRenderStateGetter<T extends Mob, S extends LivingEntityRenderState, M extends EntityModel<? super S>>(MobRenderer<T, S, M> renderer) {
-        private MobRenderStateGetter(EntityRendererProvider.Context renderer) {
-            this(new MobRenderer<>(renderer, null, 0) {
+        private MobRenderStateGetter(EntityRendererProvider.Context context) {
+            this(new MobRenderer<>(context, null, 0) {
                 @Override
                 public Identifier getTextureLocation(LivingEntityRenderState livingEntityRenderState) {
                     return null;
