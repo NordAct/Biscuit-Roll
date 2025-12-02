@@ -17,11 +17,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 
-public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S>{
+import java.util.List;
+
+public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S>{
     private final BRModelProvider<S> modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter;
     private final MobRenderStateGetter<Mob, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> mobRenderStateGetter;
@@ -74,7 +77,6 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
         super.extractRenderState(entity, state, tickDelta);
-        state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
             else livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
@@ -84,6 +86,11 @@ public abstract class BREntityRenderer<E extends Entity, S extends EntityRenderS
         }
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
+
+        state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
+        state.setStateData(StateDataTypes.CONTROLLERS, entity.getAnimationControllers());
+        state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
+        state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
     }
 
     @ApiStatus.Internal

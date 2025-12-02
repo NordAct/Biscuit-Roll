@@ -9,10 +9,10 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 @ApiStatus.NonExtendable
 public interface BRModelSubmitStorage {
-    default <S extends BRState> void biscuit_roll$submit(
+    default void biscuit_roll$submit(
             PoseStack.Pose pose,
-            BRModel<S> model,
-            S state,
+            BRModel model,
+            BRState state,
             RenderType renderType
     ) {
         throw new AssertionError("Implemented in mixin");

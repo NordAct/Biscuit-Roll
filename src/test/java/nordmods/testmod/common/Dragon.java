@@ -8,8 +8,13 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 
-public class Dragon extends Mob {
+import java.util.Collection;
+import java.util.List;
+
+public class Dragon extends Mob implements BRAnimatedObject {
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
@@ -38,5 +43,20 @@ public class Dragon extends Mob {
     protected void readAdditionalSaveData(ValueInput valueInput) {
         super.readAdditionalSaveData(valueInput);
         setIsBrown(valueInput.getBooleanOr("isBrown", false));
+    }
+
+    @Override
+    public void addMolangVariables(Context context) {
+
+    }
+
+    @Override
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isClient() {
+        return level().isClientSide();
     }
 }

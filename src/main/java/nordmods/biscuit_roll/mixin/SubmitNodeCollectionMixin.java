@@ -1,13 +1,10 @@
 package nordmods.biscuit_roll.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import nordmods.biscuit_roll.client.internal.BRModelRenderer;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitCollection;
-import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,19 +26,13 @@ public class SubmitNodeCollectionMixin implements BRModelSubmitCollection {
     }
 
     @Override
-    public <S extends BRState> void biscuit_roll$submit(PoseStack.Pose pose, BRModel<S> model, S state, RenderType renderType) {
+    public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderType renderType) {
         wasUsed = true;
         biscuit_roll$storage.add(renderType,
-                new BRModelRenderer.Submit<>(
+                new BRModelRenderer.Submit(
                         pose,
                         model,
-                        state,
-                        state.getStateData(ClientStateDataTypes.LIGHT).orElse(LightTexture.FULL_BRIGHT),
-                        state.getStateData(ClientStateDataTypes.OVERLAY_TEXTURE).orElse(OverlayTexture.NO_OVERLAY),
-                        state.getStateData(ClientStateDataTypes.COLOR).orElse(-1),
-                        state.getStateData(ClientStateDataTypes.TEXTURE_ATLAS_SPRITE).orElse(null),
-                        state.getStateData(ClientStateDataTypes.OUTLINE_COLOR).orElse(0),
-                        state.getStateData(ClientStateDataTypes.CRUMBLING_OVERLAY).orElse(null)
+                        state
                 ));
     }
 

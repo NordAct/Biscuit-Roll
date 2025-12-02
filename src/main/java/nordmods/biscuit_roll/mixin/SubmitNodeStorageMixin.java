@@ -16,7 +16,7 @@ public abstract class SubmitNodeStorageMixin implements BRModelSubmitStorage {
     public abstract SubmitNodeCollection order(int i);
 
     @Override
-    public <S extends BRState> void biscuit_roll$submit(PoseStack.Pose pose, BRModel<S> model, S state, RenderType renderType) {
+    public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderType renderType) {
         order(0).biscuit_roll$submit(pose, model, state, renderType);
     }
 }
