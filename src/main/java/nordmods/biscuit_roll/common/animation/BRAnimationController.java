@@ -4,28 +4,29 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
-import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
+import net.minecraft.util.EasingType;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class BRAnimationController implements AnimationController {
-    private final Set<BRPlayingAnimation> animations = new HashSet<>();
+    private final Map<String,BRPlayingAnimation> playingAnimations = new HashMap<>();
     private final MolangEnvironment environment;
-    private final Set<String> proposedAnimations = new HashSet<>();
+    private final Map<String, ProposedAnimationData> proposedAnimations = new HashMap<>();
     private final BRAnimatedObject animatedObject;
 
     public BRAnimationController(BRAnimatedObject animatedObject) {
         this.animatedObject = animatedObject;
-        environment = MolangRuntime.runtime().setVariables(animatedObject).create();
+        environment = MolangRuntime.runtime().setVariables(animatedObject).create(); //todo
     }
 
     @Override
     public void clearAnimations() {
-        getPlayingAnimations() .clear();
+        playingAnimations.clear();
         proposedAnimations.clear();
     }
 
@@ -36,29 +37,51 @@ public class BRAnimationController implements AnimationController {
 
     @Override
     public Collection<BRPlayingAnimation> getPlayingAnimations() {
-        return animations;
+        return playingAnimations.values();
     }
 
     public void tick() {
-        getPlayingAnimations().removeIf(PlayingAnimation::isDone);
+        playingAnimations.forEach((name, animation) -> {
+            if (animation.isDone()) playingAnimations.remove(name);
+        });
     }
 
     public <S extends BRState> void playQueuedAnimations(S state, float animationTime) {
         BRModelProvider<S> modelProvider = (BRModelProvider<S>) state.getStateData(StateDataTypes.MODEL_PROVIDER).orElse(null);
         if (modelProvider == null) return;
-        proposedAnimations.forEach(animation -> {
-            if (getPlayingAnimations().stream().anyMatch(playing -> playing.getAnimation().name().equals(animation))) return;
-            AnimationData data = BRAnimationManager.getAnimationManager(animatedObject.isClient()).getAnimation(modelProvider.getAnimationId(state), animation);
-            getPlayingAnimations().add(new BRPlayingAnimation(data, animationTime));
+        proposedAnimations.forEach((animation, data) -> {
+            if (playingAnimations.containsKey(animation)) return;
+            AnimationData animationData = BRAnimationManager.getAnimationManager(animatedObject.isClient()).getAnimation(modelProvider.getAnimationId(state), animation);
+            playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, data.transitionInTime, data.transitionOutTime, data.transitionInEasing, data.transitionOutEasing));
         });
         proposedAnimations.clear();
     }
 
     public void playAnimation(String animation) {
-        proposedAnimations.add(animation);
+        playAnimation(animation, new ProposedAnimationData(getDefaultEasingType(), getDefaultTransitionTime(), getDefaultEasingType(), getDefaultTransitionTime()));
     }
 
-    public void stopAnimation(String animation) {
-        getPlayingAnimations().removeIf(playing -> playing.getAnimation().name().equals(animation));
+    public void playAnimation(String animation, ProposedAnimationData proposedAnimationData) {
+        proposedAnimations.put(animation, proposedAnimationData);
+    }
+
+    @Nullable
+    public BRPlayingAnimation getAnimation(String animation) {
+        return playingAnimations.get(animation);
+    }
+
+    public record ProposedAnimationData(
+            EasingType transitionInEasing,
+            int transitionInTime,
+            EasingType transitionOutEasing,
+            int transitionOutTime
+    ) {}
+
+    public int getDefaultTransitionTime() {
+        return 0;
+    }
+
+    public EasingType getDefaultEasingType() {
+        return EasingType.LINEAR;
     }
 }

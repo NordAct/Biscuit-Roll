@@ -18,7 +18,7 @@ public class Drone extends Mob implements BRAnimatedObject {
 
     @Override
     public void addMolangVariables(Context context) {
-        context.addQuery("anim_time", tickCount);
+        context.addQuery("anim_time", tickCount / 20f);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Drone extends Mob implements BRAnimatedObject {
         super.tick();
         if (isClient()) {
             controller1.playAnimation("idle");
-            controller2.playAnimation("attack");
+            controller2.playAnimation("default");
         }
     }
 }

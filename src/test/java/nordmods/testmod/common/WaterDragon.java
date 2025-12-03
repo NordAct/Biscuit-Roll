@@ -18,7 +18,7 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
 
     @Override
     public void addMolangVariables(Context context) {
-        context.addQuery("anim_time", tickCount);
+        context.addQuery("anim_time", tickCount / 20f);
     }
 
     @Override
