@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.common.state;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +11,14 @@ public interface BRState {
     Map<StateDataType<?>, StateDataType.Holder<?>> getDataMap();
 
     @NotNull
-    default <T> Optional<T> getStateData(@NotNull StateDataType<T> stateDataType) {
-        StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().getOrDefault(stateDataType, null);
-        return holder == null ? Optional.empty() : Optional.ofNullable(holder.value());
+    default <T> Optional<T> getStateDataOptional(@NotNull StateDataType<T> stateDataType) {
+        return Optional.ofNullable(getStateData(stateDataType));
+    }
+
+    @Nullable
+    default <T> T getStateData(@NotNull StateDataType<T> stateDataType) {
+        StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().get(stateDataType);
+        return holder == null ? null : holder.value();
     }
 
     default <T> void setStateData(@NotNull StateDataType<T> stateDataType, T value) {

@@ -20,30 +20,30 @@ public class Dragon extends Mob implements BRAnimatedObject {
         super(entityType, level);
     }
 
-    private static final EntityDataAccessor<Boolean> IS_BROWN = SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> RAINBOW = SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.BOOLEAN);
     public void setIsBrown(boolean state) {
-        entityData.set(IS_BROWN, state);
+        entityData.set(RAINBOW, state);
     }
     public boolean isBrown() {
-        return entityData.get(IS_BROWN);
+        return entityData.get(RAINBOW);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(IS_BROWN, false);
+        builder.define(RAINBOW, false);
     }
 
     @Override
     protected void addAdditionalSaveData(ValueOutput valueOutput) {
         super.addAdditionalSaveData(valueOutput);
-        valueOutput.putBoolean("isBrown", isBrown());
+        valueOutput.putBoolean("Rainbow", isBrown());
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput valueInput) {
         super.readAdditionalSaveData(valueInput);
-        setIsBrown(valueInput.getBooleanOr("isBrown", false));
+        setIsBrown(valueInput.getBooleanOr("Rainbow", false));
     }
 
     @Override

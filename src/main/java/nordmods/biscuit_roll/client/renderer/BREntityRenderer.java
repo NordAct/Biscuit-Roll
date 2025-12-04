@@ -22,8 +22,6 @@ import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.List;
-
 public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S>{
     private final BRModelProvider<S> modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter;
@@ -62,10 +60,10 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     public abstract RenderType getRenderType(S state, Identifier texture);
 
     public void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        float scale = state.getStateData(StateDataTypes.SCALE).orElse(1f);
+        float scale = state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f);
         poseStack.scale(scale);
         if (state instanceof LivingEntityRenderState livingState) {
-            livingEntityStateGetter.rotate(livingState, poseStack, state.getStateData(StateDataTypes.BODY_YAW).orElse(0f), scale);
+            livingEntityStateGetter.rotate(livingState, poseStack, state.getStateDataOptional(StateDataTypes.BODY_YAW).orElse(0f), scale);
         }
         poseStack.scale(-1, -1, 1);
     }

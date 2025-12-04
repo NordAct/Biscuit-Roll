@@ -3,23 +3,18 @@ package nordmods.biscuit_roll.client.internal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
-import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -84,15 +79,15 @@ public class BRModelRenderer {
         submit.model.applyAnimations(submit.state);
         submit.model.render(stack, submit.state, vertexConsumer);
 
-        TextureAtlasSprite sprite = submit.state.getStateData(ClientStateDataTypes.TEXTURE_ATLAS_SPRITE).orElse(null);
-        int outline = submit.state.getStateData(ClientStateDataTypes.OUTLINE_COLOR).orElse(0);
+        TextureAtlasSprite sprite = submit.state.getStateData(ClientStateDataTypes.TEXTURE_ATLAS_SPRITE);
+        int outline = submit.state.getStateDataOptional(ClientStateDataTypes.OUTLINE_COLOR).orElse(0);
         if (outline != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {
             outlineBufferSource.setColor(outline);
             VertexConsumer outlineBuffer = outlineBufferSource.getBuffer(renderType);
             submit.model.render(stack, submit.state, sprite == null ? outlineBuffer : sprite.wrap(outlineBuffer));
         }
 
-        ModelFeatureRenderer.CrumblingOverlay overlay = submit.state.getStateData(ClientStateDataTypes.CRUMBLING_OVERLAY).orElse(null);
+        ModelFeatureRenderer.CrumblingOverlay overlay = submit.state.getStateData(ClientStateDataTypes.CRUMBLING_OVERLAY);
         if (overlay != null && renderType.affectsCrumbling()) {
             VertexConsumer overlayBuffer = new SheetedDecalTextureGenerator(
                     bufferSource.getBuffer( ModelBakery.DESTROY_TYPES.get(overlay.progress())),

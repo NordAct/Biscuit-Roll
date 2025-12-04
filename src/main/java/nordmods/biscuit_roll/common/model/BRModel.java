@@ -13,9 +13,7 @@ import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import nordmods.biscuit_roll.client.internal.BRModelRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
-import nordmods.biscuit_roll.client.util.ClientAnimationManager;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -62,10 +60,10 @@ public class BRModel implements GeometryModel {
 
             vertexConsumer.addVertex(
                     pos.x(), pos.y(), pos.z(),
-                    state.getStateData(ClientStateDataTypes.COLOR).orElse(-1),
+                    state.getStateDataOptional(ClientStateDataTypes.COLOR).orElse(-1),
                     vertex.u(), vertex.v(),
-                    state.getStateData(ClientStateDataTypes.OVERLAY_TEXTURE).orElse(OverlayTexture.NO_OVERLAY),
-                    state.getStateData(ClientStateDataTypes.LIGHT).orElse(LightTexture.FULL_BRIGHT),
+                    state.getStateDataOptional(ClientStateDataTypes.OVERLAY_TEXTURE).orElse(OverlayTexture.NO_OVERLAY),
+                    state.getStateDataOptional(ClientStateDataTypes.LIGHT).orElse(LightTexture.FULL_BRIGHT),
                     normalX, normalY, normalZ);
         }
     }
@@ -117,8 +115,8 @@ public class BRModel implements GeometryModel {
     }
 
     public void applyAnimations(BRState state) {
-        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS).orElse(List.of());
-        float animationTime = state.getStateData(StateDataTypes.ANIMATION_TIME).orElse(0f);
+        Collection<BRAnimationController> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
+        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
         controllers.forEach(controller -> {
             controller.playQueuedAnimations(state, animationTime);
             controller.setAnimationTime(animationTime);

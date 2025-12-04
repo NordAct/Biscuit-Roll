@@ -9,8 +9,8 @@ import nordmods.testmod.client.TestModClient;
 public class DragonModelProvider implements BRModelProvider<LivingEntityRenderState> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "dragon.geo");
     private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "dragon.animation");
-    private static final Identifier TEXTURE_GREEN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/dragon_green.png");
-    private static final Identifier TEXTURE_BROWN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/dragon_brown.png");
+    private static final Identifier TEXTURE_GREEN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/green.png");
+    private static final Identifier TEXTURE_BROWN = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/rainbow.png");
 
     @Override
     public Identifier getModelId(LivingEntityRenderState state) {
@@ -24,6 +24,6 @@ public class DragonModelProvider implements BRModelProvider<LivingEntityRenderSt
 
     @Override
     public Identifier getTextureId(LivingEntityRenderState state) {
-        return state.getStateData(TestModClient.IS_DRAGON_BROWN).orElse(false) ? TEXTURE_BROWN : TEXTURE_GREEN;
+        return state.getStateDataOptional(TestModClient.IS_DRAGON_BROWN).orElse(false) ? TEXTURE_BROWN : TEXTURE_GREEN;
     }
 }
