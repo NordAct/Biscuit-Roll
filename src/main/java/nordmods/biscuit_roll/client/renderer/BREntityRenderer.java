@@ -17,7 +17,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
-import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -40,10 +39,11 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         this(context, modelProvider, 90f);
     }
 
+    @Override
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
-        Identifier texture = getModelProvider().getTextureId(state);
+        Identifier texture = getTextureId(state);
         ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
                 poseStack.last().copy(),
                 getModel(state),
@@ -62,6 +62,8 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     }
 
     public abstract RenderType getRenderType(BRState state, Identifier texture);
+
+    public abstract Identifier getTextureId(BRState state);
 
     public void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         float scale = state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f);

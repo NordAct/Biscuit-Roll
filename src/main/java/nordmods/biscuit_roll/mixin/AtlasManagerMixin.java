@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.AtlasManager;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

@@ -35,12 +35,9 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
             try (InputStream stream = resourceManager.getResource(fileId).orElseThrow().open()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
                 GeometryModelData[] data = GeometryModelParser.parseModel(inputStreamReader);
-                String path = fileId.getPath();
-                String modelPath = path.substring(FOLDER.length() + 1, path.indexOf(".json"));
-                Identifier modelId = fileId.withPath(modelPath);
                 if (data.length == 1) {
-                    holder.put(modelId, new BRModel(data[0]));
-                    BiscuitRoll.LOGGER.info("Registered model with id {}", modelId);
+                    holder.put(fileId, new BRModel(data[0]));
+                    BiscuitRoll.LOGGER.info("Registered model with id {}", fileId);
                 } else {
                     BiscuitRoll.LOGGER.warn("Model file {} got more or less than 1 model and will be skipped", fileId);
                 }

@@ -6,14 +6,29 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.testmod.client.model_provider.DroneModelProvider;
+import nordmods.testmod.TestMod;
 import nordmods.testmod.common.Drone;
 import org.jetbrains.annotations.NotNull;
 
 public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderState> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/drone.png");
+    private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/drone.geo.json");
+    private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/animations/drone.animation.json");
+
     public DroneRenderer(EntityRendererProvider.Context context) {
-        super(context, new DroneModelProvider());
+        super(context, new BRModelProvider() {
+            @Override
+            public Identifier getModelId(BRState state) {
+                return MODEL;
+            }
+
+            @Override
+            public Identifier getAnimationId(BRState state) {
+                return ANIMATION;
+            }
+        });
     }
 
     @Override
@@ -24,5 +39,10 @@ public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderSta
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
         return RenderTypes.entityCutoutNoCull(texture);
+    }
+
+    @Override
+    public Identifier getTextureId(BRState state) {
+        return TEXTURE;
     }
 }

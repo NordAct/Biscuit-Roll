@@ -9,7 +9,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.util.ClientAnimationManager;
-import nordmods.biscuit_roll.client.util.ClientModelManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +35,8 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
             try (InputStream stream = resourceManager.getResource(fileId).orElseThrow().open()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
                 AnimationData[] data = AnimationParser.parse(inputStreamReader);
-                String path = fileId.getPath();
-                Identifier animationId = fileId.withPath(path.substring(FOLDER.length() + 1, path.indexOf(".json")));
-                holder.put(animationId, data);
-                BiscuitRoll.LOGGER.info("Registered animation file with id {}", animationId);
+                holder.put(fileId, data);
+                BiscuitRoll.LOGGER.info("Registered animation file with id {}", fileId);
             } catch(Exception e) {
                 BiscuitRoll.LOGGER.error("Error occurred while loading resource json {}", fileId, e);
             }
