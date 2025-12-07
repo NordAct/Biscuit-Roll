@@ -10,6 +10,7 @@
     "SubmitNodeCollectionMixin"
   ],
   "client": [
+    "AtlasManagerMixin",
     "SubmitNodeStorageMixin"
   ],
   "injectors": {

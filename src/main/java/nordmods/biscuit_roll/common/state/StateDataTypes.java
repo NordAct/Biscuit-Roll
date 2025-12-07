@@ -11,6 +11,6 @@ public class StateDataTypes {
     public static final StateDataType<Float> BODY_YAW = new StateDataType<>(BiscuitRoll.id("body_yaw"));
     public static final StateDataType<Float> SCALE = new StateDataType<>(BiscuitRoll.id("scale"));
     public static final StateDataType<Float> ANIMATION_TIME = new StateDataType<>(BiscuitRoll.id("animation_time"));
-    public static final StateDataType<BRModelProvider<?>> MODEL_PROVIDER = new StateDataType<>(BiscuitRoll.id("model_provider"));
+    public static final StateDataType<BRModelProvider> MODEL_PROVIDER = new StateDataType<>(BiscuitRoll.id("model_provider"));
     public static final StateDataType<Collection<BRAnimationController>> CONTROLLERS = new StateDataType<>(BiscuitRoll.id("controllers"));
 }

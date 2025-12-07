@@ -17,35 +17,39 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S>{
-    private final BRModelProvider<S> modelProvider;
+    private final BRModelProvider modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter;
     private final MobRenderStateGetter<Mob, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> mobRenderStateGetter;
 
-    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider, float deathFlipDegrees) {
+    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider modelProvider, float deathFlipDegrees) {
         super(context);
         this.modelProvider = modelProvider;
         this.livingEntityStateGetter = new LivingRenderStateGetter<>(context, deathFlipDegrees);
         this.mobRenderStateGetter = new MobRenderStateGetter<>(context);
     }
 
-    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider<S> modelProvider) {
+    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider modelProvider) {
         this(context, modelProvider, 90f);
     }
 
     public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+        Identifier texture = getModelProvider().getTextureId(state);
         ((BRModelSubmitStorage)submitNodeCollector).biscuit_roll$submit(
                 poseStack.last().copy(),
                 getModel(state),
                 state,
-                getRenderType(state, getModelProvider().getTextureId(state))
+                this::getRenderType,
+                texture
         );
         afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
         poseStack.popPose();
@@ -53,11 +57,11 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     }
 
     @Override
-    public BRModelProvider<S> getModelProvider() {
+    public BRModelProvider getModelProvider() {
         return modelProvider;
     }
 
-    public abstract RenderType getRenderType(S state, Identifier texture);
+    public abstract RenderType getRenderType(BRState state, Identifier texture);
 
     public void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         float scale = state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f);

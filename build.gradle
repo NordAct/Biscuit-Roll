@@ -28,7 +28,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    //todo fix face rotation bug
     implementation include("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
     implementation include("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
 }

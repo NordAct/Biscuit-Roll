@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.client.state;
 
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.state.StateDataType;
 
@@ -11,5 +10,5 @@ public class ClientStateDataTypes {
     public static final StateDataType<Integer> OUTLINE_COLOR = new StateDataType<>(BiscuitRoll.id("outline_color"));
     public static final StateDataType<Integer> COLOR = new StateDataType<>(BiscuitRoll.id("color"));
     public static final StateDataType<Integer> LIGHT = new StateDataType<>(BiscuitRoll.id("light"));
-    public static final StateDataType<TextureAtlasSprite> TEXTURE_ATLAS_SPRITE = new StateDataType<>(BiscuitRoll.id("texture_atlas_sprite"));
+
 }

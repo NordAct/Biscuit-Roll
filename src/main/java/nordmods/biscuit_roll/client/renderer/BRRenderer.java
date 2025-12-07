@@ -17,7 +17,7 @@ public interface BRRenderer<S extends BRState> {
         return ClientModelManager.instance().getModel(getModelProvider().getModelId(state));
     }
 
-    BRModelProvider<S> getModelProvider();
+    BRModelProvider getModelProvider();
 
     default void applyAnimations(Collection<BRAnimationController> controllers, S state, float animationTime) {
         controllers.forEach(controller -> {

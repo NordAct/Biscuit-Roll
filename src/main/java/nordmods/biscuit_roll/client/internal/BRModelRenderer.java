@@ -16,6 +16,7 @@ import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -26,19 +27,19 @@ public class BRModelRenderer {
             SubmitNodeCollection submitNodeCollection,
             MultiBufferSource.BufferSource bufferSource,
             OutlineBufferSource outlineBufferSource,
-            MultiBufferSource.BufferSource bufferSource2
+            MultiBufferSource.BufferSource crumblingBufferSource
     ) {
         Storage storage = submitNodeCollection.biscuit_roll$getSubmitStorage();
-        renderOpaque(bufferSource, outlineBufferSource, storage.opaque, bufferSource2);
+        renderOpaque(bufferSource, outlineBufferSource, storage.opaque, crumblingBufferSource);
         storage.translucent.sort(Comparator.comparingDouble(translucentModelSubmit -> -translucentModelSubmit.position().lengthSquared()));
-        renderTranslucent(bufferSource, outlineBufferSource, storage.translucent, bufferSource2);
+        renderTranslucent(bufferSource, outlineBufferSource, storage.translucent, crumblingBufferSource);
     }
 
     private void renderTranslucent(
             MultiBufferSource.BufferSource bufferSource,
             OutlineBufferSource outlineBufferSource,
             List<TranslucentSubmit> list,
-            MultiBufferSource.BufferSource bufferSource2
+            MultiBufferSource.BufferSource crumblingBufferSource
     ) {
         for (TranslucentSubmit translucentModelSubmit : list) {
             this.renderModel(
@@ -46,7 +47,7 @@ public class BRModelRenderer {
                     translucentModelSubmit.renderType(),
                     bufferSource.getBuffer(translucentModelSubmit.renderType()),
                     outlineBufferSource,
-                    bufferSource2
+                    crumblingBufferSource
             );
         }
     }
@@ -69,7 +70,7 @@ public class BRModelRenderer {
     private void renderModel(
             Submit submit,
             RenderType renderType,
-            VertexConsumer vertexConsumer,
+            VertexConsumer textureBuffer,
             OutlineBufferSource outlineBufferSource,
             MultiBufferSource.BufferSource bufferSource
     ) {
@@ -77,14 +78,13 @@ public class BRModelRenderer {
         stack.last().set(submit.pose());
 
         submit.model.applyAnimations(submit.state);
-        submit.model.render(stack, submit.state, vertexConsumer);
+        submit.model.render(stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
 
-        TextureAtlasSprite sprite = submit.state.getStateData(ClientStateDataTypes.TEXTURE_ATLAS_SPRITE);
         int outline = submit.state.getStateDataOptional(ClientStateDataTypes.OUTLINE_COLOR).orElse(0);
         if (outline != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {
             outlineBufferSource.setColor(outline);
             VertexConsumer outlineBuffer = outlineBufferSource.getBuffer(renderType);
-            submit.model.render(stack, submit.state, sprite == null ? outlineBuffer : sprite.wrap(outlineBuffer));
+            submit.model.render(stack, submit.state, submit.sprite == null ? outlineBuffer : submit.sprite.wrap(outlineBuffer));
         }
 
         ModelFeatureRenderer.CrumblingOverlay overlay = submit.state.getStateData(ClientStateDataTypes.CRUMBLING_OVERLAY);
@@ -94,7 +94,7 @@ public class BRModelRenderer {
                     overlay.cameraPose(),
                     1.0F
             );
-            submit.model.render(stack, submit.state, sprite == null ? overlayBuffer : sprite.wrap(overlayBuffer));
+            submit.model.render(stack, submit.state, submit.sprite == null ? overlayBuffer : submit.sprite.wrap(overlayBuffer));
         }
 
         stack.popPose();
@@ -103,7 +103,8 @@ public class BRModelRenderer {
     public record Submit(
             PoseStack.Pose pose,
             BRModel model,
-            BRState state
+            BRState state,
+            @Nullable TextureAtlasSprite sprite
     ) {}
 
     public record TranslucentSubmit(

@@ -47,7 +47,7 @@ public class BRAnimationController implements AnimationController {
     }
 
     public <S extends BRState> void playQueuedAnimations(S state, float animationTime) {
-        BRModelProvider<S> modelProvider = (BRModelProvider<S>) state.getStateData(StateDataTypes.MODEL_PROVIDER);
+        BRModelProvider modelProvider = (BRModelProvider) state.getStateData(StateDataTypes.MODEL_PROVIDER);
         if (modelProvider == null) return;
         proposedAnimations.forEach((animation, data) -> {
             if (playingAnimations.containsKey(animation)) return;
