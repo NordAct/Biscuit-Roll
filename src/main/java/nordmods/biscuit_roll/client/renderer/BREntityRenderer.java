@@ -1,6 +1,8 @@
 package nordmods.biscuit_roll.client.renderer;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -12,12 +14,11 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -80,6 +81,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
 
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
+        entity.getAnimationControllers().forEach(controller -> updateController(controller, entity, tickDelta));
         super.extractRenderState(entity, state, tickDelta);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
@@ -95,6 +97,25 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         state.setStateData(StateDataTypes.CONTROLLERS, entity.getAnimationControllers());
         state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
+    }
+
+    public void updateController(BRAnimationController controller, E entity, float tickDelta) { //todo add other queries
+        controller.updateMolangEnvironment((environmentBuilder -> {
+            environmentBuilder.setQuery("anim_time", (entity.tickCount + tickDelta) / 20f);
+            environmentBuilder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);
+            environmentBuilder.setQuery("camera_distance_range_lerp", Minecraft.getInstance().getCameraEntity() != null ? Minecraft.getInstance().getCameraEntity().distanceTo(entity) : 1);
+
+            if (entity instanceof LivingEntity living) {
+                environmentBuilder.setQuery("swim_amount", living.getSwimAmount(tickDelta));
+                environmentBuilder.setQuery("can_climb", living.onClimbable() ? 1 : 0);
+                environmentBuilder.setQuery("can_fly", living.canGlide() ? 1 : 0);
+                environmentBuilder.setQuery("blocking", living.isBlocking() ? 1 : 0);
+                if (living instanceof Mob mob) {
+                    environmentBuilder.setQuery("can_damage_nearby_mobs", !mob.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(5), target -> ((Mob) entity).canAttack(target)).isEmpty() ? 1 : 0);
+                }
+            }
+            environmentBuilder.setQuery("can_power_jump", entity instanceof PlayerRideableJumping jumping && jumping.canJump() ? 1 : 0);
+        }));
     }
 
     @ApiStatus.Internal

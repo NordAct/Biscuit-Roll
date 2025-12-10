@@ -10,15 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class Drone extends Mob implements BRAnimatedObject {
-    private final BRAnimationController controller1 = new BRAnimationController(this);
-    private final BRAnimationController controller2 = new BRAnimationController(this);
+    private final BRAnimationController controller1 = new BRAnimationController(this);;
+    private final BRAnimationController controller2 = new BRAnimationController(this);;
     public Drone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
-    }
-
-    @Override
-    public void addMolangVariables(Context context) {
-        context.addQuery("anim_time", tickCount / 20f);
     }
 
     @Override

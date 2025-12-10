@@ -10,5 +10,4 @@ public class ClientStateDataTypes {
     public static final StateDataType<Integer> OUTLINE_COLOR = new StateDataType<>(BiscuitRoll.id("outline_color"));
     public static final StateDataType<Integer> COLOR = new StateDataType<>(BiscuitRoll.id("color"));
     public static final StateDataType<Integer> LIGHT = new StateDataType<>(BiscuitRoll.id("light"));
-
 }

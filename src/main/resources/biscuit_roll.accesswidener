@@ -2,3 +2,4 @@ accessWidener	v2 named
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer getWhiteOverlayProgress (Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;)F
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer setupRotations (Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;FF)V
 accessible class net/minecraft/client/resources/model/AtlasManager$AtlasEntry
+accessible method net/minecraft/world/entity/LivingEntity canGlide ()Z

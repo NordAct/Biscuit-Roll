@@ -13,12 +13,7 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
     private final BRAnimationController controller = new BRAnimationController(this);
 
     public WaterDragon(EntityType<? extends Mob> entityType, Level level) {
-        super(entityType, level);
-    }
-
-    @Override
-    public void addMolangVariables(Context context) {
-        context.addQuery("anim_time", tickCount / 20f);
+        super(entityType, level);;
     }
 
     @Override
