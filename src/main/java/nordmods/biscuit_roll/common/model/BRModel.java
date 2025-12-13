@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.common.model;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pinwheel.api.geometry.*;
@@ -78,11 +79,15 @@ public class BRModel implements GeometryModel {
 
     public void applyAnimations(BRState state) {
         Collection<BRAnimationController> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
-        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
         controllers.forEach(controller -> {
-            controller.playQueuedAnimations(state, animationTime);
-            controller.setAnimationTime(animationTime);
-            controller.tick();
+            try {
+                float animationTime = controller.getEnvironment().getQuery().get("anim_time").get(controller.getEnvironment());
+                controller.playQueuedAnimations(state, animationTime);
+                controller.setAnimationTime(animationTime);
+                controller.tick();
+            } catch (MolangRuntimeException e) {
+                throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
+            }
         });
         resetTransformation();
         controllers.forEach(this::applyAnimations);

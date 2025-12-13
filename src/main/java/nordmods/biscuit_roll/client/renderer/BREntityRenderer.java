@@ -1,6 +1,5 @@
 package nordmods.biscuit_roll.client.renderer;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -81,7 +80,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
 
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
-        entity.getAnimationControllers().forEach(controller -> updateController(controller, entity, tickDelta));
+        entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller, entity, tickDelta));
         super.extractRenderState(entity, state, tickDelta);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
@@ -95,11 +94,10 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
 
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         state.setStateData(StateDataTypes.CONTROLLERS, entity.getAnimationControllers());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
     }
 
-    public void updateController(BRAnimationController controller, E entity, float tickDelta) { //todo add other queries
+    public void updateControllerVariables(BRAnimationController controller, E entity, float tickDelta) { //todo add other queries
         controller.updateMolangEnvironment((environmentBuilder -> {
             environmentBuilder.setQuery("anim_time", (entity.tickCount + tickDelta) / 20f);
             environmentBuilder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);

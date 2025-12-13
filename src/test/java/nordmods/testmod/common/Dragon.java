@@ -60,7 +60,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
     public void tick() {
         super.tick();
         if (isClient()) {
-            controller.playAnimation(isBrown() ? "walk" : "dance");
+            controller.playAnimation(isBrown() ? "pose2" : "dance");
             //for (BRPlayingAnimation animation : controller.getPlayingAnimations()) {
             //    animation.stop();
             //}
