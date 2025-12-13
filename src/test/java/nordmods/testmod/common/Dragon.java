@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController controller = new BRAnimationController(this);;
+    private final BRAnimationController controller = new BRAnimationController(this);
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
