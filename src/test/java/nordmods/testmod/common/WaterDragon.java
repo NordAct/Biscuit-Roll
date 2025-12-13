@@ -29,6 +29,10 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
     @Override
     public void tick() {
         super.tick();
-        if (isClient()) controller.playAnimation("pose");
+        if (isClient()) {
+            controller.playAnimation("pose");
+            //if (controller.getAnimation("pose") != null)
+            //    controller.getAnimation("pose").stop();
+        }
     }
 }

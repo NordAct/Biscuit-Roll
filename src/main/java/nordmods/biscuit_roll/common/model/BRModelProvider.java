@@ -9,7 +9,7 @@ public interface BRModelProvider {
     Identifier getModelId(BRState state);
     Identifier getAnimationId(BRState state);
 
-    default AnimationData getAnimationData(BRState state, boolean isClient, String animation) {
-        return BRAnimationManager.getAnimationManager(isClient).getAnimation(getAnimationId(state), animation);
+    default AnimationData getAnimationData(Identifier animationId, boolean isClient, String animation) {
+        return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationId, animation);
     }
 }

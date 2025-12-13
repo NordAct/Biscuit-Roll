@@ -3,20 +3,21 @@ package nordmods.biscuit_roll.common.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
+import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.EasingType;
-import nordmods.biscuit_roll.common.model.BRModelProvider;
-import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.biscuit_roll.common.util.BRAnimationManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class BRAnimationController implements AnimationController {
-    private final Map<String,BRPlayingAnimation> playingAnimations = new HashMap<>();
+    private Map<String,BRPlayingAnimation> playingAnimations = new HashMap<>();
     private MolangEnvironment environment = MolangRuntime.runtime().create();
     private final Map<String, ProposedAnimationData> proposedAnimations = new HashMap<>();
+    @Nullable private Identifier animationFile;
     private final boolean isClient;
 
     public BRAnimationController(BRAnimatedObject animatedObject) {
@@ -40,18 +41,25 @@ public class BRAnimationController implements AnimationController {
     }
 
     public void tick() {
+        if (animationFile != null) playQueuedAnimations();
+        Map<String,BRPlayingAnimation> shouldContinue = new HashMap<>();
         playingAnimations.forEach((name, animation) -> {
-            if (animation.isDone()) playingAnimations.remove(name);
+            if (!animation.canContinue()) animation.stop();
+            if (!animation.isDone() || !animation.canClearOut()) shouldContinue.put(name, animation);
         });
+        playingAnimations = shouldContinue;
     }
 
-    public <S extends BRState> void playQueuedAnimations(S state, float animationTime) {
-        BRModelProvider modelProvider = state.getStateData(StateDataTypes.MODEL_PROVIDER);
-        if (modelProvider == null) return;
+    public void playQueuedAnimations() {
         proposedAnimations.forEach((animation, data) -> {
-            if (playingAnimations.containsKey(animation)) return;
-            AnimationData animationData = modelProvider.getAnimationData(state, isClient, animation);
-            playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, data.transitionInTime, data.transitionOutTime, data.transitionInEasing, data.transitionOutEasing));
+            try {
+                float animationTime = getEnvironment().getQuery().get("anim_time").get(getEnvironment());
+                if (playingAnimations.containsKey(animation)) return;
+                AnimationData animationData = getAnimationData(animation);
+                playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, data.transitionInTime, data.transitionOutTime, data.transitionInEasing, data.transitionOutEasing));
+            }  catch (MolangRuntimeException e) {
+                throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
+            }
         });
         proposedAnimations.clear();
     }
@@ -67,6 +75,10 @@ public class BRAnimationController implements AnimationController {
     @Nullable
     public BRPlayingAnimation getAnimation(String animation) {
         return playingAnimations.get(animation);
+    }
+
+    public void setAnimationFile(@Nullable Identifier animationFile) {
+        this.animationFile = animationFile;
     }
 
     public record ProposedAnimationData(
@@ -89,6 +101,10 @@ public class BRAnimationController implements AnimationController {
         MolangEnvironmentBuilder<?> builder = environment.edit();
         for (MolangEnvironmentUpdateProvider updateProvider : updateProviders) updateProvider.update(builder);
         environment = builder.create();
+    }
+
+    private AnimationData getAnimationData(String animation) {
+        return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);
     }
 
     public interface MolangEnvironmentUpdateProvider {

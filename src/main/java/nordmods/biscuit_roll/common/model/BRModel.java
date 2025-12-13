@@ -82,7 +82,7 @@ public class BRModel implements GeometryModel {
         controllers.forEach(controller -> {
             try {
                 float animationTime = controller.getEnvironment().getQuery().get("anim_time").get(controller.getEnvironment());
-                controller.playQueuedAnimations(state, animationTime);
+                controller.setAnimationFile(state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state));
                 controller.setAnimationTime(animationTime);
                 controller.tick();
             } catch (MolangRuntimeException e) {

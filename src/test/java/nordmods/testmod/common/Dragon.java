@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 
 import java.util.Collection;
 import java.util.List;
@@ -61,9 +62,8 @@ public class Dragon extends Mob implements BRAnimatedObject {
         super.tick();
         if (isClient()) {
             controller.playAnimation(isBrown() ? "pose2" : "dance");
-            //for (BRPlayingAnimation animation : controller.getPlayingAnimations()) {
-            //    animation.stop();
-            //}
+            //if (controller.getAnimation("pose2") != null) controller.getAnimation("pose2").stop();
+            //if (controller.getAnimation("dance") != null) controller.getAnimation("dance").stop();
         }
     }
 }

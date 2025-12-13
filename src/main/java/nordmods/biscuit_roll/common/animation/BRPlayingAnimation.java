@@ -4,6 +4,7 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import net.minecraft.util.EasingType;
+import nordmods.biscuit_roll.BiscuitRoll;
 
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;
@@ -38,8 +39,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public float getTransitionOutProgress() {
         return transitionOutTime > 0 ?
-                transitionOutEasing.apply((transitionOutTime - (time - getAnimationDuration())) / transitionOutTime) :
-                1;
+                transitionOutEasing.apply((transitionOutTime - (time - stopTime)) / transitionOutTime) : 1;
     }
 
     public boolean isTransitioningIn() {
@@ -47,9 +47,9 @@ public class BRPlayingAnimation implements PlayingAnimation {
     }
 
     public boolean isTransitioningOut() {
-        if (stopped) return true;
-        float transitionTime = time - getAnimationDuration();
-        return transitionTime > 0 && transitionTime <= transitionOutTime;
+        if (!stopped) return false;
+        float transitionTime = time - stopTime;
+        return transitionTime >= 0 && transitionTime <= transitionOutTime;
     }
 
     @Override
@@ -73,6 +73,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
         if (weight == 0) return 0;
 
         environment.setThisValue(weight);
+        if (weight > 1) BiscuitRoll.LOGGER.warn("{}", weight);
         return weight * environment.safeResolve(animation.blendWeight());
     }
 
@@ -89,8 +90,15 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     @Override
     public boolean isDone() {
-        return (getAnimation().loop() == AnimationData.Loop.NONE && getAnimationTime() >= getLength())
-                || (stopped && (paused || !isTransitioningOut()));
+        return stopped && (paused || !isTransitioningOut());
+    }
+
+    public boolean canClearOut() {
+        return animation.loop() != AnimationData.Loop.HOLD_ON_LAST_FRAME;
+    }
+
+    public boolean canContinue() {
+        return getAnimation().loop() == AnimationData.Loop.LOOP || getAnimationTime() < getLength();
     }
 
     public boolean isPlaying() {
