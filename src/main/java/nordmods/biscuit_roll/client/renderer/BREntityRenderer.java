@@ -86,12 +86,14 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     public void extractRenderState(E entity, S state, float tickDelta) {
         entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), entity, tickDelta));
         super.extractRenderState(entity, state, tickDelta);
+        state.setStateData(ClientStateDataTypes.INVISIBLE, state.isInvisible);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {
             if (entity instanceof Mob mob) mobRenderStateGetter.fillRenderState(mob, livingState, tickDelta);
             else livingEntityStateGetter.fillRenderState(livingEntity, livingState, tickDelta);
             state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, LivingEntityRenderer.getOverlayCoords(livingState, livingEntityStateGetter.getWhiteOverlayProgress(livingState)));
             state.setStateData(StateDataTypes.BODY_YAW, livingState.bodyRot);
             state.setStateData(StateDataTypes.SCALE, livingState.scale * livingState.ageScale);
+            state.setStateData(ClientStateDataTypes.INVISIBLE, livingState.isInvisibleToPlayer);
         }
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, state.outlineColor);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);

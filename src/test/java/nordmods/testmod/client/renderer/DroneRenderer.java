@@ -9,6 +9,7 @@ import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
+import nordmods.testmod.client.renderer.layer.DroneGlowLayer;
 import nordmods.testmod.common.Drone;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,7 @@ public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderSta
                 return ANIMATION;
             }
         });
+        addRenderLayer(new DroneGlowLayer(this));
     }
 
     @Override

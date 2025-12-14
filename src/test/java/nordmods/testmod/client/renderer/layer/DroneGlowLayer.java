@@ -14,10 +14,10 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.TestModClient;
 
-public class RainbowGlowLayer extends TextureRenderLayer {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/animated_textures/rainbow_glow.png");
+public class DroneGlowLayer extends TextureRenderLayer {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/drone_glow.png");
 
-    public RainbowGlowLayer(BRRenderer<?> parentRenderer) {
+    public DroneGlowLayer(BRRenderer<?> parentRenderer) {
         super(parentRenderer);
     }
 
@@ -29,12 +29,6 @@ public class RainbowGlowLayer extends TextureRenderLayer {
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
         return RenderTypes.eyes(texture);
-    }
-
-    @Override
-    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        if (!state.getStateDataOptional(TestModClient.IS_DRAGON_RAINBOW).orElse(false)) return;
-        super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 
     @Override

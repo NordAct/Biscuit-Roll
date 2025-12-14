@@ -83,7 +83,9 @@ public class BRModelRenderer {
         stack.last().set(submit.pose());
 
         submit.model.applyAnimations(submit.state);
-        renderModel(submit.model, stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
+        if (!submit.state.getStateDataOptional(ClientStateDataTypes.INVISIBLE).orElse(false)) {
+            renderModel(submit.model, stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
+        }
 
         int outline = submit.state.getStateDataOptional(ClientStateDataTypes.OUTLINE_COLOR).orElse(0);
         if (outline != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {

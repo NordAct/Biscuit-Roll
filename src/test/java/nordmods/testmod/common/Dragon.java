@@ -61,7 +61,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
         super.tick();
         if (isClient()) {
             controller.playAnimation("blink");
-            controller.playAnimation(isRainbow() ? "pose2" : "dance");
+            controller.playAnimation(isRainbow() ? "dance" : "walk");
         }
     }
 }
