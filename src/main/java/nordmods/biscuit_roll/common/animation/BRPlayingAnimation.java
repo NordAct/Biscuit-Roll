@@ -4,7 +4,6 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import net.minecraft.util.EasingType;
-import nordmods.biscuit_roll.BiscuitRoll;
 
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;

@@ -10,7 +10,7 @@ import nordmods.testmod.client.renderer.DroneRenderer;
 import nordmods.testmod.client.renderer.WaterDragonRenderer;
 
 public class TestModClient implements ClientModInitializer {
-    public static final StateDataType<Boolean> IS_DRAGON_BROWN = new StateDataType<>(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "is_dragon_brown"));
+    public static final StateDataType<Boolean> IS_DRAGON_RAINBOW = new StateDataType<>(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "is_dragon_brown"));
 
     @Override
     public void onInitializeClient() {

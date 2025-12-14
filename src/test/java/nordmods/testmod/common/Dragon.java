@@ -10,7 +10,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +24,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
     public void setIsBrown(boolean state) {
         entityData.set(RAINBOW, state);
     }
-    public boolean isBrown() {
+    public boolean isRainbow() {
         return entityData.get(RAINBOW);
     }
 
@@ -38,7 +37,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
     @Override
     protected void addAdditionalSaveData(ValueOutput valueOutput) {
         super.addAdditionalSaveData(valueOutput);
-        valueOutput.putBoolean("Rainbow", isBrown());
+        valueOutput.putBoolean("Rainbow", isRainbow());
     }
 
     @Override
@@ -61,9 +60,8 @@ public class Dragon extends Mob implements BRAnimatedObject {
     public void tick() {
         super.tick();
         if (isClient()) {
-            controller.playAnimation(isBrown() ? "pose2" : "dance");
-            //if (controller.getAnimation("pose2") != null) controller.getAnimation("pose2").stop();
-            //if (controller.getAnimation("dance") != null) controller.getAnimation("dance").stop();
+            controller.playAnimation("blink");
+            controller.playAnimation(isRainbow() ? "pose2" : "dance");
         }
     }
 }

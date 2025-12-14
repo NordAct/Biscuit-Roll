@@ -13,7 +13,7 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
     private final BRAnimationController controller = new BRAnimationController(this);
 
     public WaterDragon(EntityType<? extends Mob> entityType, Level level) {
-        super(entityType, level);;
+        super(entityType, level);
     }
 
     @Override
@@ -31,8 +31,6 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
         super.tick();
         if (isClient()) {
             controller.playAnimation("pose");
-            //if (controller.getAnimation("pose") != null)
-            //    controller.getAnimation("pose").stop();
         }
     }
 }

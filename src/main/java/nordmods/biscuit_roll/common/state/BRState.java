@@ -25,8 +25,16 @@ public interface BRState {
         getDataMap().put(stateDataType, stateDataType.createHolder(value));
     }
 
+    static BRState copy(BRState state) {
+        return new Impl(new HashMap<>(state.getDataMap()));
+    }
+
     class Impl implements BRState {
-        private final Map<StateDataType<?>, StateDataType.Holder<?>> dataMap = new HashMap<>();
+        private final Map<StateDataType<?>, StateDataType.Holder<?>> dataMap;
+
+        public Impl(Map<StateDataType<?>, StateDataType.Holder<?>> dataMap) {
+            this.dataMap = dataMap;
+        }
 
         @Override
         public Map<StateDataType<?>, StateDataType.Holder<?>> getDataMap() {

@@ -30,7 +30,7 @@ public class SubmitNodeCollectionMixin implements BRModelSubmitCollection {
     @Override
     public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderTypeProvider renderTypeProvider, Identifier texture) {
         wasUsed = true;
-        TextureAtlasSprite sprite = AnimatedTextureUtil.getAnimatedTextureSprite(texture); //this is a workaround for getting animated textures to work... maybe I shouldn't do it via atlas
+        TextureAtlasSprite sprite = AnimatedTextureUtil.getAnimatedTextureSprite(texture);
         biscuit_roll$storage.add(renderTypeProvider.getRenderType(state, sprite == null ? texture : sprite.atlasLocation()),
                 new BRModelRenderer.Submit(
                         pose,
