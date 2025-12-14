@@ -1,13 +1,11 @@
 package nordmods.biscuit_roll.common.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.EasingType;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,9 +80,9 @@ public class BRAnimationController implements AnimationController {
     }
 
     public record ProposedAnimationData(
-            EasingType transitionInEasing,
+            AnimationData.LerpMode transitionInEasing,
             int transitionInTime,
-            EasingType transitionOutEasing,
+            AnimationData.LerpMode transitionOutEasing,
             int transitionOutTime
     ) {}
 
@@ -92,22 +90,11 @@ public class BRAnimationController implements AnimationController {
         return 1;
     }
 
-    public EasingType getDefaultEasingType() {
-        return EasingType.LINEAR;
-    }
-
-    public void updateMolangEnvironment(MolangEnvironmentUpdateProvider ... updateProviders) {
-        if (!environment.canEdit()) return;
-        MolangEnvironmentBuilder<?> builder = environment.edit();
-        for (MolangEnvironmentUpdateProvider updateProvider : updateProviders) updateProvider.update(builder);
-        environment = builder.create();
+    public AnimationData.LerpMode getDefaultEasingType() {
+        return AnimationData.LerpMode.LINEAR;
     }
 
     private AnimationData getAnimationData(String animation) {
         return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);
-    }
-
-    public interface MolangEnvironmentUpdateProvider {
-        void update(MolangEnvironmentBuilder<?> environmentBuilder);
     }
 }

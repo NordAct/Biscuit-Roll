@@ -1,10 +1,14 @@
 package nordmods.testmod.common;
 
+import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -63,5 +67,15 @@ public class Dragon extends Mob implements BRAnimatedObject {
             controller.playAnimation("blink");
             controller.playAnimation(isRainbow() ? "dance" : "walk");
         }
+    }
+
+    protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+        if (level().isClientSide()) {
+            controller.playAnimation(
+                    "attack.melee1",
+                    new BRAnimationController.ProposedAnimationData(AnimationData.LerpMode.LINEAR, 0, AnimationData.LerpMode.LINEAR, 0)
+            );
+        }
+        return super.mobInteract(player, interactionHand);
     }
 }

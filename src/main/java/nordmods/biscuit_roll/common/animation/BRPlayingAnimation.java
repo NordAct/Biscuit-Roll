@@ -3,7 +3,6 @@ package nordmods.biscuit_roll.common.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
-import net.minecraft.util.EasingType;
 
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;
@@ -11,44 +10,43 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private final float startTime;
     private final float transitionInTime;
     private final float transitionOutTime;
-    private final EasingType transitionInEasing;
-    private final EasingType transitionOutEasing;
+    private final AnimationData.LerpMode transitionInLerp;
+    private final AnimationData.LerpMode transitionOutLerp;
 
     private float weight = 1;
     private boolean stopped = false;
     private boolean paused = false;
     private float stopTime;
-    public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, EasingType transitionInEasing, EasingType transitionOutEasing) {
+    public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutEasing) {
         this.animation = animation;
-        this.startTime = this.time = startTime;
+        this.startTime = startTime;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);
-        this.transitionInEasing = transitionInEasing;
-        this.transitionOutEasing = transitionOutEasing;
+        this.transitionInLerp = transitionInLerp;
+        this.transitionOutLerp = transitionOutEasing;
     }
 
     @Override
     public float getAnimationTime() {
-        return isTransitioningIn() ? 0 : isTransitioningOut() ? getAnimationDuration() : time - startTime - transitionInTime;
+        return isTransitioningIn() ? 0 : stopped ? stopTime : time - transitionInTime;
     }
 
     public float getTransitionInProgress() {
-        return transitionInTime > 0 ? transitionInEasing.apply((time - startTime) / transitionInTime) : 1;
+        return transitionInTime > 0 ? transitionInLerp.apply(time / transitionInTime) : 1;
     }
 
     public float getTransitionOutProgress() {
         return transitionOutTime > 0 ?
-                transitionOutEasing.apply((transitionOutTime - (time - stopTime)) / transitionOutTime) : 1;
+                transitionOutLerp.apply((transitionOutTime - (time - stopTime)) / transitionOutTime) : 1;
     }
 
     public boolean isTransitioningIn() {
-        return time - startTime <= transitionInTime;
+        return time <= transitionInTime;
     }
 
     public boolean isTransitioningOut() {
         if (!stopped) return false;
-        float transitionTime = time - stopTime;
-        return transitionTime >= 0 && transitionTime <= transitionOutTime;
+        return time >= 0 && time - stopTime <= transitionOutTime;
     }
 
     @Override
@@ -78,7 +76,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     @Override
     public void setAnimationTime(float time) {
         if (paused) return;
-        this.time = time;
+        this.time = time - startTime;
     }
 
     @Override
@@ -120,9 +118,5 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public boolean isStopped() {
         return stopped;
-    }
-
-    private float getAnimationDuration() {
-        return stopped ? stopTime - startTime : animation.animationLength();
     }
 }
