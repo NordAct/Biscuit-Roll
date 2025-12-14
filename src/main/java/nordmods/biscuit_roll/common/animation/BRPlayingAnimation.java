@@ -21,7 +21,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private float stopTime;
     public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, EasingType transitionInEasing, EasingType transitionOutEasing) {
         this.animation = animation;
-        this.startTime = startTime;
+        this.startTime = this.time = startTime;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);
         this.transitionInEasing = transitionInEasing;
@@ -73,7 +73,6 @@ public class BRPlayingAnimation implements PlayingAnimation {
         if (weight == 0) return 0;
 
         environment.setThisValue(weight);
-        if (weight > 1) BiscuitRoll.LOGGER.warn("{}", weight);
         return weight * environment.safeResolve(animation.blendWeight());
     }
 
