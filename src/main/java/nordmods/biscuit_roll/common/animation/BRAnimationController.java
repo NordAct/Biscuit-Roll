@@ -5,21 +5,27 @@ import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class BRAnimationController implements AnimationController {
+public abstract class BRAnimationController<O extends BRAnimatedObject> implements AnimationController {
     private Map<String,BRPlayingAnimation> playingAnimations = new HashMap<>();
     private MolangEnvironment environment = MolangRuntime.runtime().create();
     private final Map<String, ProposedAnimationData> proposedAnimations = new HashMap<>();
     @Nullable private Identifier animationFile;
     private final boolean isClient;
 
-    public BRAnimationController(BRAnimatedObject animatedObject) {
-        this.isClient = animatedObject.isClient();
+    public BRAnimationController(O animatedObject, boolean isClient) {
+        this.isClient = isClient;
     }
 
     @Override
@@ -93,6 +99,43 @@ public class BRAnimationController implements AnimationController {
     public AnimationData.LerpMode getDefaultEasingType() {
         return AnimationData.LerpMode.LINEAR;
     }
+
+    @Override
+    public void setAnimationTime(float time) {
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time));
+    }
+
+    public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
+        getPlayingAnimations().forEach(playingAnimation -> {
+            float lastTime = playingAnimation.getLastRenderAnimationTime();
+            float newTime = playingAnimation.getRenderAnimationTime();
+
+            for (AnimationData.SoundEffect soundEffect : playingAnimation.getAnimation().soundEffects()) {
+                float triggerTime = soundEffect.time();
+                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime)
+                    onSoundEffect(soundEffect, model, state);
+            }
+
+            for (AnimationData.ParticleEffect particleEffect : playingAnimation.getAnimation().particleEffects()) {
+                float triggerTime = particleEffect.time();
+                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime) {
+                    onParticleEffect(particleEffect, model, state);
+                }
+            }
+
+            for (AnimationData.TimelineEffect timelineEffect : playingAnimation.getAnimation().timelineEffects()) {
+                float triggerTime = timelineEffect.time();
+                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime)
+                    onTimelineEffect(timelineEffect, model, state);
+            }
+        });
+    }
+
+    protected abstract void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state);
+
+    protected abstract void onParticleEffect(AnimationData.ParticleEffect particleEffect, BRModel model, BRState state);
+
+    protected abstract void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state);
 
     private AnimationData getAnimationData(String animation) {
         return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);

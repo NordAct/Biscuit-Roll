@@ -14,18 +14,19 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.EntityAnimationController;
 
 import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController controller = new BRAnimationController(this);
+    private final BRAnimationController<Dragon> controller = new EntityAnimationController<>(this);
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
 
     private static final EntityDataAccessor<Boolean> RAINBOW = SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.BOOLEAN);
-    public void setIsBrown(boolean state) {
+    public void setRainbow(boolean state) {
         entityData.set(RAINBOW, state);
     }
     public boolean isRainbow() {
@@ -47,23 +48,18 @@ public class Dragon extends Mob implements BRAnimatedObject {
     @Override
     protected void readAdditionalSaveData(ValueInput valueInput) {
         super.readAdditionalSaveData(valueInput);
-        setIsBrown(valueInput.getBooleanOr("Rainbow", false));
+        setRainbow(valueInput.getBooleanOr("Rainbow", false));
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public Collection<BRAnimationController<?>> getAnimationControllers() {
         return List.of(controller);
-    }
-
-    @Override
-    public boolean isClient() {
-        return level().isClientSide();
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (isClient()) {
+        if (level().isClientSide()) {
             controller.playAnimation("blink");
             controller.playAnimation(isRainbow() ? "dance" : "walk");
         }

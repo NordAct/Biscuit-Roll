@@ -78,7 +78,7 @@ public class BRModel implements GeometryModel {
     }
 
     public void applyAnimations(BRState state) {
-        Collection<BRAnimationController> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
+        Collection<BRAnimationController<?>> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
         controllers.forEach(controller -> {
             try {
                 float animationTime = controller.getEnvironment().getQuery().get("anim_time").get(controller.getEnvironment());
@@ -91,5 +91,7 @@ public class BRModel implements GeometryModel {
         });
         resetTransformation();
         controllers.forEach(this::applyAnimations);
+        updateLocators();
+        controllers.forEach(controller -> controller.triggerAnimationEffects(this, state));
     }
 }

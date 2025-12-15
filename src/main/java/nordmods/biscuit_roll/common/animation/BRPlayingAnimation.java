@@ -7,6 +7,7 @@ import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;
     private float time;
+    private float lastRenderTime;
     private final float startTime;
     private final float transitionInTime;
     private final float transitionOutTime;
@@ -29,6 +30,10 @@ public class BRPlayingAnimation implements PlayingAnimation {
     @Override
     public float getAnimationTime() {
         return isTransitioningIn() ? 0 : stopped ? stopTime : time - transitionInTime;
+    }
+
+    public float getLastRenderAnimationTime() {
+        return lastRenderTime;
     }
 
     public float getTransitionInProgress() {
@@ -76,6 +81,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     @Override
     public void setAnimationTime(float time) {
         if (paused) return;
+        this.lastRenderTime = getRenderAnimationTime();
         this.time = time - startTime;
     }
 
@@ -107,6 +113,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
+        if (paused) lastRenderTime = getRenderAnimationTime();
     }
 
     public void stop() {
