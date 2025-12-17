@@ -66,18 +66,22 @@ java {
 
 loom {
     accessWidenerPath = file("src/main/resources/biscuit_roll.accesswidener")
-    //runs {
-    //    testClient {
-    //        inherit client
+    runs {
+        testClient {
+            inherit client
 
-    //        configName = "Test Minecraft Client"
-    //        source = sourceSets.test
-    //    }
-    //}
+            configName = "Test Minecraft Client"
+            source = sourceSets.test
+        }
+    }
+}
+
+tasks.withType(AbstractTestTask).configureEach {
+    failOnNoDiscoveredTests = false
 }
 
 jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+    from(".") {
+        include 'LICENSE*'
     }
 }

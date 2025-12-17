@@ -1,2 +1,4 @@
 Copyright (c) 2025 Nord_Act
 All rights reserved.
+
+Project uses modified versions of libraries Pinwheel and Molang Compiler by Ocelot. Text of licenses for those projects can be found in "LICENSE_Pinwheel.txt" and "LICENSE_Molang_Compiler.txt" respectively
