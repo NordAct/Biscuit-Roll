@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
+    id 'com.gradleup.shadow' version "9.3.0"
 }
 
 version = project.mod_version
@@ -8,6 +9,22 @@ group = project.maven_group
 
 base {
     archivesName = project.archives_base_name
+}
+
+configurations {
+    shade
+}
+
+configurations.implementation.extendsFrom(configurations.shade)
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate('gg.moonflower.molangcompiler', 'libs.gg.moonflower.molangcompiler')
+    relocate('gg.moonflower.pinwheel', 'libs.gg.moonflower.pinwheel')
+}
+
+remapJar {
+    input = shadowJar.archiveFile
 }
 
 repositories {
@@ -31,8 +48,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    implementation include("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
-    implementation include("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
+    shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
+    shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
 }
 
 processResources {
@@ -62,6 +79,7 @@ java {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
     withSourcesJar()
+    withJavadocJar()
 }
 
 loom {
