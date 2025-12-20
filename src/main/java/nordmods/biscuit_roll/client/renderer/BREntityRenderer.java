@@ -48,7 +48,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     @Override
     public void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         float scale = state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f);
-        poseStack.scale(scale);
+        poseStack.scale(scale, scale, scale);
         if (state instanceof LivingEntityRenderState livingState) {
             livingEntityStateGetter.rotate(livingState, poseStack, state.getStateDataOptional(StateDataTypes.BODY_YAW).orElse(0f), scale);
         }

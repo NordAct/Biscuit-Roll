@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
+import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -135,7 +136,7 @@ public class BRModelRenderer {
     }
 
     private void renderModel(BRModel model, PoseStack stack, BRState state, VertexConsumer vertexConsumer) {
-        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, state), stack);
+        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, state), (MatrixStack) stack);
     }
 
     public record Submit(
