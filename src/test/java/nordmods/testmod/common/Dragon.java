@@ -62,6 +62,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
         if (level().isClientSide()) {
             controller.playAnimation("blink");
             controller.playAnimation(isRainbow() ? "dance" : "walk");
+            controller.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f));
         }
     }
 

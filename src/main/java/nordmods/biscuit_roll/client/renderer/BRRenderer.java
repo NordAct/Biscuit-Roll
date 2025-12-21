@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-@ApiStatus.Internal
+@SuppressWarnings("unused")
 public interface BRRenderer<S extends BRState> {
     @Nullable
     default BRModel getModel(S state) {
@@ -30,6 +30,7 @@ public interface BRRenderer<S extends BRState> {
 
     default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
 
+    @ApiStatus.Internal
     default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);

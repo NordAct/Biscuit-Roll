@@ -4,6 +4,7 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 
+@SuppressWarnings("unused")
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;
     private float time;
@@ -13,7 +14,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private final float transitionOutTime;
     private final AnimationData.LerpMode transitionInLerp;
     private final AnimationData.LerpMode transitionOutLerp;
-
+    private float speed = 1;
     private float weight = 1;
     private boolean stopped = false;
     private boolean paused = false;
@@ -82,7 +83,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     public void setAnimationTime(float time) {
         if (paused) return;
         this.lastRenderTime = getRenderAnimationTime();
-        this.time = time - startTime;
+        this.time = (time - startTime) * speed;
     }
 
     @Override
@@ -125,5 +126,13 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public boolean isStopped() {
         return stopped;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 }
