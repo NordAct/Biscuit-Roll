@@ -7,9 +7,9 @@ import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
 @ApiStatus.NonExtendable
 public interface BRModelSubmitStorage {
+    @ApiStatus.Internal
     default void biscuit_roll$submit(
             PoseStack.Pose pose,
             BRModel model,

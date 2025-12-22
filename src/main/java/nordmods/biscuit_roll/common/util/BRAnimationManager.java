@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApiStatus.Internal
+@ApiStatus.NonExtendable
 public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
 

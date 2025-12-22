@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApiStatus.Internal
+@ApiStatus.NonExtendable
 public abstract class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, BRModel>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
 

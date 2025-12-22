@@ -10,7 +10,6 @@ import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -30,12 +29,21 @@ public interface BRRenderer<S extends BRState> {
 
     default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
 
-    @ApiStatus.Internal
     default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
         Identifier texture = getTextureId(state);
         submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage) submitNodeCollector);
+        getRenderLayers().forEach(renderLayer -> renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState));
+        afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+        poseStack.popPose();
+    }
+
+    default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
+        poseStack.pushPose();
+        beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+        Identifier texture = getTextureId(state);
+        submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage) submitNodeCollector.order(order));
         getRenderLayers().forEach(renderLayer -> renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState));
         afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
         poseStack.popPose();
