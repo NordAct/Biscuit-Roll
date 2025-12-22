@@ -58,7 +58,7 @@ public interface BRRenderer<S extends BRState> {
 
     static void submitModel(
             PoseStack poseStack,
-            @NotNull BRModel model,
+            BRModel model,
             BRState state,
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider,
             Identifier texture,
