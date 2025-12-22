@@ -10,6 +10,7 @@ import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -57,12 +58,15 @@ public interface BRRenderer<S extends BRState> {
 
     static void submitModel(
             PoseStack poseStack,
-            BRModel model,
+            @NotNull BRModel model,
             BRState state,
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider,
             Identifier texture,
             BRModelSubmitStorage submitNodeCollector
     ) {
+        if (model == null) {
+            throw new IllegalStateException("Attempted to submit null model. Please check if model you trying to submit is loaded");
+        }
         submitNodeCollector.biscuit_roll$submit(
                 poseStack.last().copy(),
                 model,
