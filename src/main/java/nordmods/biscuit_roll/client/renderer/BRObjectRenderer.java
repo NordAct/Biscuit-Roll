@@ -42,7 +42,6 @@ public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRS
     public void submitObjectOrdered(O object, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, float tickDelta, int order) {
         S state = createRenderState();
         extractRenderState(object, state, tickDelta);
-        poseStack.pushPose();
         submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
     }
 }
