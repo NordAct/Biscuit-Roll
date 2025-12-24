@@ -6,10 +6,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
-import nordmods.biscuit_roll.client.util.ClientModelManager;
-import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class TextureRenderLayer extends BRRenderLayer {
     protected final int renderOrder;
@@ -32,10 +29,5 @@ public abstract class TextureRenderLayer extends BRRenderLayer {
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         Identifier texture = getTextureId(state);
         BRRenderer.submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage)submitNodeCollector.order(renderOrder));
-    }
-
-    @Nullable
-    private BRModel getModel(BRState state) {
-        return ClientModelManager.instance().getModel(parentRenderer.getModelProvider().getModelId(state));
     }
 }

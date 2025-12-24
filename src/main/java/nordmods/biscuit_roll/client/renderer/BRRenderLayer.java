@@ -3,8 +3,11 @@ package nordmods.biscuit_roll.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
+import nordmods.biscuit_roll.client.util.ClientModelManager;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BRRenderLayer {
     protected final BRRenderer<?> parentRenderer;
@@ -12,7 +15,6 @@ public abstract class BRRenderLayer {
     public BRRenderLayer(BRRenderer<?> parentRenderer) {
         this.parentRenderer = parentRenderer;
     }
-
 
     @ApiStatus.Internal
     public final void submitLayer(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
@@ -32,5 +34,10 @@ public abstract class BRRenderLayer {
 
     protected void updateRenderState(BRState state) {
 
+    }
+
+    @Nullable
+    protected BRModel getModel(BRState state) {
+        return ClientModelManager.instance().getModel(this.parentRenderer.getModelProvider().getModelId(state));
     }
 }
