@@ -30,16 +30,13 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     private final MobRenderStateGetter<Mob, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> mobRenderStateGetter;
     private final List<BRRenderLayer> renderLayers = new ArrayList<>();
 
-    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider modelProvider, float deathFlipDegrees) {
+    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider modelProvider) {
         super(context);
         this.modelProvider = modelProvider;
-        this.livingEntityStateGetter = new LivingRenderStateGetter<>(context, deathFlipDegrees);
+        this.livingEntityStateGetter = new LivingRenderStateGetter<>(context, getFlipDegrees());
         this.mobRenderStateGetter = new MobRenderStateGetter<>(context);
     }
 
-    protected BREntityRenderer(EntityRendererProvider.Context context, BRModelProvider modelProvider) {
-        this(context, modelProvider, 90f);
-    }
 
     @Override
     public Collection<BRRenderLayer> getRenderLayers() {
@@ -51,7 +48,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         float scale = state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f);
         poseStack.scale(scale, scale, scale);
         if (state instanceof LivingEntityRenderState livingState) {
-            livingEntityStateGetter.rotate(livingState, poseStack, state.getStateDataOptional(StateDataTypes.BODY_YAW).orElse(0f), scale);
+            setupRotations(livingState, poseStack, state.getStateDataOptional(StateDataTypes.BODY_YAW).orElse(0f), scale);
         }
         poseStack.scale(-1, -1, 1);
     }
@@ -104,6 +101,13 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
     }
 
+    public <SL extends LivingEntityRenderState> void setupRotations(SL state, PoseStack poseStack, float bodyYaw, float scale) {
+        livingEntityStateGetter.rotate(state, poseStack, bodyYaw, scale);
+    }
+
+    public float getFlipDegrees() {
+        return 90f;
+    }
 
     @ApiStatus.Internal
     private record LivingRenderStateGetter<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>(LivingEntityRenderer<T, S, M> renderer) {
