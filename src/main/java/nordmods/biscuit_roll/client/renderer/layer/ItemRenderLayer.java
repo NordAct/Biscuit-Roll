@@ -17,14 +17,19 @@ public abstract class ItemRenderLayer extends BRRenderLayer{
     }
 
     @Override
-    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+    protected void beforeSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         ItemStackRenderState stackRenderState = getItemStackRenderState(state);
         if (stackRenderState == null) return;
-
         LocatorTransformation transformation = getModel(state).getLocatorTransformation(getLocatorName());
         poseStack.scale(-1, -1, 1);
         poseStack.mulPose(transformation.matrix());
         poseStack.scale(1, -1, -1);
+    }
+
+    @Override
+    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        ItemStackRenderState stackRenderState = getItemStackRenderState(state);
+        if (stackRenderState == null) return;
         stackRenderState.submit(poseStack, submitNodeCollector, state.getStateData(ClientStateDataTypes.LIGHT), OverlayTexture.NO_OVERLAY, 0);
     }
 
