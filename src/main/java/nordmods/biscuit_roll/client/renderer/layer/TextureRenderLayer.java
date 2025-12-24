@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
+import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.common.state.BRState;
 
 public abstract class TextureRenderLayer extends BRRenderLayer {
