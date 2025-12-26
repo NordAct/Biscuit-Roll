@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @ApiStatus.NonExtendable
 public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
@@ -62,7 +63,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                 .stream(data)
                 .filter(animationData -> animationData.name().equals(animationName))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + animationId));
     }
 
     protected abstract Map<Identifier, AnimationData[]> getHolderMap();

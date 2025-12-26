@@ -13,14 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BRAnimationController<O extends BRAnimatedObject> implements AnimationController {
-    private Map<String,BRPlayingAnimation> playingAnimations = new HashMap<>();
-    private MolangEnvironment environment = MolangRuntime.runtime().create();
-    private final Map<String, ProposedAnimationData> proposedAnimations = new HashMap<>();
+    private final ConcurrentHashMap<String,BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
+    private final MolangEnvironment environment = MolangRuntime.runtime().create();
     @Nullable private Identifier animationFile;
     private final boolean isClient;
-    private String currentAnimation;
     private final boolean singleAnimation;
 
     public BRAnimationController(O animatedObject, boolean isClient, boolean singleAnimation) {
@@ -31,7 +30,6 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     @Override
     public void clearAnimations() {
         playingAnimations.clear();
-        proposedAnimations.clear();
     }
 
     @Override
@@ -45,35 +43,13 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     }
 
     public void tick() {
-        if (animationFile != null) playQueuedAnimations();
         Map<String,BRPlayingAnimation> shouldContinue = new HashMap<>();
         playingAnimations.forEach((name, animation) -> {
             if (!animation.canContinue()) animation.stop();
             if (!animation.isDone() || !animation.canClearOut()) shouldContinue.put(name, animation);
         });
-        playingAnimations = shouldContinue;
-    }
-
-    public void playQueuedAnimations() {
-        proposedAnimations.forEach((animation, data) -> {
-            try {
-                if (singleAnimation) {
-                    if (!animation.equals(currentAnimation)) return;
-                    playingAnimations.forEach(((name, playingAnimation) -> {
-                        if (!name.equals(currentAnimation)) playingAnimation.stop();
-                    }));
-                }
-
-                float animationTime = getEnvironment().getQuery().get("anim_time").get(getEnvironment());
-                if (playingAnimations.containsKey(animation)) return;
-
-                AnimationData animationData = getAnimationData(animation);
-                playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, data.transitionInTime, data.transitionOutTime, data.transitionInEasing, data.transitionOutEasing));
-            }  catch (MolangRuntimeException e) {
-                throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
-            }
-        });
-        proposedAnimations.clear();
+        playingAnimations.clear();
+        playingAnimations.putAll(shouldContinue);
     }
 
     public void playAnimation(String animation) {
@@ -81,10 +57,27 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     }
 
     public void playAnimation(String animation, ProposedAnimationData proposedAnimationData) {
+        if (animationFile == null) return;
+
         if (singleAnimation) {
-            currentAnimation = animation;
+            playingAnimations.forEach(((name, playingAnimation) -> {
+                if (!name.equals(animation)) playingAnimation.stop();
+            }));
         }
-        proposedAnimations.put(animation, proposedAnimationData);
+        try {
+            float animationTime = getEnvironment().getQuery().get("anim_time").get(getEnvironment());
+            if (playingAnimations.containsKey(animation)) {
+                BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
+                if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
+                    float transitionOutProgress = playingAnimation.getTransitionOutProgress();
+                    animationTime -= proposedAnimationData.transitionInTime * transitionOutProgress;
+                } else return;
+            }
+            AnimationData animationData = getAnimationData(animation);
+            playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, proposedAnimationData.transitionInTime, proposedAnimationData.transitionOutTime, proposedAnimationData.transitionInEasing, proposedAnimationData.transitionOutEasing));
+        }  catch (MolangRuntimeException e) {
+            throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
+        }
     }
 
     @Nullable

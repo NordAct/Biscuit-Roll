@@ -3,7 +3,6 @@ package nordmods.biscuit_roll.common.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
-import nordmods.biscuit_roll.BiscuitRoll;
 
 @SuppressWarnings("unused")
 public class BRPlayingAnimation implements PlayingAnimation {
@@ -55,7 +54,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public boolean isTransitioningOut() {
         if (!stopped) return false;
-        return time >= 0 && time - stopTime <= transitionOutTime;
+        return time - stopTime <= transitionOutTime;
     }
 
     @Override
