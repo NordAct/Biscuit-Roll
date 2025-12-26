@@ -65,7 +65,6 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     }
 
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, E entity, float tickDelta) { //todo add other queries
-        builder.setQuery("anim_time", (entity.tickCount + tickDelta) / 20f);
         builder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);
 
         if (entity instanceof LivingEntity living) {
@@ -99,6 +98,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         state.setStateData(StateDataTypes.CONTROLLERS, entity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
+        state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
     }
 
     public <SL extends LivingEntityRenderState> void setupRotations(SL state, PoseStack poseStack, float bodyYaw, float scale) {

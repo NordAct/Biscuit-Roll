@@ -75,13 +75,14 @@ public class Dragon extends Mob implements BRAnimatedObject {
         if (level().isClientSide()) {
             controller0.playAnimation("blink");
             controller1.playAnimation(animations[getAnimationOrdinal()]);
+            controller1.getPlayingAnimations().forEach(animation -> animation.setSpeed(1f));
         }
     }
 
     protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         if (level().isClientSide()) {
-            if (!player.isShiftKeyDown()) {
-                controller1.playAnimation(
+            if (player.isShiftKeyDown()) {
+                controller0.playAnimation(
                         "attack.melee1",
                         new BRAnimationController.ProposedAnimationData(AnimationData.LerpMode.LINEAR, 0, AnimationData.LerpMode.LINEAR, 0)
                 );

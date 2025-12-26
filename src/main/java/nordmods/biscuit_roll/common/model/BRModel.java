@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.common.model;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
-import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pinwheel.api.geometry.*;
@@ -66,6 +65,8 @@ public class BRModel implements GeometryModel {
 
             AnimationData data = animation.getAnimation();
             float localAnimationTime = animation.getRenderAnimationTime();
+            environment.edit().setQuery("anim_time", localAnimationTime);
+
             for (AnimationData.BoneAnimation boneAnimation : data.boneAnimations()) {
                 AnimatedBone bone = this.getBone(boneAnimation.name());
                 if (bone == null) {
@@ -79,15 +80,11 @@ public class BRModel implements GeometryModel {
 
     public void applyAnimations(BRState state) {
         Collection<BRAnimationController<?>> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
+        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
         controllers.forEach(controller -> {
-            try {
-                float animationTime = controller.getEnvironment().getQuery().get("anim_time").get(controller.getEnvironment());
-                controller.setAnimationFile(state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state));
-                controller.setAnimationTime(animationTime);
-                controller.tick();
-            } catch (MolangRuntimeException e) {
-                throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
-            }
+            controller.setAnimationFile(state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state));
+            controller.setAnimationTime(animationTime);
+            controller.tick();
         });
         resetTransformation();
         controllers.forEach(this::applyAnimations);

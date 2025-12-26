@@ -85,7 +85,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     public void setAnimationTime(float time) {
         if (paused) return;
         this.lastRenderTime = getRenderAnimationTime();
-        this.time = (time - startTime) * speed;
+        this.time = time - startTime * speed;
     }
 
     @Override

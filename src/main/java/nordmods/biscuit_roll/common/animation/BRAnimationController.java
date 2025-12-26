@@ -21,6 +21,7 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     @Nullable private Identifier animationFile;
     private final boolean isClient;
     private final boolean singleAnimation;
+    private float animationTime = 0;
 
     public BRAnimationController(O animatedObject, boolean isClient, boolean singleAnimation) {
         this.isClient = isClient;
@@ -64,20 +65,18 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
                 if (!name.equals(animation)) playingAnimation.stop();
             }));
         }
-        try {
-            float animationTime = getEnvironment().getQuery().get("anim_time").get(getEnvironment());
-            if (playingAnimations.containsKey(animation)) {
-                BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
-                if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
-                    float transitionOutProgress = playingAnimation.getTransitionOutProgress();
-                    animationTime -= proposedAnimationData.transitionInTime * transitionOutProgress;
-                } else return;
-            }
-            AnimationData animationData = getAnimationData(animation);
-            playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, proposedAnimationData.transitionInTime, proposedAnimationData.transitionOutTime, proposedAnimationData.transitionInEasing, proposedAnimationData.transitionOutEasing));
-        }  catch (MolangRuntimeException e) {
-            throw new RuntimeException("Couldn't find query \"anim_time\" in controller", e);
+
+        float animationTime = this.animationTime;
+        if (playingAnimations.containsKey(animation)) {
+            BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
+            if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
+                float transitionOutProgress = playingAnimation.getTransitionOutProgress();
+                animationTime -= proposedAnimationData.transitionInTime * transitionOutProgress;
+            } else return;
         }
+        AnimationData animationData = getAnimationData(animation);
+        playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, proposedAnimationData.transitionInTime, proposedAnimationData.transitionOutTime, proposedAnimationData.transitionInEasing, proposedAnimationData.transitionOutEasing));
+
     }
 
     @Nullable
@@ -87,6 +86,10 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
 
     public void setAnimationFile(@Nullable Identifier animationFile) {
         this.animationFile = animationFile;
+    }
+
+    public float getAnimationTime() {
+        return animationTime;
     }
 
     public record ProposedAnimationData(
@@ -106,12 +109,13 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
 
     @Override
     public void setAnimationTime(float time) {
-        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time));
+        this.animationTime = time;
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time * playingAnimation.getSpeed()));
     }
 
     public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
         getPlayingAnimations().forEach(playingAnimation -> {
-            if (playingAnimation.isStopped()) return;
+            if (!playingAnimation.isPlaying()) return;
 
             float lastTime = playingAnimation.getLastRenderAnimationTime();
             float newTime = playingAnimation.getRenderAnimationTime();
