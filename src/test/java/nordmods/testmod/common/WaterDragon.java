@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class WaterDragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<WaterDragon> controller = new EntityAnimationController<>(this);
+    private final BRAnimationController<WaterDragon> controller = new EntityAnimationController<>(this, false);
 
     public WaterDragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);

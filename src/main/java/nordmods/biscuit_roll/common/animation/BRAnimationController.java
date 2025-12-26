@@ -20,9 +20,12 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     private final Map<String, ProposedAnimationData> proposedAnimations = new HashMap<>();
     @Nullable private Identifier animationFile;
     private final boolean isClient;
+    private String currentAnimation;
+    private final boolean singleAnimation;
 
-    public BRAnimationController(O animatedObject, boolean isClient) {
+    public BRAnimationController(O animatedObject, boolean isClient, boolean singleAnimation) {
         this.isClient = isClient;
+        this.singleAnimation = singleAnimation;
     }
 
     @Override
@@ -54,8 +57,16 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     public void playQueuedAnimations() {
         proposedAnimations.forEach((animation, data) -> {
             try {
+                if (singleAnimation) {
+                    if (!animation.equals(currentAnimation)) return;
+                    playingAnimations.forEach(((name, playingAnimation) -> {
+                        if (!name.equals(currentAnimation)) playingAnimation.stop();
+                    }));
+                }
+
                 float animationTime = getEnvironment().getQuery().get("anim_time").get(getEnvironment());
                 if (playingAnimations.containsKey(animation)) return;
+
                 AnimationData animationData = getAnimationData(animation);
                 playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, data.transitionInTime, data.transitionOutTime, data.transitionInEasing, data.transitionOutEasing));
             }  catch (MolangRuntimeException e) {
@@ -70,6 +81,9 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     }
 
     public void playAnimation(String animation, ProposedAnimationData proposedAnimationData) {
+        if (singleAnimation) {
+            currentAnimation = animation;
+        }
         proposedAnimations.put(animation, proposedAnimationData);
     }
 
@@ -84,12 +98,12 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
 
     public record ProposedAnimationData(
             AnimationData.LerpMode transitionInEasing,
-            int transitionInTime,
+            float transitionInTime,
             AnimationData.LerpMode transitionOutEasing,
-            int transitionOutTime
+            float transitionOutTime
     ) {}
 
-    public int getDefaultTransitionTime() {
+    public float getDefaultTransitionTime() {
         return 1;
     }
 

@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<Dragon> controller = new EntityAnimationController<>(this);
+    private final BRAnimationController<Dragon> controller = new EntityAnimationController<>(this, false);
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }

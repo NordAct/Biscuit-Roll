@@ -19,8 +19,8 @@ import org.joml.Vector4f;
 public class EntityAnimationController<E extends Entity & BRAnimatedObject> extends BRAnimationController<E> {
     private final EffectConsumer<AnimationData.SoundEffect> soundEffectConsumer;
     private final EffectConsumer<AnimationData.ParticleEffect> particleEffectConsumer;
-    public EntityAnimationController(E animatedObject, boolean isClient) {
-        super(animatedObject, isClient);
+    public EntityAnimationController(E animatedObject, boolean isClient, boolean singleAnimation) {
+        super(animatedObject, isClient, singleAnimation);
         this.soundEffectConsumer = (effect, model, state) -> {
             try {
                 if (animatedObject.level() instanceof ClientLevel clientLevel) {
@@ -53,8 +53,8 @@ public class EntityAnimationController<E extends Entity & BRAnimatedObject> exte
         };
     }
 
-    public EntityAnimationController(E animatedObject) {
-        this(animatedObject, animatedObject.level().isClientSide());
+    public EntityAnimationController(E animatedObject, boolean singleAnimation) {
+        this(animatedObject, animatedObject.level().isClientSide(), singleAnimation);
     }
 
     @Override

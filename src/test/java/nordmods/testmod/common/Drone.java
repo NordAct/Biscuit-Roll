@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class Drone extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<Drone> controller1 = new EntityAnimationController<>(this);
-    private final BRAnimationController<Drone> controller2 = new EntityAnimationController<>(this);
+    private final BRAnimationController<Drone> controller1 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController<Drone> controller2 = new EntityAnimationController<>(this, false);
     public Drone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
