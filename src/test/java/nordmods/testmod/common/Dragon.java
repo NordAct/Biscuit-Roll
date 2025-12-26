@@ -20,12 +20,15 @@ import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<Dragon> controller = new EntityAnimationController<>(this, false);
+    private final BRAnimationController<Dragon> controller0 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController<Dragon> controller1 = new EntityAnimationController<>(this, true);
+    private String[] animations = {"idle", "walk", "dance", "fly.idle", "fly.straight"};
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
 
     private static final EntityDataAccessor<Boolean> RAINBOW = SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ANIMATION_ORDINAL = SynchedEntityData.defineId(Dragon.class, EntityDataSerializers.INT);
     public void setRainbow(boolean state) {
         entityData.set(RAINBOW, state);
     }
@@ -33,9 +36,17 @@ public class Dragon extends Mob implements BRAnimatedObject {
         return entityData.get(RAINBOW);
     }
 
+    public void setAnimationOrdinal(int state) {
+        entityData.set(ANIMATION_ORDINAL, state);
+    }
+    public int getAnimationOrdinal() {
+        return entityData.get(ANIMATION_ORDINAL);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(ANIMATION_ORDINAL, 0);
         builder.define(RAINBOW, false);
     }
 
@@ -43,35 +54,40 @@ public class Dragon extends Mob implements BRAnimatedObject {
     protected void addAdditionalSaveData(ValueOutput valueOutput) {
         super.addAdditionalSaveData(valueOutput);
         valueOutput.putBoolean("Rainbow", isRainbow());
+        valueOutput.putInt("Animation", getAnimationOrdinal());
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput valueInput) {
         super.readAdditionalSaveData(valueInput);
         setRainbow(valueInput.getBooleanOr("Rainbow", false));
+        setAnimationOrdinal(valueInput.getIntOr("Animation", 0));
     }
 
     @Override
     public Collection<BRAnimationController<?>> getAnimationControllers() {
-        return List.of(controller);
+        return List.of(controller1, controller0);
     }
 
     @Override
     public void tick() {
         super.tick();
         if (level().isClientSide()) {
-            controller.playAnimation("blink");
-            controller.playAnimation(isRainbow() ? "dance" : "walk");
-            controller.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f));
+            controller0.playAnimation("blink");
+            controller1.playAnimation(animations[getAnimationOrdinal()]);
         }
     }
 
     protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         if (level().isClientSide()) {
-            controller.playAnimation(
-                    "attack.melee1",
-                    new BRAnimationController.ProposedAnimationData(AnimationData.LerpMode.LINEAR, 0, AnimationData.LerpMode.LINEAR, 0)
-            );
+            if (!player.isShiftKeyDown()) {
+                controller1.playAnimation(
+                        "attack.melee1",
+                        new BRAnimationController.ProposedAnimationData(AnimationData.LerpMode.LINEAR, 0, AnimationData.LerpMode.LINEAR, 0)
+                );
+            }
+        } else {
+            if (!player.isShiftKeyDown()) setAnimationOrdinal((getAnimationOrdinal() + 1) % animations.length);
         }
         return super.mobInteract(player, interactionHand);
     }

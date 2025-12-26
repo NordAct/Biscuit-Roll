@@ -118,6 +118,8 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
 
     public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
         getPlayingAnimations().forEach(playingAnimation -> {
+            if (playingAnimation.isStopped()) return;
+
             float lastTime = playingAnimation.getLastRenderAnimationTime();
             float newTime = playingAnimation.getRenderAnimationTime();
 
