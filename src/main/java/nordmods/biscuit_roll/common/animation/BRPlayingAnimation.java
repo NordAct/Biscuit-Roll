@@ -8,8 +8,8 @@ import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 public class BRPlayingAnimation implements PlayingAnimation {
     private final AnimationData animation;
     private float time;
+    private float unmodifiedTime;
     private float lastRenderTime;
-    private final float startTime;
     private final float transitionInTime;
     private final float transitionOutTime;
     private final AnimationData.LerpMode transitionInLerp;
@@ -22,7 +22,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private float transitionInProgressLeftover;
     public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutEasing) {
         this.animation = animation;
-        this.startTime = startTime;
+        this.unmodifiedTime = startTime;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);
         this.transitionInLerp = transitionInLerp;
@@ -85,7 +85,9 @@ public class BRPlayingAnimation implements PlayingAnimation {
     public void setAnimationTime(float time) {
         if (paused) return;
         this.lastRenderTime = getRenderAnimationTime();
-        this.time = time - startTime * speed;
+        float diff = time - unmodifiedTime;
+        unmodifiedTime = time;
+        this.time += diff * speed;
     }
 
     @Override
@@ -123,6 +125,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
         if (!stopped) {
             stopped = true;
             stopTime = time;
+            lastRenderTime = getRenderAnimationTime();
             transitionInProgressLeftover = 1 - getTransitionInProgress();
         }
     }
@@ -137,5 +140,15 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    @Override
+    public float getRenderAnimationTime() {
+        float animationTime = getAnimationTime();
+        return switch (getAnimation().loop()) {
+            case NONE -> animationTime;
+            case LOOP -> getLength() > 0 ? animationTime % getLength() : animationTime;
+            case HOLD_ON_LAST_FRAME -> Math.min(animationTime, getLength());
+        };
     }
 }

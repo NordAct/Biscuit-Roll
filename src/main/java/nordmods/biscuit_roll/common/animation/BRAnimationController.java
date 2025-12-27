@@ -110,7 +110,7 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
     @Override
     public void setAnimationTime(float time) {
         this.animationTime = time;
-        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time * playingAnimation.getSpeed()));
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time));
     }
 
     public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
