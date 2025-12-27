@@ -126,7 +126,8 @@ public class BRPlayingAnimation implements PlayingAnimation {
             stopped = true;
             stopTime = time;
             lastRenderTime = getRenderAnimationTime();
-            transitionInProgressLeftover = 1 - getTransitionInProgress();
+            if (getTransitionInProgress() < 1)
+                transitionInProgressLeftover = 1 - getTransitionInProgress();
         }
     }
 

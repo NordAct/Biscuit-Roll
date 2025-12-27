@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.common.model;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
+import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import gg.moonflower.pinwheel.api.geometry.*;
@@ -56,6 +57,13 @@ public class BRModel implements GeometryModel {
     }
 
     @Override
+    @ApiStatus.Internal
+    public void applyAnimations(AnimationController controller) {
+        GeometryModel.super.applyAnimations(controller);
+    }
+
+    @Override
+    @ApiStatus.Internal
     public void applyAnimations(MolangEnvironment environment, Collection<? extends PlayingAnimation> animations) {
         for (PlayingAnimation animation : animations) {
             float blendWeight = animation.getWeight(environment);
@@ -78,14 +86,9 @@ public class BRModel implements GeometryModel {
         }
     }
 
+    @ApiStatus.Internal
     public void applyAnimations(BRState state) {
-        Collection<BRAnimationController> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
-        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
-        controllers.forEach(controller -> {
-            controller.setAnimationFile(state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state));
-            controller.setAnimationTime(animationTime);
-            controller.tick();
-        });
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         resetTransformation();
         controllers.forEach(this::applyAnimations);
         updateLocators();

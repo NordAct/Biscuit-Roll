@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.client.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
@@ -18,23 +17,23 @@ public abstract class ItemRenderLayer extends BRRenderLayer{
 
     @Override
     protected void beforeSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        ItemStackRenderState stackRenderState = getItemStackRenderState(state);
-        if (stackRenderState == null) return;
-        LocatorTransformation transformation = getModel(state).getLocatorTransformation(getLocatorName());
         poseStack.scale(-1, -1, 1);
-        poseStack.mulPose(transformation.matrix());
-        poseStack.scale(1, -1, -1);
+        poseStack.mulPose(getModel(state).getLocatorTransformation(getLocatorName()).matrix());
+        poseStack.scale(-1, -1, 1);
     }
 
     @Override
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        ItemStackRenderState stackRenderState = getItemStackRenderState(state);
-        if (stackRenderState == null) return;
-        stackRenderState.submit(poseStack, submitNodeCollector, state.getStateData(ClientStateDataTypes.LIGHT), OverlayTexture.NO_OVERLAY, 0);
+        getItemStackRenderState(state).submit(poseStack, submitNodeCollector, state.getStateData(ClientStateDataTypes.LIGHT), OverlayTexture.NO_OVERLAY, 0);
     }
 
     protected abstract String getLocatorName();
 
     @Nullable
     protected abstract ItemStackRenderState getItemStackRenderState(BRState state);
+
+    @Override
+    public boolean canRender(BRState state) {
+        return getItemStackRenderState(state) != null && getModel(state).getLocatorTransformation(getLocatorName()) != null;
+    }
 }

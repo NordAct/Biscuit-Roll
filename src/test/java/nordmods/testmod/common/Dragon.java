@@ -75,7 +75,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
         if (level().isClientSide()) {
             controller0.playAnimation("blink");
             controller1.playAnimation(animations[getAnimationOrdinal()]);
-            controller1.getPlayingAnimations().forEach(animation -> animation.setSpeed((float) (Math.sin(tickCount / 20f / 2f) * 3 + 3)));
+            if (isRainbow()) controller1.getPlayingAnimations().forEach(animation -> animation.setSpeed((float) (Math.sin(tickCount / 20f / 2f) * 3 + 3)));
         }
     }
 
@@ -84,7 +84,8 @@ public class Dragon extends Mob implements BRAnimatedObject {
             if (player.isShiftKeyDown()) {
                 controller0.playAnimation(
                         "attack.melee1",
-                        new BRAnimationController.ProposedAnimationData(AnimationData.LerpMode.LINEAR, 0, AnimationData.LerpMode.LINEAR, 0)
+                        0, 0,
+                        AnimationData.LerpMode.LINEAR, AnimationData.LerpMode.LINEAR
                 );
             }
         } else {

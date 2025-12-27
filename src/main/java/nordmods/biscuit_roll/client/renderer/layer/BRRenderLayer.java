@@ -41,4 +41,8 @@ public abstract class BRRenderLayer {
     protected BRModel getModel(BRState state) {
         return ClientModelManager.instance().getModel(this.parentRenderer.getModelProvider().getModelId(state));
     }
+
+    public boolean canRender(BRState state) {
+        return true;
+    }
 }

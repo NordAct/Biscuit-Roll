@@ -1,11 +1,8 @@
 package nordmods.testmod.client.renderer.layer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.TextureRenderLayer;
@@ -32,14 +29,13 @@ public class RainbowGlowLayer extends TextureRenderLayer {
     }
 
     @Override
-    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        if (!state.getStateDataOptional(TestModClient.IS_DRAGON_RAINBOW).orElse(false)) return;
-        super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
-    }
-
-    @Override
     protected void updateRenderState(BRState state) {
         state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
         state.setStateData(ClientStateDataTypes.INVISIBLE, false);
+    }
+
+    @Override
+    public boolean canRender(BRState state) {
+        return state.getStateDataOptional(TestModClient.IS_DRAGON_RAINBOW).orElse(false);
     }
 }

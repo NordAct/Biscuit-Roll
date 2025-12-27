@@ -8,9 +8,12 @@ import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -31,22 +34,33 @@ public interface BRRenderer<S extends BRState> {
     default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
 
     default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        poseStack.pushPose();
-        beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
-        Identifier texture = getTextureId(state);
-        submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage) submitNodeCollector);
-        getRenderLayers().forEach(renderLayer -> renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState));
-        afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
-        poseStack.popPose();
+        submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector);
     }
 
     default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
+        submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector.order(order));
+    }
+
+    @ApiStatus.Internal
+    @ApiStatus.NonExtendable
+    default void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, BRModelSubmitStorage brModelSubmitStorage) {
         poseStack.pushPose();
+
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+
         Identifier texture = getTextureId(state);
-        submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage) submitNodeCollector.order(order));
-        getRenderLayers().forEach(renderLayer -> renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState));
+        BRModel model = getModel(state);
+        submitModel(poseStack, model, state, this::getRenderType, texture, brModelSubmitStorage);
+
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
+        controllers.forEach(controller -> controller.update(state));
+        model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
+
+        for (BRRenderLayer renderLayer : getRenderLayers()) {
+            if (renderLayer.canRender(state)) renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState);
+        }
         afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+
         poseStack.popPose();
     }
 

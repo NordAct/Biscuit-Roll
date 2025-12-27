@@ -7,6 +7,7 @@ import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,7 @@ public abstract class BRAnimationController implements AnimationController {
     }
 
     public void tick() {
+
         Map<String,BRPlayingAnimation> shouldContinue = new HashMap<>();
         playingAnimations.forEach((name, animation) -> {
             if (!animation.canContinue()) animation.stop();
@@ -53,10 +55,10 @@ public abstract class BRAnimationController implements AnimationController {
     }
 
     public void playAnimation(String animation) {
-        playAnimation(animation, new ProposedAnimationData(getDefaultEasingType(), getDefaultTransitionTime(), getDefaultEasingType(), getDefaultTransitionTime()));
+        playAnimation(animation, getDefaultTransitionTime(), getDefaultTransitionTime(), getDefaultEasingType(), getDefaultEasingType());
     }
 
-    public void playAnimation(String animation, ProposedAnimationData proposedAnimationData) {
+    public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInEasing, AnimationData.LerpMode transitionOutEasing) {
         if (animationFile == null) return;
 
         if (singleAnimation) {
@@ -70,11 +72,11 @@ public abstract class BRAnimationController implements AnimationController {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
             if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
                 float transitionOutProgress = playingAnimation.getTransitionOutProgress();
-                animationTime -= proposedAnimationData.transitionInTime * transitionOutProgress;
+                animationTime -= transitionInTime * transitionOutProgress;
             } else return;
         }
         AnimationData animationData = getAnimationData(animation);
-        playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, proposedAnimationData.transitionInTime, proposedAnimationData.transitionOutTime, proposedAnimationData.transitionInEasing, proposedAnimationData.transitionOutEasing));
+        playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, transitionInTime, transitionOutTime, transitionInEasing, transitionOutEasing));
     }
 
     @Nullable
@@ -89,13 +91,6 @@ public abstract class BRAnimationController implements AnimationController {
     public float getAnimationTime() {
         return animationTime;
     }
-
-    public record ProposedAnimationData(
-            AnimationData.LerpMode transitionInEasing,
-            float transitionInTime,
-            AnimationData.LerpMode transitionOutEasing,
-            float transitionOutTime
-    ) {}
 
     public float getDefaultTransitionTime() {
         return 1;
@@ -137,6 +132,13 @@ public abstract class BRAnimationController implements AnimationController {
                     onTimelineEffect(timelineEffect, model, state);
             }
         });
+    }
+
+    public void update(BRState state) {
+        animationFile = state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state);
+        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
+        setAnimationTime(animationTime);
+        tick();
     }
 
     protected abstract void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state);
