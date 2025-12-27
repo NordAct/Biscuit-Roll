@@ -79,7 +79,7 @@ public class BRModel implements GeometryModel {
     }
 
     public void applyAnimations(BRState state) {
-        Collection<BRAnimationController<?>> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
+        Collection<BRAnimationController> controllers = state.getStateDataOptional(StateDataTypes.CONTROLLERS).orElse(List.of());
         float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
         controllers.forEach(controller -> {
             controller.setAnimationFile(state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state));

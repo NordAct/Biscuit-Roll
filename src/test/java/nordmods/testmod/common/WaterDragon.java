@@ -11,14 +11,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class WaterDragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<WaterDragon> controller = new EntityAnimationController<>(this, false);
+    private final BRAnimationController controller = new EntityAnimationController<>(this, false);
 
     public WaterDragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
 
     @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
+    public Collection<BRAnimationController> getAnimationControllers() {
         return List.of(controller);
     }
 

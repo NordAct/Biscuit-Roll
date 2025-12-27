@@ -11,14 +11,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class Drone extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<Drone> controller1 = new EntityAnimationController<>(this, false);
-    private final BRAnimationController<Drone> controller2 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController controller1 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController controller2 = new EntityAnimationController<>(this, false);
     public Drone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
 
     @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
+    public Collection<BRAnimationController> getAnimationControllers() {
         return List.of(controller1, controller2);
     }
 

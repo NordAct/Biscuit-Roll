@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController<Dragon> controller0 = new EntityAnimationController<>(this, false);
-    private final BRAnimationController<Dragon> controller1 = new EntityAnimationController<>(this, true);
+    private final BRAnimationController controller0 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController controller1 = new EntityAnimationController<>(this, true);
     private String[] animations = {"idle", "walk", "dance", "fly.idle", "fly.straight"};
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
@@ -65,7 +65,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
     }
 
     @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
+    public Collection<BRAnimationController> getAnimationControllers() {
         return List.of(controller1, controller0);
     }
 

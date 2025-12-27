@@ -16,11 +16,11 @@ import nordmods.biscuit_roll.common.state.BRState;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class EntityAnimationController<E extends Entity & BRAnimatedObject> extends BRAnimationController<E> {
+public class EntityAnimationController<E extends Entity & BRAnimatedObject> extends BRAnimationController {
     private final EffectConsumer<AnimationData.SoundEffect> soundEffectConsumer;
     private final EffectConsumer<AnimationData.ParticleEffect> particleEffectConsumer;
     public EntityAnimationController(E animatedObject, boolean isClient, boolean singleAnimation) {
-        super(animatedObject, isClient, singleAnimation);
+        super(isClient, singleAnimation);
         this.soundEffectConsumer = (effect, model, state) -> {
             try {
                 if (animatedObject.level() instanceof ClientLevel clientLevel) {

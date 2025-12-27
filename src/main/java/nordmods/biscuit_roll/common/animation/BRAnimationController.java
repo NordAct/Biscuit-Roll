@@ -2,7 +2,6 @@ package nordmods.biscuit_roll.common.animation;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
-import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
@@ -15,15 +14,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BRAnimationController<O extends BRAnimatedObject> implements AnimationController {
-    private final ConcurrentHashMap<String,BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
+public abstract class BRAnimationController implements AnimationController {
+    protected final ConcurrentHashMap<String,BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
     private final MolangEnvironment environment = MolangRuntime.runtime().create();
-    @Nullable private Identifier animationFile;
-    private final boolean isClient;
-    private final boolean singleAnimation;
+    @Nullable protected Identifier animationFile;
+    protected final boolean isClient;
+    protected final boolean singleAnimation;
     private float animationTime = 0;
 
-    public BRAnimationController(O animatedObject, boolean isClient, boolean singleAnimation) {
+    public BRAnimationController(boolean isClient, boolean singleAnimation) {
         this.isClient = isClient;
         this.singleAnimation = singleAnimation;
     }
@@ -76,7 +75,6 @@ public abstract class BRAnimationController<O extends BRAnimatedObject> implemen
         }
         AnimationData animationData = getAnimationData(animation);
         playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, proposedAnimationData.transitionInTime, proposedAnimationData.transitionOutTime, proposedAnimationData.transitionInEasing, proposedAnimationData.transitionOutEasing));
-
     }
 
     @Nullable
