@@ -14,24 +14,28 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private final float transitionOutTime;
     private final AnimationData.LerpMode transitionInLerp;
     private final AnimationData.LerpMode transitionOutLerp;
+    private final float startOffset;
+
     private float speed = 1;
     private float weight = 1;
     private boolean stopped = false;
     private boolean paused = false;
     private float stopTime;
-    private float transitionInProgressLeftover;
-    public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutEasing) {
+    private float transitionInProgress = 1;
+    public BRPlayingAnimation(AnimationData animation, float startTime, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp, float startOffset, float initialTimeOffset) {
         this.animation = animation;
         this.unmodifiedTime = startTime;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);
         this.transitionInLerp = transitionInLerp;
-        this.transitionOutLerp = transitionOutEasing;
+        this.transitionOutLerp = transitionOutLerp;
+        this.startOffset = startOffset;
+        this.time = initialTimeOffset;
     }
 
     @Override
     public float getAnimationTime() {
-        return isTransitioningIn() ? 0 : stopped ? stopTime - transitionInTime : time - transitionInTime;
+        return (isTransitioningIn() ? 0 : stopped ? Math.max(stopTime - transitionInTime, 0) : time - transitionInTime) + startOffset;
     }
 
     public float getLastRenderAnimationTime() {
@@ -39,12 +43,12 @@ public class BRPlayingAnimation implements PlayingAnimation {
     }
 
     public float getTransitionInProgress() {
-        return transitionInTime > 0 ? transitionInLerp.apply(time / transitionInTime) : 1;
+        return transitionInTime > 0 ? transitionInLerp.apply( time / transitionInTime) : 1;
     }
 
     public float getTransitionOutProgress() {
         return transitionOutTime > 0 ?
-                Math.max(transitionOutLerp.apply((transitionOutTime - (time - stopTime)) / transitionOutTime) - transitionInProgressLeftover, 0): 1;
+                Math.max(transitionOutLerp.apply((transitionOutTime - (time - stopTime)) / transitionOutTime) - 1 + transitionInProgress, 0): 1;
     }
 
     public boolean isTransitioningIn() {
@@ -83,7 +87,11 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     @Override
     public void setAnimationTime(float time) {
-        if (paused) return;
+        if (paused) {
+            this.lastRenderTime = getRenderAnimationTime();
+            unmodifiedTime = time;
+            return;
+        }
         this.lastRenderTime = getRenderAnimationTime();
         float diff = time - unmodifiedTime;
         unmodifiedTime = time;
@@ -126,8 +134,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
             stopped = true;
             stopTime = time;
             lastRenderTime = getRenderAnimationTime();
-            if (getTransitionInProgress() < 1)
-                transitionInProgressLeftover = 1 - getTransitionInProgress();
+            transitionInProgress = getTransitionInProgress();
         }
     }
 

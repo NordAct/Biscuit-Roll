@@ -58,25 +58,38 @@ public abstract class BRAnimationController implements AnimationController {
         playAnimation(animation, getDefaultTransitionTime(), getDefaultTransitionTime(), getDefaultEasingType(), getDefaultEasingType());
     }
 
-    public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInEasing, AnimationData.LerpMode transitionOutEasing) {
+    public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp) {
         if (animationFile == null) return;
 
         if (singleAnimation) {
             playingAnimations.forEach(((name, playingAnimation) -> {
-                if (!name.equals(animation)) playingAnimation.stop();
+                if (!playingAnimation.isStopped() && !name.equals(animation)) playingAnimation.stop();
             }));
         }
 
         float animationTime = this.animationTime;
+
         if (playingAnimations.containsKey(animation)) {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
             if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
-                float transitionOutProgress = playingAnimation.getTransitionOutProgress();
-                animationTime -= transitionInTime * transitionOutProgress;
-            } else return;
+                playingAnimations.put(
+                        animation,
+                        new BRPlayingAnimation(
+                                getAnimationData(animation),
+                                animationTime,
+                                transitionInTime,
+                                transitionOutTime,
+                                transitionInLerp,
+                                transitionOutLerp,
+                                playingAnimation.getRenderAnimationTime(),
+                                transitionInTime * transitionInLerp.apply(playingAnimation.getTransitionOutProgress())
+                        )
+                );
+            }
+            return;
         }
-        AnimationData animationData = getAnimationData(animation);
-        playingAnimations.put(animation, new BRPlayingAnimation(animationData, animationTime, transitionInTime, transitionOutTime, transitionInEasing, transitionOutEasing));
+
+        playingAnimations.put(animation, new BRPlayingAnimation(getAnimationData(animation), animationTime, transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
     }
 
     @Nullable

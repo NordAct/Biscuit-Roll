@@ -41,7 +41,7 @@ public class CloneAnimationController extends BRAnimationController {
     public void playAnimation(String animation) {}
 
     @Override
-    public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInEasing, AnimationData.LerpMode transitionOutEasing) {}
+    public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp) {}
 
     @Override
     public void setAnimationTime(float time) {}
