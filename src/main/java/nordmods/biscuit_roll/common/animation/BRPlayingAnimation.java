@@ -159,4 +159,20 @@ public class BRPlayingAnimation implements PlayingAnimation {
             case HOLD_ON_LAST_FRAME -> Math.min(animationTime, getLength());
         };
     }
+
+    public float getTransitionInTime() {
+        return transitionInTime;
+    }
+
+    public float getTransitionOutTime() {
+        return transitionOutTime;
+    }
+
+    public AnimationData.LerpMode getTransitionInLerp() {
+        return transitionInLerp;
+    }
+
+    public AnimationData.LerpMode getTransitionOutLerp() {
+        return transitionOutLerp;
+    }
 }
