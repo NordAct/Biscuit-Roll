@@ -122,27 +122,29 @@ public abstract class BRAnimationController implements AnimationController {
 
     public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
         getPlayingAnimations().forEach(playingAnimation -> {
-            if (!playingAnimation.isPlaying()) return;
+            if (!playingAnimation.isPlaying() || playingAnimation.isTransitioningIn()) return;
 
             float lastTime = playingAnimation.getLastRenderAnimationTime();
             float newTime = playingAnimation.getRenderAnimationTime();
 
+            if (lastTime == newTime) return;
+
             for (AnimationData.SoundEffect soundEffect : playingAnimation.getAnimation().soundEffects()) {
                 float triggerTime = soundEffect.time();
-                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime)
+                if ((triggerTime >= lastTime || lastTime >= newTime) && triggerTime <= newTime)
                     onSoundEffect(soundEffect, model, state);
             }
 
             for (AnimationData.ParticleEffect particleEffect : playingAnimation.getAnimation().particleEffects()) {
                 float triggerTime = particleEffect.time();
-                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime) {
+                if ((triggerTime >= lastTime || lastTime >= newTime) && triggerTime <= newTime) {
                     onParticleEffect(particleEffect, model, state);
                 }
             }
 
             for (AnimationData.TimelineEffect timelineEffect : playingAnimation.getAnimation().timelineEffects()) {
                 float triggerTime = timelineEffect.time();
-                if ((triggerTime > lastTime || lastTime > newTime) && triggerTime <= newTime)
+                if ((triggerTime >= lastTime || lastTime > newTime) && triggerTime <= newTime)
                     onTimelineEffect(timelineEffect, model, state);
             }
         });
