@@ -92,6 +92,5 @@ public class BRModel implements GeometryModel {
         resetTransformation();
         controllers.forEach(this::applyAnimations);
         updateLocators();
-        controllers.forEach(controller -> controller.triggerAnimationEffects(this, state));
     }
 }

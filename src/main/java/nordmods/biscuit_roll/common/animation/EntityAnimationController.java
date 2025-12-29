@@ -4,7 +4,7 @@ import com.mojang.math.Axis;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,8 +23,8 @@ public class EntityAnimationController<E extends Entity & BRAnimatedObject> exte
         super(isClient, singleAnimation);
         this.soundEffectConsumer = (effect, model, state) -> {
             try {
-                if (animatedObject.level() instanceof ClientLevel clientLevel) {
-                    clientLevel.playLocalSound(
+                if (isClient) {
+                    Minecraft.getInstance().level.playLocalSound(
                             animatedObject,
                             SoundEvent.createVariableRangeEvent(Identifier.tryParse(effect.effect())),
                             animatedObject.getSoundSource(),
@@ -37,18 +37,20 @@ public class EntityAnimationController<E extends Entity & BRAnimatedObject> exte
             }
         };
         this.particleEffectConsumer = (effect, model, state) -> {
-            LocatorTransformation transformation = model.getLocatorTransformation(effect.locator());
-            if (transformation != null) {
-                ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.tryParse(effect.effect()));
-                if (!(particleType instanceof ParticleOptions particleOptions)) return;
-                Vector4f vec = transformation.matrix().transform(new Vector4f(0,0, 0, 1));
-                Vector3f pos = new Vector3f(vec.x(), vec.y(), vec.z()).rotate(Axis.YP.rotationDegrees(180 - animatedObject.getYRot()));
-                animatedObject.level().addParticle(
-                        particleOptions,
-                        pos.x() + animatedObject.getX(),
-                        pos.y() + animatedObject.getY(),
-                        pos.z() + animatedObject.getZ(),
-                        0, 0, 0);
+            if (isClient) {
+                LocatorTransformation transformation = model.getLocatorTransformation(effect.locator());
+                if (transformation != null) {
+                    ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.tryParse(effect.effect()));
+                    if (!(particleType instanceof ParticleOptions particleOptions)) return;
+                    Vector4f vec = transformation.matrix().transform(new Vector4f(0, 0, 0, 1));
+                    Vector3f pos = new Vector3f(vec.x(), vec.y(), vec.z()).rotate(Axis.YP.rotationDegrees(180 - animatedObject.getYRot()));
+                    Minecraft.getInstance().level.addParticle(
+                            particleOptions,
+                            pos.x() + animatedObject.getX(),
+                            pos.y() + animatedObject.getY(),
+                            pos.z() + animatedObject.getZ(),
+                            0, 0, 0);
+                }
             }
         };
     }

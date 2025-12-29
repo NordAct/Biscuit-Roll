@@ -109,6 +109,7 @@ public abstract class BRAnimationController implements AnimationController {
         return 1;
     }
 
+    //todo figure out why some lerp modes cause twitching when they shouldn't
     public AnimationData.LerpMode getDefaultEasingType() {
         return AnimationData.LerpMode.LINEAR;
     }
