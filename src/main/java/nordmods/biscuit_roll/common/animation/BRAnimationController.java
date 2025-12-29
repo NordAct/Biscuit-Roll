@@ -44,7 +44,6 @@ public abstract class BRAnimationController implements AnimationController {
     }
 
     public void tick() {
-
         Map<String,BRPlayingAnimation> shouldContinue = new HashMap<>();
         playingAnimations.forEach((name, animation) -> {
             if (!animation.canContinue()) animation.stop();
@@ -72,8 +71,7 @@ public abstract class BRAnimationController implements AnimationController {
         if (playingAnimations.containsKey(animation)) {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
             if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
-                playingAnimations.put(
-                        animation,
+                playAnimation(
                         new BRPlayingAnimation(
                                 getAnimationData(animation),
                                 animationTime,
@@ -89,16 +87,16 @@ public abstract class BRAnimationController implements AnimationController {
             return;
         }
 
-        playingAnimations.put(animation, new BRPlayingAnimation(getAnimationData(animation), animationTime, transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
+        playAnimation(new BRPlayingAnimation(getAnimationData(animation), animationTime, transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
+    }
+
+    public void playAnimation(BRPlayingAnimation animation) {
+        playingAnimations.put(animation.getAnimation().name(), animation);
     }
 
     @Nullable
     public BRPlayingAnimation getAnimation(String animation) {
         return playingAnimations.get(animation);
-    }
-
-    public void setAnimationFile(@Nullable Identifier animationFile) {
-        this.animationFile = animationFile;
     }
 
     public float getAnimationTime() {
