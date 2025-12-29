@@ -161,7 +161,7 @@ public abstract class BRAnimationController implements AnimationController {
 
     protected abstract void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state);
 
-    private AnimationData getAnimationData(String animation) {
+    public AnimationData getAnimationData(String animation) {
         return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);
     }
 }
