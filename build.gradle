@@ -42,6 +42,10 @@ repositories {
     }
 }
 
+configurations {
+    shadeSources
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
@@ -50,6 +54,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
     shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
+
+    shadeSources("gg.moonflower:pinwheel:${project.pinwheel_version}-sources")
+    shadeSources("gg.moonflower:molang-compiler:${project.molang_compiler_version}-sources")
 }
 
 processResources {
@@ -79,7 +86,6 @@ java {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
     withSourcesJar()
-    withJavadocJar()
 }
 
 loom {
@@ -103,3 +109,68 @@ jar {
         include 'LICENSE*'
     }
 }
+
+// don't judge, I vibecoded 90% of it
+// it works and it's all that matters
+tasks.register('fatSourcesJar', Jar) {
+    archiveClassifier.set('sources')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        def allSourceDirs = []
+        allSourceDirs += configurations.shadeSources.collect { dep ->
+            if (dep.isDirectory()) return dep
+
+            def tempDir = layout.buildDirectory.dir("tmp/sources/dep-${dep.name}").get().asFile
+            copy {
+                from zipTree(dep)
+                into tempDir
+            }
+            tempDir
+        }
+        def projectSourcesTemp = layout.buildDirectory.dir("tmp/sources/project-main").get().asFile
+        copy {
+            from sourceSets.main.allSource
+            into projectSourcesTemp
+        }
+        allSourceDirs += projectSourcesTemp
+
+        def oldPackage = 'gg.moonflower'
+        def newPackage = 'libs.gg.moonflower'
+        def oldPath = oldPackage.replace('.', '/')
+        def newPath = newPackage.replace('.', '/')
+
+        allSourceDirs.each { dir ->
+            if (!dir.exists()) return
+
+            fileTree(dir).matching {
+                include '**/*.java'
+            }.each { file ->
+                def relativePath = dir.toPath().relativize(file.toPath()).toString()
+
+                def currentFile = file
+                def text = file.text
+
+                if (relativePath.startsWith(oldPath)) {
+                    def newRelative = relativePath.replaceFirst(oldPath, newPath)
+                    def newFile = new File(dir, newRelative)
+
+                    newFile.parentFile.mkdirs()
+                    file.renameTo(newFile)
+
+                    currentFile = newFile
+                    text = newFile.text
+                }
+
+                text = text.replaceAll(~/(?m)^package\s+${oldPackage.replace('.', '\\.')}(\.[^\s;]+)?\s*;?/, 'package ' + newPackage + '$1;')
+                text = text.replaceAll(~/(?m)^import\s+(static\s+)?${oldPackage.replace('.', '\\.')}(\.[^\s;]+)?\s*;?/, 'import $1' + newPackage + '$2;')
+                text = text.replaceAll(~/(?m)^import\s+(static\s+)?${oldPackage.replace('.', '\\.')}\b/, 'import $1' + newPackage)
+
+                currentFile.text = text
+            }
+        }
+        allSourceDirs
+    }
+}
+
+sourcesJar.finalizedBy fatSourcesJar
