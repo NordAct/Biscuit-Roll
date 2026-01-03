@@ -25,6 +25,9 @@ shadowJar {
 
 remapJar {
     input = shadowJar.archiveFile
+    from(".") {
+        include 'LICENSE*'
+    }
 }
 
 repositories {
@@ -104,12 +107,6 @@ tasks.withType(AbstractTestTask).configureEach {
     failOnNoDiscoveredTests = false
 }
 
-jar {
-    from(".") {
-        include 'LICENSE*'
-    }
-}
-
 // don't judge, I vibecoded 90% of it
 // it works and it's all that matters
 tasks.register('fatSourcesJar', Jar) {
@@ -170,6 +167,10 @@ tasks.register('fatSourcesJar', Jar) {
             }
         }
         allSourceDirs
+    }
+
+    from(".") {
+        include 'LICENSE*'
     }
 }
 
