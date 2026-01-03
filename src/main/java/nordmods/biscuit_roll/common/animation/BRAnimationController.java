@@ -15,29 +15,43 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/// Biscuit Roll Animation Controller or BRAnimationController for short
+///
+/// Responsible for managing playing animations
 public abstract class BRAnimationController implements AnimationController {
     protected final ConcurrentHashMap<String,BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
+    /// Molang environment that is used for resolving Molang expressions
     private final MolangEnvironment environment = MolangRuntime.runtime().create();
+    /// Current animation file
     @Nullable protected Identifier animationFile;
+    /// Defines on which logical side controller is
     protected final boolean isClient;
+    /// Defines if controller can have only one animation running at the time.
+    /// If it is, when new animation is attempted to be played, previously running animation will be stopped via {@link BRPlayingAnimation#stop()}
     protected final boolean singleAnimation;
+    /// Controller's current animation time
     private float animationTime = 0;
 
+    /// @param isClient is controller on client side
+    /// @param singleAnimation is controller in single animation mode
     public BRAnimationController(boolean isClient, boolean singleAnimation) {
         this.isClient = isClient;
         this.singleAnimation = singleAnimation;
     }
 
+    /// Clears out all animations from controller
     @Override
     public void clearAnimations() {
         playingAnimations.clear();
     }
 
+    /// @return controller's {@link MolangEnvironment}
     @Override
     public MolangEnvironment getEnvironment() {
         return environment;
     }
 
+    /// @return all currently playing animations
     @Override
     public Collection<BRPlayingAnimation> getPlayingAnimations() {
         return playingAnimations.values();
@@ -53,20 +67,25 @@ public abstract class BRAnimationController implements AnimationController {
         playingAnimations.putAll(shouldContinue);
     }
 
+    /// Plays animation by specified name with default transition time ({@link BRAnimationController#getDefaultTransitionTime()}) and in-out easing ({@link BRAnimationController#getDefaultEasingType()})
+    /// @param animation animation name
     public void playAnimation(String animation) {
         playAnimation(animation, getDefaultTransitionTime(), getDefaultTransitionTime(), getDefaultEasingType(), getDefaultEasingType());
     }
 
+    /// @param animation animation name
+    /// @param transitionInTime animation transition in time
+    /// @param transitionOutTime animation transition out time
+    /// @param transitionInLerp animation transition in easing
+    /// @param transitionOutLerp animation transition out easing
     public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp) {
         if (animationFile == null) return;
 
         if (singleAnimation) {
             playingAnimations.forEach(((name, playingAnimation) -> {
-                if (!playingAnimation.isStopped() && !name.equals(animation)) playingAnimation.stop();
+                if (!playingAnimation.isFinished() && !name.equals(animation)) playingAnimation.stop();
             }));
         }
-
-        float animationTime = this.animationTime;
 
         if (playingAnimations.containsKey(animation)) {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
@@ -74,7 +93,6 @@ public abstract class BRAnimationController implements AnimationController {
                 playAnimation(
                         new BRPlayingAnimation(
                                 getAnimationData(animation),
-                                animationTime,
                                 transitionInTime,
                                 transitionOutTime,
                                 transitionInLerp,
@@ -87,40 +105,59 @@ public abstract class BRAnimationController implements AnimationController {
             return;
         }
 
-        playAnimation(new BRPlayingAnimation(getAnimationData(animation), animationTime, transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
+        playAnimation(new BRPlayingAnimation(getAnimationData(animation), transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
     }
 
+    /// Adds [BRPlayingAnimation] directly to the collection of playing animations. May override already playing animation if animation with same name is already playing
+    /// @param animation animation to add
     public void playAnimation(BRPlayingAnimation animation) {
+        if (singleAnimation) {
+            playingAnimations.forEach(((name, playingAnimation) -> {
+                if (!playingAnimation.isFinished()) playingAnimation.stop();
+            }));
+        }
         playingAnimations.put(animation.getAnimation().name(), animation);
     }
 
+    /// @param animation animation name
+    /// @return animation of specified name if it's playing on this controller, null if not
     @Nullable
     public BRPlayingAnimation getAnimation(String animation) {
         return playingAnimations.get(animation);
     }
 
+    /// @return controller's animation time
     public float getAnimationTime() {
         return animationTime;
     }
 
+    /// @return default animation transition time in seconds
     public float getDefaultTransitionTime() {
         return 1;
     }
 
+    /// @return default easing to be used in animation transitions
     //todo figure out why some lerp modes cause twitching when they shouldn't
     public AnimationData.LerpMode getDefaultEasingType() {
         return AnimationData.LerpMode.LINEAR;
     }
 
+    /// Sets controller's animation time and updates time for all playing animations
+    /// @param time The new time in seconds
     @Override
     public void setAnimationTime(float time) {
+        float previousAnimationTime = this.animationTime;
         this.animationTime = time;
-        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(time));
+        float diff = animationTime - previousAnimationTime;
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(diff));
     }
 
+    /// Triggers effect keyframes on playing animations
+    /// @param model animated model
+    /// @param state animated model state
     public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
         getPlayingAnimations().forEach(playingAnimation -> {
-            if (!playingAnimation.isPlaying() || playingAnimation.isTransitioningIn()) return;
+            if (!playingAnimation.isRunning() || playingAnimation.isTransitioningIn()) return;
 
             float lastTime = playingAnimation.getLastRenderAnimationTime();
             float newTime = playingAnimation.getRenderAnimationTime();
@@ -148,6 +185,8 @@ public abstract class BRAnimationController implements AnimationController {
         });
     }
 
+    /// Updates animation file id and animation time from data provided in [BRState] state
+    /// @param state provided state
     public void update(BRState state) {
         animationFile = state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state);
         float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
@@ -155,12 +194,27 @@ public abstract class BRAnimationController implements AnimationController {
         tick();
     }
 
+    /// Defines behavior of sound effect keyframe
+    /// @param soundEffect sound effect keyframe data
+    /// @param model animated model
+    /// @param state animated model state
     protected abstract void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state);
 
+    /// Defines behavior of particle effect keyframe
+    /// @param particleEffect particle effect keyframe data
+    /// @param model animated model
+    /// @param state animated model state
     protected abstract void onParticleEffect(AnimationData.ParticleEffect particleEffect, BRModel model, BRState state);
 
+    /// Defines behavior of timeline effect keyframe
+    /// @param timelineEffect timeline effect keyframe data
+    /// @param model animated model
+    /// @param state animated model state
     protected abstract void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state);
 
+    /// Gets {@link AnimationData} for animation to play from current {@link BRAnimationController#animationFile}. Make sure animationFile is not null before calling this
+    /// @param animation animation name
+    /// @return AnimationData for specified animation
     public AnimationData getAnimationData(String animation) {
         return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);
     }

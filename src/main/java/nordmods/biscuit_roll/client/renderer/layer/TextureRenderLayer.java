@@ -8,7 +8,7 @@ import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.common.state.BRState;
-
+/// Renders texture with the same model provided via parent renderer in specified render order
 public abstract class TextureRenderLayer extends BRRenderLayer {
     protected final int renderOrder;
     public TextureRenderLayer(BRRenderer<?> parentRenderer, int renderOrder) {

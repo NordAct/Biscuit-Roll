@@ -3,7 +3,7 @@
   "id": "biscuit_roll",
   "version": "${version}",
   "name": "Biscuit Roll Lib",
-  "description": "",
+  "description": "An animation library",
   "authors": ["Nord_Act"],
   "contact": {},
   "license": "All-Rights-Reserved",
@@ -30,7 +30,8 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_11788": ["nordmods/biscuit_roll/client/internal/BRModelSubmitCollection"],
       "net/minecraft/class_11661": ["nordmods/biscuit_roll/client/internal/BRModelSubmitStorage"],
-      "net/minecraft/class_10017": ["nordmods/biscuit_roll/common/state/BRState"]
+      "net/minecraft/class_10017": ["nordmods/biscuit_roll/common/state/BRState"],
+      "net/minecraft/class_4587": ["nordmods/biscuit_roll/client/internal/BRMatrixStack"]
     }
   }
 }

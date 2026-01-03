@@ -9,8 +9,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import nordmods.biscuit_roll.common.util.ServerAnimationManager;
 import nordmods.biscuit_roll.common.util.ServerModelManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+/// Initializer class for both sides
 //todo: reminder to self - change license once done
 public class BiscuitRoll implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -24,6 +26,7 @@ public class BiscuitRoll implements ModInitializer {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
     }
 
+    @ApiStatus.Internal
     public static Identifier id(String id) {
         return Identifier.fromNamespaceAndPath(MOD_ID, id);
     }

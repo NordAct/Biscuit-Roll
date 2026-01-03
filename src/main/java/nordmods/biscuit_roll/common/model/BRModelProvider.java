@@ -1,15 +1,15 @@
 package nordmods.biscuit_roll.common.model;
 
-import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.biscuit_roll.common.util.BRAnimationManager;
 
+/// Provides animation and model file ids to be used
 public interface BRModelProvider {
+    /// @param state animated model state
+    /// @return model file id
     Identifier getModelId(BRState state);
-    Identifier getAnimationId(BRState state);
 
-    default AnimationData getAnimationData(Identifier animationId, boolean isClient, String animation) {
-        return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationId, animation);
-    }
+    /// @param state animated model state
+    /// @return animation file id
+    Identifier getAnimationId(BRState state);
 }

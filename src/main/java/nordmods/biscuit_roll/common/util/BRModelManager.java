@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Responsible for loading models. Use [BRModelManager#getModelManager(boolean isClient)] to get model manager for correct side
 @ApiStatus.NonExtendable
 public abstract class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, BRModel>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
@@ -54,6 +55,8 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         getHolderMap().putAll(map);
     }
 
+    /// @param modelId id of model file
+    /// @return model if it was loaded
     @Nullable
     public BRModel getModel(Identifier modelId) {
         return getHolderMap().get(modelId);
@@ -61,6 +64,8 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
 
     protected abstract Map<Identifier, BRModel> getHolderMap();
 
+    /// @param isClient is client side
+    /// @return model manager for specified side
     public static BRModelManager getModelManager(boolean isClient) {
         return isClient ? ClientModelManager.instance() : ServerModelManager.instance();
     }

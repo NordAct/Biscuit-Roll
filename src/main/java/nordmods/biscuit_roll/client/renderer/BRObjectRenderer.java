@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/// Implementation of {@link BRRenderer} that can be used with any {@link BRAnimatedObject}
+///
+/// Use this if there's no existing implementation for your animatied object
+/// @see BREntityRenderer
 public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRState> implements BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final List<BRRenderLayer> renderLayers = new ArrayList();

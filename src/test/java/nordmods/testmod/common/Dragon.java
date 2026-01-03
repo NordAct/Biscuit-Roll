@@ -22,7 +22,7 @@ import java.util.List;
 public class Dragon extends Mob implements BRAnimatedObject {
     private final BRAnimationController controller0 = new EntityAnimationController<>(this, false);
     private final BRAnimationController controller1 = new EntityAnimationController<>(this, true);
-    private String[] animations = {"idle", "walk", "dance", "fly.idle", "fly.straight"};
+    private final String[] animations = {"idle", "walk", "dance", "fly.idle", "fly.straight"};
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }

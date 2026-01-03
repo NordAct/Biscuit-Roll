@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Animation controller that doesn't have any of its own animations, but rather "copies" them from other controllers.
+ * It doesn't update playing animations, leaving this job to controller from which it copied those animations.
+ * All it does is making sure it doesn't keep done animations that are done on other controller so garbage collector can do its job
+ */
 public class CloneAnimationController extends BRAnimationController {
     public CloneAnimationController(boolean isClient) {
         super(isClient, false);

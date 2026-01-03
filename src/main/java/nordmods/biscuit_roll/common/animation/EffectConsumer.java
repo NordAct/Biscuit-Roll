@@ -5,6 +5,8 @@ import nordmods.biscuit_roll.common.state.BRState;
 
 import java.util.Objects;
 
+/// @see BRAnimationController#triggerAnimationEffects(BRModel, BRState)
+/// @see EntityAnimationController#triggerAnimationEffects(BRModel, BRState)
 public interface EffectConsumer<E> {
     void accept(E effect, BRModel model, BRState state);
 

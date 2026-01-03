@@ -16,6 +16,7 @@ import nordmods.biscuit_roll.common.state.BRState;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+/// Animation controller made specifically for {@link Entity}
 public class EntityAnimationController<E extends Entity & BRAnimatedObject> extends BRAnimationController {
     private final EffectConsumer<AnimationData.SoundEffect> soundEffectConsumer;
     private final EffectConsumer<AnimationData.ParticleEffect> particleEffectConsumer;

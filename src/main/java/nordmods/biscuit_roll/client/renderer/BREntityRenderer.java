@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.*;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/// Implementation of {@link BRRenderer} for {@link Entity}
+/// @see BRObjectRenderer
 public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter;
@@ -36,7 +40,6 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         this.livingEntityStateGetter = new LivingRenderStateGetter<>(context, getFlipDegrees());
         this.mobRenderStateGetter = new MobRenderStateGetter<>(context);
     }
-
 
     @Override
     public Collection<BRRenderLayer> getRenderLayers() {
@@ -64,6 +67,11 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         return modelProvider;
     }
 
+    /// Updates variables for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
+    /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection)} regardless
+    /// @param builder provided by controller Molang environment
+    /// @param entity entity from which data for queries and values is gotten
+    /// @param tickDelta current tick progress
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, E entity, float tickDelta) { //todo add other queries
         builder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);
 
@@ -101,10 +109,12 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
     }
 
+    /// Setups rotation for living entities
     public <SL extends LivingEntityRenderState> void setupRotations(SL state, PoseStack poseStack, float bodyYaw, float scale) {
         livingEntityStateGetter.rotate(state, poseStack, bodyYaw, scale);
     }
 
+    /// @return max model rotation when entity is dead or dying, applied only to living entities
     public float getFlipDegrees() {
         return 90f;
     }

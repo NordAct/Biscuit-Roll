@@ -18,25 +18,55 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-@SuppressWarnings("unused")
+/// Biscuit Roll Renderer or BRRenderer for short.
+/// Base class for renderers
+/// @see BRObjectRenderer
+/// @see BREntityRenderer
 public interface BRRenderer<S extends BRState> {
+    /// @param state animated model state
+    /// @return model for provided state
     @Nullable
     default BRModel getModel(S state) {
         return ClientModelManager.instance().getModel(getModelProvider().getModelId(state));
     }
 
+    /// @return model provider for this for renderer
     BRModelProvider getModelProvider();
+
+    /// @return render type that will be used when model gets submitted
     RenderType getRenderType(BRState state, Identifier texture);
+
+    /// @return id of a texture that will be used during rendering
     Identifier getTextureId(BRState state);
 
+    /// Runs before model actually gets submitted. By this moment, state should already be initialized, but transformations from animations are not applied
+    /// @param state animated model state
+    /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
+    /// @param submitNodeCollector node collector to which model will be submitted
+    /// @param cameraRenderState camera render state
     default void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
 
+    /// Runs after model and render layers were submitted for render. By this moment transformations from animations are already applied to the model
+    /// @param state animated model state
+    /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that was used
+    /// @param submitNodeCollector node collector to which model was submitted
+    /// @param cameraRenderState camera render state
     default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
 
+    /// Submits model for render with render order 0
+    /// @param state animated model state
+    /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
+    /// @param submitNodeCollector node collector to which model will be submitted
+    /// @param cameraRenderState camera render state
     default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector);
     }
 
+    /// Submits model for render in specified order
+    /// @param state animated model state
+    /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
+    /// @param submitNodeCollector node collector to which model will be submitted
+    /// @param cameraRenderState camera render state
     default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
         submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector.order(order));
     }
@@ -55,6 +85,7 @@ public interface BRRenderer<S extends BRState> {
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         controllers.forEach(controller -> controller.update(state));
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
+        state.getStateData(StateDataTypes.CONTROLLERS).forEach(controller -> controller.triggerAnimationEffects(model, state));
 
         for (BRRenderLayer renderLayer : getRenderLayers()) {
             if (renderLayer.canRender(state)) renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState);
@@ -64,12 +95,15 @@ public interface BRRenderer<S extends BRState> {
         poseStack.popPose();
     }
 
+    /// @return all render layers this renderer has
     Collection<BRRenderLayer> getRenderLayers();
 
+    /// @param renderLayer render layer to add
     default void addRenderLayer(BRRenderLayer renderLayer) {
         getRenderLayers().add(renderLayer);
     }
 
+    /// Submits {@link BRModel} for render
     static void submitModel(
             PoseStack poseStack,
             BRModel model,

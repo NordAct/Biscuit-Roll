@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/// Responsible for loading animations. Use [BRAnimationManager#getAnimationManager(boolean isClient)] to get animation manager for correct side
 @ApiStatus.NonExtendable
 public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
@@ -51,12 +52,17 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
         getHolderMap().putAll(map);
     }
 
+    /// @param animationId id of animation file
+    /// @return all animations from the file as [AnimationData]
     @Nullable
     public AnimationData[] getAnimations(Identifier animationId) {
         return getHolderMap().get(animationId);
     }
 
-    @Nullable
+    /// @param animationId id of animation file
+    /// @param animationName name of animation to get
+    /// @return [AnimationData] for specified animation
+    /// @throws NoSuchElementException if specified animation doesn't exist in specified animation file
     public AnimationData getAnimation(Identifier animationId, String animationName) {
         AnimationData[] data = getAnimations(animationId);
         return Arrays
@@ -68,6 +74,8 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
 
     protected abstract Map<Identifier, AnimationData[]> getHolderMap();
 
+    /// @param isClient is client side
+    /// @return animation manager for specified side
     public static BRAnimationManager getAnimationManager(boolean isClient) {
         return isClient ? ClientAnimationManager.instance() : ServerAnimationManager.instance();
     }

@@ -5,6 +5,10 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.BiscuitRoll;
 
+/// Util class to help to deal with pain in the butt called animated textures.
+///
+/// If you wish to use animated textures anywhere in your project with models from this mod, you should place them in `animated_textures` folder in `textures` folder, i.e.:
+/// `your_name_space:textures/animated_textures/your_texture.png`. To animate the texture, do same steps as for animating vanilla textures
 public class AnimatedTextureUtil {
     private static final String ANIMATED_TEXTURES = "animated_textures";
     private static final String PATH_START = "textures/" + ANIMATED_TEXTURES + "/";

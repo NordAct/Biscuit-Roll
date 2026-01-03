@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/// Model to be animated and rendered
+/// @see nordmods.biscuit_roll.common.util.BRModelManager
 public class BRModel implements GeometryModel {
     private final GeometryTree tree;
 

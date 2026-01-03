@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
-import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,7 +18,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -27,6 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/// it renders
 @ApiStatus.Internal
 public class BRModelRenderer {
     private final PoseStack stack = new PoseStack();
@@ -85,7 +84,6 @@ public class BRModelRenderer {
         stack.last().set(submit.pose());
 
         submit.model.applyAnimations(submit.state);
-        submit.state.getStateData(StateDataTypes.CONTROLLERS).forEach(controller -> controller.triggerAnimationEffects(submit.model, submit.state));
 
         if (!submit.state.getStateDataOptional(ClientStateDataTypes.INVISIBLE).orElse(false)) {
             renderModel(submit.model, stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
@@ -139,7 +137,7 @@ public class BRModelRenderer {
     }
 
     private void renderModel(BRModel model, PoseStack stack, BRState state, VertexConsumer vertexConsumer) {
-        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, state), (MatrixStack) stack);
+        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, state), stack);
     }
 
     public record Submit(
