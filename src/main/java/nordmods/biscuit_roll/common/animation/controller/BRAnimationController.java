@@ -1,10 +1,11 @@
-package nordmods.biscuit_roll.common.animation;
+package nordmods.biscuit_roll.common.animation.controller;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 ///
 /// Responsible for managing playing animations
 public abstract class BRAnimationController implements AnimationController {
-    protected final ConcurrentHashMap<String,BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, BRPlayingAnimation> playingAnimations = new ConcurrentHashMap<>();
     /// Molang environment that is used for resolving Molang expressions
     private final MolangEnvironment environment = MolangRuntime.runtime().create();
     /// Current animation file

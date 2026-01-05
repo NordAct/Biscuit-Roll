@@ -1,6 +1,8 @@
-package nordmods.biscuit_roll.common.animation;
+package nordmods.biscuit_roll.common.animation.controller;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 
@@ -29,7 +31,7 @@ public class CloneAnimationController extends BRAnimationController {
 
     @Override
     public void tick() {
-        Map<String,BRPlayingAnimation> shouldContinue = new HashMap<>();
+        Map<String, BRPlayingAnimation> shouldContinue = new HashMap<>();
         playingAnimations.forEach((name, animation) -> {
             if (!animation.isDone() || !animation.canClearOut()) shouldContinue.put(name, animation);
         });

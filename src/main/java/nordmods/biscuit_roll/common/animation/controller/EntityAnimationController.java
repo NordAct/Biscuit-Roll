@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.common.animation;
+package nordmods.biscuit_roll.common.animation.controller;
 
 import com.mojang.math.Axis;
 import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
@@ -11,6 +11,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.EffectConsumer;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.joml.Vector3f;

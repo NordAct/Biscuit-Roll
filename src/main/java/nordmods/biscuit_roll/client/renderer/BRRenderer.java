@@ -9,7 +9,7 @@ import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;

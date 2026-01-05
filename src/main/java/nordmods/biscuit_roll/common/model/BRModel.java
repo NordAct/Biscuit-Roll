@@ -8,7 +8,7 @@ import gg.moonflower.pinwheel.api.geometry.*;
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;

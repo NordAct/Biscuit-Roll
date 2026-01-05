@@ -1,5 +1,7 @@
 package nordmods.biscuit_roll.common.animation;
 
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 

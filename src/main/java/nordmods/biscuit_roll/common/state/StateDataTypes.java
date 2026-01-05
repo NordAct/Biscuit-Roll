@@ -2,7 +2,7 @@ package nordmods.biscuit_roll.common.state;
 
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import nordmods.biscuit_roll.BiscuitRoll;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import org.jetbrains.annotations.ApiStatus;
 

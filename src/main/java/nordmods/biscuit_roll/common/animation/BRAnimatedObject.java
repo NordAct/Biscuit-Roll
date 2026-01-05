@@ -1,5 +1,7 @@
 package nordmods.biscuit_roll.common.animation;
 
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+
 import java.util.Collection;
 
 /// Biscuit Roll Animated Object or BRAnimatedObject for short

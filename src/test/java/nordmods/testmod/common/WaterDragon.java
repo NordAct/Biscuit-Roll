@@ -4,8 +4,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.EntityAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 
 import java.util.Collection;
 import java.util.List;

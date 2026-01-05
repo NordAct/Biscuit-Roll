@@ -17,6 +17,7 @@ import net.minecraft.world.entity.*;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.QueryHelper;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -67,29 +68,17 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         return modelProvider;
     }
 
-    /// Updates variables for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
+    /// Updates variables and queries for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
     /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection)} regardless
     /// @param builder provided by controller Molang environment
     /// @param entity entity from which data for queries and values is gotten
     /// @param tickDelta current tick progress
-    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, E entity, float tickDelta) { //todo add other queries
-        builder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);
-
-        if (entity instanceof LivingEntity living) {
-            builder.setQuery("swim_amount", living.getSwimAmount(tickDelta));
-            builder.setQuery("can_climb", living.onClimbable() ? 1 : 0);
-            builder.setQuery("can_fly", living.canGlide() ? 1 : 0);
-            builder.setQuery("blocking", living.isBlocking() ? 1 : 0);
-            if (living instanceof Mob mob) {
-                builder.setQuery("can_damage_nearby_mobs", !mob.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(5), target -> ((Mob) entity).canAttack(target)).isEmpty() ? 1 : 0);
-            }
-        }
-        if (entity instanceof PlayerRideableJumping jumping) builder.setQuery("can_power_jump", jumping.canJump() ? 1 : 0);
-    }
+    /// @see QueryHelper
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, E entity, float tickDelta) {}
 
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
-        //entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), entity, tickDelta));
+        entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), entity, tickDelta));
         super.extractRenderState(entity, state, tickDelta);
         state.setStateData(ClientStateDataTypes.INVISIBLE, state.isInvisible);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {

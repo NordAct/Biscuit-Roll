@@ -3,6 +3,7 @@ package nordmods.biscuit_roll.common.animation;
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 
 /// Animation that gets to play on {@link BRAnimationController}
 public class BRPlayingAnimation implements PlayingAnimation {
