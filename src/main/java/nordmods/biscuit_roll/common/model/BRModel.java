@@ -13,6 +13,7 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.*;
 
@@ -93,6 +94,26 @@ public class BRModel implements GeometryModel {
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         resetTransformation();
         controllers.forEach(this::applyAnimations);
+        updateLocators();
+    }
+
+    @ApiStatus.Internal
+    public void applyAnimationsFromStorage(BRState state) {
+        Map<String, AnimatedBone.AnimationPose> poseStorage = state.getStateDataOptional(StateDataTypes.POSE_STORAGE).orElse(Map.of());
+        resetTransformation();
+        poseStorage.forEach((bone, pose) -> {
+            AnimatedBone animatedBone = this.getBone(bone);
+            if (animatedBone == null) return;
+            animatedBone.getAnimationPose().position().x = pose.position().x();
+            animatedBone.getAnimationPose().position().y = pose.position().y();
+            animatedBone.getAnimationPose().position().z = pose.position().z();
+            animatedBone.getAnimationPose().rotation().x = pose.rotation().x();
+            animatedBone.getAnimationPose().rotation().y = pose.rotation().y();
+            animatedBone.getAnimationPose().rotation().z = pose.rotation().z();
+            animatedBone.getAnimationPose().scale().x = pose.scale().x();
+            animatedBone.getAnimationPose().scale().y = pose.scale().y();
+            animatedBone.getAnimationPose().scale().z = pose.scale().z();
+        });
         updateLocators();
     }
 }

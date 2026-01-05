@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
@@ -15,8 +16,11 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /// Biscuit Roll Renderer or BRRenderer for short.
 /// Base class for renderers
@@ -85,6 +89,7 @@ public interface BRRenderer<S extends BRState> {
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         controllers.forEach(controller -> controller.update(state));
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
+        savePoseStorage(model, state);
         state.getStateData(StateDataTypes.CONTROLLERS).forEach(controller -> controller.triggerAnimationEffects(model, state));
 
         for (BRRenderLayer renderLayer : getRenderLayers()) {
@@ -93,6 +98,18 @@ public interface BRRenderer<S extends BRState> {
         afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
 
         poseStack.popPose();
+    }
+
+    @ApiStatus.Internal
+    static void savePoseStorage(BRModel model, BRState state) {
+        Map<String, AnimatedBone.AnimationPose> poseStorage = new HashMap<>();
+        model.getBones().forEach(animatedBone -> poseStorage.put(animatedBone.getBone().name(),
+                new AnimatedBone.AnimationPose(
+                        new Vector3f(animatedBone.getAnimationPose().position()),
+                        new Vector3f(animatedBone.getAnimationPose().rotation()),
+                        new Vector3f(animatedBone.getAnimationPose().scale()))
+        ));
+        state.setStateData(StateDataTypes.POSE_STORAGE, poseStorage);
     }
 
     /// @return all render layers this renderer has

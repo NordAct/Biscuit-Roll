@@ -83,7 +83,8 @@ public class BRModelRenderer {
         stack.pushPose();
         stack.last().set(submit.pose());
 
-        submit.model.applyAnimations(submit.state);
+        //submit.model.applyAnimations(submit.state);
+        submit.model.applyAnimationsFromStorage(submit.state);
 
         if (!submit.state.getStateDataOptional(ClientStateDataTypes.INVISIBLE).orElse(false)) {
             renderModel(submit.model, stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
