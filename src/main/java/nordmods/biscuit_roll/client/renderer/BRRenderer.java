@@ -90,7 +90,7 @@ public interface BRRenderer<S extends BRState> {
         controllers.forEach(controller -> controller.update(state));
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
         savePoseStorage(model, state);
-        state.getStateData(StateDataTypes.CONTROLLERS).forEach(controller -> controller.triggerAnimationEffects(model, state));
+        controllers.forEach(controller -> controller.triggerAnimationEffects(model, state));
 
         for (BRRenderLayer renderLayer : getRenderLayers()) {
             if (renderLayer.canRender(state)) renderLayer.submitLayer(BRState.copy(state), poseStack, submitNodeCollector, cameraRenderState);

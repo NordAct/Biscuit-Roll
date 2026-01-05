@@ -89,7 +89,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
 
     @Override
     public void extractRenderState(E entity, S state, float tickDelta) {
-        entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), entity, tickDelta));
+        //entity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), entity, tickDelta));
         super.extractRenderState(entity, state, tickDelta);
         state.setStateData(ClientStateDataTypes.INVISIBLE, state.isInvisible);
         if (state instanceof LivingEntityRenderState livingState && entity instanceof LivingEntity livingEntity) {

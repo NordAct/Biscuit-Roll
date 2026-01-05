@@ -83,7 +83,6 @@ public class BRModelRenderer {
         stack.pushPose();
         stack.last().set(submit.pose());
 
-        //submit.model.applyAnimations(submit.state);
         submit.model.applyAnimationsFromStorage(submit.state);
 
         int color = submit.state.getStateData(ClientStateDataTypes.COLOR, -1);
