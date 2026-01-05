@@ -189,7 +189,7 @@ public abstract class BRAnimationController implements AnimationController {
     /// @param state provided state
     public void update(BRState state) {
         animationFile = state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state);
-        float animationTime = state.getStateDataOptional(StateDataTypes.ANIMATION_TIME).orElse(0f);
+        float animationTime = state.getStateData(StateDataTypes.ANIMATION_TIME, 0f);
         setAnimationTime(animationTime);
         tick();
     }

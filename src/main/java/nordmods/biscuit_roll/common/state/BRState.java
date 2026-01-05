@@ -15,19 +15,20 @@ public interface BRState {
 
     /// @param stateDataType stored state data type to get
     /// @param <T> type of state data type and returned value
-    /// @return same as [BRState#getStateData(StateDataType)], but wrapped as [Optional]
-    @NotNull
-    default <T> Optional<T> getStateDataOptional(@NotNull StateDataType<T> stateDataType) {
-        return Optional.ofNullable(getStateData(stateDataType));
-    }
-
-    /// @param stateDataType stored state data type to get
-    /// @param <T> type of state data type and returned value
     /// @return value from the state data type holder if value is present, null if specified state data type is not present
     @Nullable
     default <T> T getStateData(@NotNull StateDataType<T> stateDataType) {
         StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().get(stateDataType);
         return holder == null ? null : holder.value();
+    }
+
+    /// @param stateDataType stored state data type to get
+    /// @param <T> type of state data type and returned value
+    /// @return value from the state data type holder if value is present or default value
+    default <T> T getStateData(@NotNull StateDataType<T> stateDataType, T defaultValue) {
+        StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().get(stateDataType);
+        if (holder == null) return defaultValue;
+        return holder.value() != null ? holder.value() : defaultValue;
     }
 
     /// Stores specified value in data map

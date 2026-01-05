@@ -36,6 +36,6 @@ public class RainbowGlowLayer extends TextureRenderLayer {
 
     @Override
     public boolean canRender(BRState state) {
-        return state.getStateDataOptional(TestModClient.IS_DRAGON_RAINBOW).orElse(false);
+        return state.getStateData(TestModClient.IS_DRAGON_RAINBOW, false);
     }
 }

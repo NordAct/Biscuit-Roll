@@ -99,8 +99,7 @@ public class BRModel implements GeometryModel {
 
     @ApiStatus.Internal
     public void applyAnimationsFromStorage(BRState state) {
-        Map<String, AnimatedBone.AnimationPose> poseStorage = state.getStateDataOptional(StateDataTypes.POSE_STORAGE).orElse(Map.of());
-        resetTransformation();
+        Map<String, AnimatedBone.AnimationPose> poseStorage = state.getStateData(StateDataTypes.POSE_STORAGE);
         poseStorage.forEach((bone, pose) -> {
             AnimatedBone animatedBone = this.getBone(bone);
             if (animatedBone == null) return;
@@ -114,6 +113,5 @@ public class BRModel implements GeometryModel {
             animatedBone.getAnimationPose().scale().y = pose.scale().y();
             animatedBone.getAnimationPose().scale().z = pose.scale().z();
         });
-        updateLocators();
     }
 }

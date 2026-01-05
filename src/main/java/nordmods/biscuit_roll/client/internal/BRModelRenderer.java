@@ -86,15 +86,20 @@ public class BRModelRenderer {
         //submit.model.applyAnimations(submit.state);
         submit.model.applyAnimationsFromStorage(submit.state);
 
-        if (!submit.state.getStateDataOptional(ClientStateDataTypes.INVISIBLE).orElse(false)) {
-            renderModel(submit.model, stack, submit.state, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer));
+        int color = submit.state.getStateData(ClientStateDataTypes.COLOR, -1);
+        int overlayTexture = submit.state.getStateData(ClientStateDataTypes.OVERLAY_TEXTURE, OverlayTexture.NO_OVERLAY);
+        int light = submit.state.getStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+
+        boolean invisible = submit.state.getStateData(ClientStateDataTypes.INVISIBLE, false);
+        if (!invisible) {
+            renderModel(submit.model, stack, submit.sprite == null ? textureBuffer : submit.sprite.wrap(textureBuffer), color, overlayTexture, light);
         }
 
-        int outline = submit.state.getStateDataOptional(ClientStateDataTypes.OUTLINE_COLOR).orElse(0);
+        int outline = submit.state.getStateData(ClientStateDataTypes.OUTLINE_COLOR, 0);
         if (outline != 0 && (renderType.outline().isPresent() || renderType.isOutline())) {
             outlineBufferSource.setColor(outline);
             VertexConsumer outlineBuffer = outlineBufferSource.getBuffer(renderType);
-            renderModel(submit.model, stack, submit.state, submit.sprite == null ? outlineBuffer : submit.sprite.wrap(outlineBuffer));
+            renderModel(submit.model, stack, submit.sprite == null ? outlineBuffer : submit.sprite.wrap(outlineBuffer), color, overlayTexture, light);
         }
 
         ModelFeatureRenderer.CrumblingOverlay overlay = submit.state.getStateData(ClientStateDataTypes.CRUMBLING_OVERLAY);
@@ -104,13 +109,13 @@ public class BRModelRenderer {
                     overlay.cameraPose(),
                     1.0F
             );
-            renderModel(submit.model, stack, submit.state, submit.sprite == null ? overlayBuffer : submit.sprite.wrap(overlayBuffer));
+            renderModel(submit.model, stack, submit.sprite == null ? overlayBuffer : submit.sprite.wrap(overlayBuffer), color, overlayTexture, light);
         }
 
         stack.popPose();
     }
 
-    private void renderPolygon(PoseStack.Pose pose, Polygon polygon, VertexConsumer vertexConsumer, BRState state) {
+    private void renderPolygon(PoseStack.Pose pose, Polygon polygon, VertexConsumer vertexConsumer, int color, int overlayTexture, int light) {
         Matrix4f matrix4f = pose.pose();
         Vector3f vector3f = new Vector3f();
 
@@ -129,16 +134,16 @@ public class BRModelRenderer {
 
             vertexConsumer.addVertex(
                     pos.x(), pos.y(), pos.z(),
-                    state.getStateDataOptional(ClientStateDataTypes.COLOR).orElse(-1),
+                    color,
                     vertex.u(), vertex.v(),
-                    state.getStateDataOptional(ClientStateDataTypes.OVERLAY_TEXTURE).orElse(OverlayTexture.NO_OVERLAY),
-                    state.getStateDataOptional(ClientStateDataTypes.LIGHT).orElse(LightTexture.FULL_BRIGHT),
+                    overlayTexture,
+                    light,
                     normalX, normalY, normalZ);
         }
     }
 
-    private void renderModel(BRModel model, PoseStack stack, BRState state, VertexConsumer vertexConsumer) {
-        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, state), stack);
+    private void renderModel(BRModel model, PoseStack stack, VertexConsumer vertexConsumer, int color, int overlayTexture, int light) {
+        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, color, overlayTexture, light), stack);
     }
 
     public record Submit(

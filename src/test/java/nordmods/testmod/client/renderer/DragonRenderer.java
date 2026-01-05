@@ -53,6 +53,6 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
 
     @Override
     public Identifier getTextureId(BRState state) {
-        return state.getStateDataOptional(TestModClient.IS_DRAGON_RAINBOW).orElse(false) ? TEXTURE_RAINBOW : TEXTURE_GREEN;
+        return state.getStateData(TestModClient.IS_DRAGON_RAINBOW, false) ? TEXTURE_RAINBOW : TEXTURE_GREEN;
     }
 }
