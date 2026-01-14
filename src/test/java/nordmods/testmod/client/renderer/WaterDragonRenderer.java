@@ -10,7 +10,7 @@ import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.common.WaterDragon;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class WaterDragonRenderer extends BREntityRenderer<WaterDragon, LivingEntityRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/water_dragon.png");
@@ -32,7 +32,7 @@ public class WaterDragonRenderer extends BREntityRenderer<WaterDragon, LivingEnt
     }
 
     @Override
-    public @NotNull LivingEntityRenderState createRenderState() {
+    public @NonNull LivingEntityRenderState createRenderState() {
         return new LivingEntityRenderState();
     }
 

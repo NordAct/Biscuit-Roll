@@ -10,8 +10,8 @@ import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,8 @@ public abstract class BRAnimationController implements AnimationController {
     /// Molang environment that is used for resolving Molang expressions
     private final MolangEnvironment environment = MolangRuntime.runtime().create();
     /// Current animation file
-    @Nullable protected Identifier animationFile;
+    @Nullable
+    protected Identifier animationFile;
     /// Defines on which logical side controller is
     protected final boolean isClient;
     /// Defines if controller can have only one animation running at the time.
@@ -156,7 +157,7 @@ public abstract class BRAnimationController implements AnimationController {
     /// Triggers effect keyframes on playing animations
     /// @param model animated model
     /// @param state animated model state
-    public void triggerAnimationEffects(@NotNull BRModel model, @NotNull BRState state) {
+    public void triggerAnimationEffects(@NonNull BRModel model, @NonNull BRState state) {
         getPlayingAnimations().forEach(playingAnimation -> {
             if (!playingAnimation.isRunning() || playingAnimation.isTransitioningIn()) return;
 

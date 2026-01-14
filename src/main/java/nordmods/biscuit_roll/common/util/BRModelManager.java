@@ -11,7 +11,8 @@ import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.model.BRModel;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +26,7 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
 
     @Override
-    protected Map<Identifier, BRModel> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected Map<Identifier, BRModel> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         Map<Identifier, BRModel> holder = new HashMap<>();
 
         Map<Identifier, Resource> resourceMap = resourceManager.listResources(FOLDER, path -> path.getPath().endsWith(".json"));
@@ -50,7 +51,7 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     }
 
     @Override
-    protected void apply(Map<Identifier, BRModel> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, BRModel> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         getHolderMap().clear();
         getHolderMap().putAll(map);
     }

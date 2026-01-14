@@ -4,6 +4,8 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.state.StateDataType;
 
+import java.util.Map;
+
 /// Build in [StateDataType] that can be called from client side only.
 /// Attempting to call this class from server side will cause [ClassNotFoundException] on dedicated servers
 public class ClientStateDataTypes {
@@ -13,4 +15,5 @@ public class ClientStateDataTypes {
     public static final StateDataType<Integer> COLOR = new StateDataType<>(BiscuitRoll.id("color"));
     public static final StateDataType<Integer> LIGHT = new StateDataType<>(BiscuitRoll.id("light"));
     public static final StateDataType<Boolean> INVISIBLE = new StateDataType<>(BiscuitRoll.id("invisible"));
+    public static final StateDataType<Map<String, Boolean>> BONE_VISIBILITY_OVERRIDES = new StateDataType<>(BiscuitRoll.id("bone_visibility_overrides"));
 }

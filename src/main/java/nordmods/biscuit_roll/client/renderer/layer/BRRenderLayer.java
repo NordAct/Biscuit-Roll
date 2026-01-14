@@ -9,7 +9,7 @@ import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /// Biscuit Roll Render Layer or BRRender Layer for short.
 /// Base class for render layer

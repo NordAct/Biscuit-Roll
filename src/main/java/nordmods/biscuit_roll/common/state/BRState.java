@@ -1,7 +1,7 @@
 package nordmods.biscuit_roll.common.state;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public interface BRState {
     /// @param <T> type of state data type and returned value
     /// @return value from the state data type holder if value is present, null if specified state data type is not present
     @Nullable
-    default <T> T getStateData(@NotNull StateDataType<T> stateDataType) {
+    default <T> T getStateData(@NonNull StateDataType<T> stateDataType) {
         StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().get(stateDataType);
         return holder == null ? null : holder.value();
     }
@@ -24,7 +24,7 @@ public interface BRState {
     /// @param stateDataType stored state data type to get
     /// @param <T> type of state data type and returned value
     /// @return value from the state data type holder if value is present or default value
-    default <T> T getStateData(@NotNull StateDataType<T> stateDataType, T defaultValue) {
+    default <T> T getStateData(@NonNull StateDataType<T> stateDataType, @NonNull T defaultValue) {
         StateDataType.Holder<T> holder = (StateDataType.Holder<T>) getDataMap().get(stateDataType);
         if (holder == null) return defaultValue;
         return holder.value() != null ? holder.value() : defaultValue;
@@ -34,7 +34,7 @@ public interface BRState {
     /// @param stateDataType state data type, used as key for data map and to determine value's type
     /// @param value value to store
     /// @param <T> type of state data type and value
-    default <T> void setStateData(@NotNull StateDataType<T> stateDataType, T value) {
+    default <T> void setStateData(@NonNull StateDataType<T> stateDataType, T value) {
         getDataMap().put(stateDataType, stateDataType.createHolder(value));
     }
 

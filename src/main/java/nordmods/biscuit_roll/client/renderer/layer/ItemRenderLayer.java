@@ -8,7 +8,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.state.BRState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+
 /// Submits {@link ItemStackRenderState} to be rendered at specified locator in {@link ItemRenderLayer#getLocatorName()}
 public abstract class ItemRenderLayer extends BRRenderLayer{
     public ItemRenderLayer(BRRenderer<?> parentRenderer) {

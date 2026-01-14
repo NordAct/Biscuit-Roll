@@ -8,11 +8,12 @@ import gg.moonflower.pinwheel.api.geometry.*;
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
+import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -93,24 +94,11 @@ public class BRModel implements GeometryModel {
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         resetTransformation();
         controllers.forEach(this::applyAnimations);
-        updateLocators();
     }
 
     @ApiStatus.Internal
-    public void applyAnimationsFromStorage(BRState state) {
-        Map<String, AnimatedBone.AnimationPose> poseStorage = state.getStateData(StateDataTypes.POSE_STORAGE);
-        poseStorage.forEach((bone, pose) -> {
-            AnimatedBone animatedBone = this.getBone(bone);
-            if (animatedBone == null) return;
-            animatedBone.getAnimationPose().position().x = pose.position().x();
-            animatedBone.getAnimationPose().position().y = pose.position().y();
-            animatedBone.getAnimationPose().position().z = pose.position().z();
-            animatedBone.getAnimationPose().rotation().x = pose.rotation().x();
-            animatedBone.getAnimationPose().rotation().y = pose.rotation().y();
-            animatedBone.getAnimationPose().rotation().z = pose.rotation().z();
-            animatedBone.getAnimationPose().scale().x = pose.scale().x();
-            animatedBone.getAnimationPose().scale().y = pose.scale().y();
-            animatedBone.getAnimationPose().scale().z = pose.scale().z();
-        });
+    public void updateBoneVisibility(BRState state) {
+        Map<String, Boolean> visibilityMap = state.getStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES);
+        if (visibilityMap != null) visibilityMap.forEach(((bone, visible) -> getBone(bone).setVisible(visible)));
     }
 }

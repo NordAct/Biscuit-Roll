@@ -12,7 +12,7 @@ import nordmods.testmod.TestMod;
 import nordmods.testmod.client.TestModClient;
 import nordmods.testmod.client.renderer.layer.RainbowGlowLayer;
 import nordmods.testmod.common.Dragon;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderState> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/dragon.geo.json");
@@ -36,7 +36,7 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
     }
 
     @Override
-    public @NotNull LivingEntityRenderState createRenderState() {
+    public @NonNull LivingEntityRenderState createRenderState() {
         return new LivingEntityRenderState();
     }
 

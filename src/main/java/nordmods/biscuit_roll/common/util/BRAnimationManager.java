@@ -10,7 +10,8 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.util.ClientAnimationManager;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +27,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
 
     @Override
-    protected Map<Identifier, AnimationData[]> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected Map<Identifier, AnimationData[]> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         Map<Identifier, AnimationData[]> holder = new HashMap<>();
 
         Map<Identifier, Resource> resourceMap = resourceManager.listResources(FOLDER, path -> path.getPath().endsWith(".json"));
@@ -47,7 +48,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     }
 
     @Override
-    protected void apply(Map<Identifier, AnimationData[]> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<Identifier, AnimationData[]> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         getHolderMap().clear();
         getHolderMap().putAll(map);
     }

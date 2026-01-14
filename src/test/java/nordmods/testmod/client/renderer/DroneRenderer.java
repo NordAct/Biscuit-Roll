@@ -11,7 +11,7 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.renderer.layer.DroneGlowLayer;
 import nordmods.testmod.common.Drone;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/drone.png");
@@ -34,7 +34,7 @@ public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderSta
     }
 
     @Override
-    public @NotNull LivingEntityRenderState createRenderState() {
+    public @NonNull LivingEntityRenderState createRenderState() {
         return new LivingEntityRenderState();
     }
 
