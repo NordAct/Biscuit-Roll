@@ -1,6 +1,8 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
+import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
@@ -103,13 +105,14 @@ public interface BRRenderer<S extends BRState> {
     /// @param state animated model state
     /// @param bone bone, which visibility will be changed
     /// @param visible visibility of the bone
-    default void setBoneVisibility(S state, String bone, boolean visible) {
-        Map<String, Boolean> visibilityMap = state.getStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES);
+    /// @param updateChildren if visibility of children should be updated as well
+    default void setBoneVisibility(S state, AnimatedBone bone, boolean visible, boolean updateChildren) {
+        Map<AnimatedBone, BooleanBooleanPair> visibilityMap = state.getStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES);
         if (visibilityMap == null) {
             visibilityMap = new HashMap<>();
             state.setStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES, visibilityMap);
         }
-        visibilityMap.put(bone, visible);
+        visibilityMap.put(bone, BooleanBooleanPair.of(visible, updateChildren));
     }
 
     /// @return all render layers this renderer has
