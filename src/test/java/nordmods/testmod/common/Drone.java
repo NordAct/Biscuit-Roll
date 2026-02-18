@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +35,7 @@ public class Drone extends Mob implements BRAnimatedObject {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_ORDINAL, 0);
     }
@@ -52,7 +53,8 @@ public class Drone extends Mob implements BRAnimatedObject {
         }
     }
 
-    protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+    @Override
+    protected @NonNull InteractionResult mobInteract(@NonNull Player player, @NonNull InteractionHand interactionHand) {
         if (!level().isClientSide() && interactionHand == InteractionHand.MAIN_HAND) {
             if (!player.isShiftKeyDown())
                 setAnimationOrdinal((getAnimationOrdinal() + 1) % animations.length);

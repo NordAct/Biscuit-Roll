@@ -1,15 +1,12 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
-import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
-import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -20,8 +17,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /// Biscuit Roll Renderer or BRRenderer for short.
 /// Base class for renderers
@@ -77,6 +72,7 @@ public interface BRRenderer<S extends BRState> {
         submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector.order(order));
     }
 
+    /// Animates and submits model and its layers for render
     @ApiStatus.Internal
     @ApiStatus.NonExtendable
     default void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, BRModelSubmitStorage brModelSubmitStorage) {
@@ -90,6 +86,7 @@ public interface BRRenderer<S extends BRState> {
 
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         controllers.forEach(controller -> controller.update(state));
+        state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
         model.updateLocators();
         controllers.forEach(controller -> controller.triggerAnimationEffects(model, state));
@@ -102,18 +99,15 @@ public interface BRRenderer<S extends BRState> {
         poseStack.popPose();
     }
 
+    /// Called after model has animations from controller applied.
+    /// Use this method to adjust model bone transforms or to change their visibility
+    ///
+    /// Note: each model is shared across all objects that use it.
+    /// If you do disable visibility of certain bone on the model under certain condition,
+    /// it *must* be updated each time this model is submitted to correctly update bone visibility
     /// @param state animated model state
-    /// @param bone bone, which visibility will be changed
-    /// @param visible visibility of the bone
-    /// @param updateChildren if visibility of children should be updated as well
-    default void setBoneVisibility(S state, AnimatedBone bone, boolean visible, boolean updateChildren) {
-        Map<AnimatedBone, BooleanBooleanPair> visibilityMap = state.getStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES);
-        if (visibilityMap == null) {
-            visibilityMap = new HashMap<>();
-            state.setStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES, visibilityMap);
-        }
-        visibilityMap.put(bone, BooleanBooleanPair.of(visible, updateChildren));
-    }
+    /// @param model model
+    default void adjustAnimation(BRState state, BRModel model) {}
 
     /// @return all render layers this renderer has
     Collection<BRRenderLayer> getRenderLayers();

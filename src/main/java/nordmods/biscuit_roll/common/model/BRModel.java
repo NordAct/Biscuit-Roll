@@ -8,15 +8,13 @@ import gg.moonflower.pinwheel.api.geometry.*;
 import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
-import it.unimi.dsi.fastutil.booleans.BooleanBooleanPair;
-import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
 
 /// Model to be animated and rendered
 /// @see nordmods.biscuit_roll.common.util.BRModelManager
@@ -95,11 +93,6 @@ public class BRModel implements GeometryModel {
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         resetTransformation();
         controllers.forEach(this::applyAnimations);
-    }
-
-    @ApiStatus.Internal
-    public void updateBoneVisibility(BRState state) {
-        Map<AnimatedBone, BooleanBooleanPair> visibilityMap = state.getStateData(ClientStateDataTypes.BONE_VISIBILITY_OVERRIDES);
-        if (visibilityMap != null) visibilityMap.forEach(((bone, pair) -> bone.setVisible(pair.leftBoolean(), pair.rightBoolean())));
+        state.getStateData(StateDataTypes.ANIMATION_ADJUSTMENT).accept(state, this);
     }
 }

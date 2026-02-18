@@ -6,8 +6,10 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.TestModClient;
 import nordmods.testmod.client.renderer.layer.RainbowGlowLayer;
@@ -54,5 +56,22 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
     @Override
     public Identifier getTextureId(BRState state) {
         return state.getStateData(TestModClient.IS_DRAGON_RAINBOW, false) ? TEXTURE_RAINBOW : TEXTURE_GREEN;
+    }
+
+    @Override
+    public void adjustAnimation(BRState state, BRModel model) { //with some magic of coding, wyvern turns into amphithere
+        boolean bl = state.getStateData(TestModClient.IS_DRAGON_RAINBOW, false);
+        boolean isFlying = state.getStateData(StateDataTypes.CONTROLLERS).stream().anyMatch(brAnimationController -> brAnimationController.getAnimation("fly.straight") != null || brAnimationController.getAnimation("fly.idle") != null);
+        if (bl) {
+            if (!isFlying) {
+                model.getBone("wing_left").getAnimationPose().rotation().add(0, 0, -90);
+                model.getBone("wing_right").getAnimationPose().rotation().add(0, 0, 90);
+                model.getBone("tail1").getAnimationPose().rotation().add(30, 0, 0);
+                model.getBone("dragon").getAnimationPose().position().add(0, -27, 0);
+            }
+            model.getBone("front").getAnimationPose().position().add(0, 2, 0);
+        }
+        model.getBone("leg_left").setVisible(!bl);
+        model.getBone("leg_right").setVisible(!bl);
     }
 }

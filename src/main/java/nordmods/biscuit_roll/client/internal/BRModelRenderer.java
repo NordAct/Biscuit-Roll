@@ -84,7 +84,6 @@ public class BRModelRenderer {
         stack.last().set(submit.pose());
 
         submit.model.applyAnimations(submit.state);
-        submit.model.updateBoneVisibility(submit.state);
 
         int color = submit.state.getStateData(ClientStateDataTypes.COLOR, -1);
         int overlayTexture = submit.state.getStateData(ClientStateDataTypes.OVERLAY_TEXTURE, OverlayTexture.NO_OVERLAY);

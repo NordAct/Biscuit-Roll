@@ -15,6 +15,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,21 +45,21 @@ public class Dragon extends Mob implements BRAnimatedObject {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_ORDINAL, 0);
         builder.define(RAINBOW, false);
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+    protected void addAdditionalSaveData(@NonNull ValueOutput valueOutput) {
         super.addAdditionalSaveData(valueOutput);
         valueOutput.putBoolean("Rainbow", isRainbow());
         valueOutput.putInt("Animation", getAnimationOrdinal());
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput valueInput) {
+    protected void readAdditionalSaveData(@NonNull ValueInput valueInput) {
         super.readAdditionalSaveData(valueInput);
         setRainbow(valueInput.getBooleanOr("Rainbow", false));
         setAnimationOrdinal(valueInput.getIntOr("Animation", 0));
@@ -79,7 +80,8 @@ public class Dragon extends Mob implements BRAnimatedObject {
         }
     }
 
-    protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+    @Override
+    protected @NonNull InteractionResult mobInteract(@NonNull Player player, @NonNull InteractionHand interactionHand) {
         if (level().isClientSide()) {
             if (player.isShiftKeyDown()) {
                 controller0.playAnimation(
