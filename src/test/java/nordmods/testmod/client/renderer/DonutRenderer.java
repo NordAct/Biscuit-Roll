@@ -12,13 +12,9 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.renderer.BRBlockEntityRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
@@ -27,14 +23,15 @@ import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.common.block.DonutBlockEntity;
 import org.joml.Vector3fc;
-import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
-import java.sql.Time;
 import java.util.List;
-import java.util.Timer;
 import java.util.function.Consumer;
 
+// If you wish to use geometry models for items, do it so only if:
+// 1. It's model of block with block entity
+// 2. You need polymesh
+// Also note that animating items separately is pain in the butt
 public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, BlockEntityRenderState> implements NoDataSpecialModelRenderer {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/block/donut.png");
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/donut.geo.json");
@@ -93,7 +90,6 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
             }
             case THIRD_PERSON_LEFT_HAND,
                  THIRD_PERSON_RIGHT_HAND -> {
-                boolean bl = itemDisplayContext.leftHand();
                 poseStack.scale(0.5);
                 poseStack.translate(1, 1, 1);
                 poseStack.rotate(Axis.XP.rotationDegrees(90));
@@ -101,7 +97,7 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
                 poseStack.translate(0, 0.1, -0.25);
             }
         }
-        super.submit(state, poseStack, submitNodeCollector, null);
+        submit(state, poseStack, submitNodeCollector, null);
     }
 
     @Override
@@ -119,12 +115,12 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
         public static final MapCodec<DonutRenderer.Unbaked> MAP_CODEC = MapCodec.unit(new DonutRenderer.Unbaked());
 
         @Override
-        public MapCodec<DonutRenderer.Unbaked> type() {
+        public @NonNull MapCodec<DonutRenderer.Unbaked> type() {
             return MAP_CODEC;
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext bakingContext) {
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.@NonNull BakingContext bakingContext) {
             return new DonutRenderer();
         }
     }

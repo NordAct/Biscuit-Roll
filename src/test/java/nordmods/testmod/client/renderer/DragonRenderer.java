@@ -63,7 +63,7 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
         boolean bl = state.getStateData(TestModClient.IS_DRAGON_RAINBOW, false);
         boolean isFlying = state.getStateData(StateDataTypes.CONTROLLERS).stream().anyMatch(brAnimationController -> brAnimationController.getAnimation("fly.straight") != null || brAnimationController.getAnimation("fly.idle") != null);
         if (bl) {
-            if (!isFlying) {
+            if (!isFlying) { //please actually do a proper check if bone is present on the model, getBone() is nullable
                 model.getBone("wing_left").getAnimationPose().rotation().add(0, 0, -90);
                 model.getBone("wing_right").getAnimationPose().rotation().add(0, 0, 90);
                 model.getBone("tail1").getAnimationPose().rotation().add(30, 0, 0);

@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -21,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedObject, S extends BlockEntityRenderState> implements BlockEntityRenderer<T, S>, BRRenderer<S> {
+/// Implementation of {@link BRRenderer} for {@link BlockEntity}
+/// @see BRObjectRenderer
+public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedObject, S extends BlockEntityRenderState> implements BlockEntityRenderer<@NonNull T, S>, BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final List<BRRenderLayer> renderLayers = new ArrayList<>();
 
@@ -55,7 +56,7 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickDelta, cameraPos, crumblingOverlay);
         state.setStateData(StateDataTypes.CONTROLLERS, blockEntity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, (getCurrentTick(blockEntity) / 20f) + tickDelta);
+        state.setStateData(StateDataTypes.ANIMATION_TIME, (getCurrentTick(blockEntity) / 20f) + tickDelta); //TODO delta is incorrect somehow
         state.setStateData(ClientStateDataTypes.CRUMBLING_OVERLAY, crumblingOverlay);
     }
 
