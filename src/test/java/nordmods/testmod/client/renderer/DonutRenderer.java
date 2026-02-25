@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import nordmods.biscuit_roll.client.renderer.BRBlockEntityRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.client.util.RenderUtil;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -96,13 +97,21 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
                 poseStack.translate(-0.5, 0, -0.5);
                 poseStack.translate(0, 0.1, -0.25);
             }
+            case GROUND -> {
+                poseStack.scale(0.5);
+                poseStack.translate(0.5, 0, 0.5);
+            }
         }
         submit(state, poseStack, submitNodeCollector, null);
     }
 
     @Override
     public void getExtents(@NonNull Consumer<Vector3fc> consumer) {
-
+        PoseStack poseStack = new PoseStack();
+        poseStack.scale(-1, -1, 1);
+        BlockEntityRenderState state = createRenderState();
+        state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
+        RenderUtil.getExtentsForGui(getModel(state), poseStack, consumer);
     }
 
     @Override

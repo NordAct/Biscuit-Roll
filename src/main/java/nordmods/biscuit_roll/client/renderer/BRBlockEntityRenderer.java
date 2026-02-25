@@ -56,7 +56,7 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickDelta, cameraPos, crumblingOverlay);
         state.setStateData(StateDataTypes.CONTROLLERS, blockEntity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, (getCurrentTick(blockEntity) / 20f) + tickDelta); //TODO delta is incorrect somehow
+        state.setStateData(StateDataTypes.ANIMATION_TIME, ((getCurrentTick(blockEntity) + tickDelta) / 20f));
         state.setStateData(ClientStateDataTypes.CRUMBLING_OVERLAY, crumblingOverlay);
     }
 
