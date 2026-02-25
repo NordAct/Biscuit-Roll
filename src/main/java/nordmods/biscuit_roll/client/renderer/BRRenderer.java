@@ -45,21 +45,21 @@ public interface BRRenderer<S extends BRState> {
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
     /// @param submitNodeCollector node collector to which model will be submitted
     /// @param cameraRenderState camera render state
-    default void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
+    default void beforeSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {}
 
     /// Runs after model and render layers were submitted for render. By this moment transformations from animations are already applied to the model
     /// @param state animated model state
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that was used
     /// @param submitNodeCollector node collector to which model was submitted
     /// @param cameraRenderState camera render state
-    default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
+    default void afterSubmit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {}
 
     /// Submits model for render with render order 0
     /// @param state animated model state
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
     /// @param submitNodeCollector node collector to which model will be submitted
     /// @param cameraRenderState camera render state
-    default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+    default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {
         submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector);
     }
 
@@ -68,14 +68,14 @@ public interface BRRenderer<S extends BRState> {
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
     /// @param submitNodeCollector node collector to which model will be submitted
     /// @param cameraRenderState camera render state
-    default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
+    default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState, int order) {
         submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector.order(order));
     }
 
     /// Animates and submits model and its layers for render
     @ApiStatus.Internal
     @ApiStatus.NonExtendable
-    default void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, BRModelSubmitStorage brModelSubmitStorage) {
+    default void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState, BRModelSubmitStorage brModelSubmitStorage) {
         poseStack.pushPose();
 
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);

@@ -1,4 +1,4 @@
-package nordmods.testmod.common;
+package nordmods.testmod.common.entity;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.network.syncher.EntityDataAccessor;

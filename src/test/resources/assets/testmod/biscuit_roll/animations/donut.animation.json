@@ -1,0 +1,18 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"hover": {
+			"loop": true,
+			"bones": {
+				"donut": {
+					"rotation": [
+						"temp.var = query.anim_time*360/4;loop(1024, { temp.var < 360 ? break;temp.var = temp.var - 360;});return +temp.var;",
+						"temp.var = query.anim_time*360/4;loop(1024, { temp.var < 360 ? break;temp.var = temp.var - 360;});return +temp.var;",
+						"temp.var = query.anim_time*360/4;loop(1024, { temp.var < 360 ? break;temp.var = temp.var - 360;});return temp.var;"
+					],
+					"position": [0, "-math.cos(query.anim_time*360/4)*4+6", 0]
+				}
+			}
+		}
+	}
+}

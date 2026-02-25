@@ -1,4 +1,4 @@
-package nordmods.testmod.common;
+package nordmods.testmod.common.entity;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

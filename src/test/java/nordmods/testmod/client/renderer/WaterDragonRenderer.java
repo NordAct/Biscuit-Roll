@@ -9,7 +9,7 @@ import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
-import nordmods.testmod.common.WaterDragon;
+import nordmods.testmod.common.entity.WaterDragon;
 import org.jspecify.annotations.NonNull;
 
 public class WaterDragonRenderer extends BREntityRenderer<WaterDragon, LivingEntityRenderState> {

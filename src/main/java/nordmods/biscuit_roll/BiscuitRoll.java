@@ -17,13 +17,16 @@ import org.slf4j.Logger;
 public class BiscuitRoll implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "biscuit_roll";
+    public static boolean loadServerside = false;
 
     @Override
     public void onInitialize() {
         PinwheelMolangCompiler.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, BiscuitRoll.class.getClassLoader())); //what
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("model"), ServerModelManager.instance());
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
+        if (loadServerside) {
+            ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("model"), ServerModelManager.instance());
+            ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
+        }
     }
 
     @ApiStatus.Internal

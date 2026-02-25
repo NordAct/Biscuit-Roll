@@ -10,5 +10,7 @@ public interface InjectedBRState extends BRState {
         return biscuit_roll$getInjectedDataMap();
     }
 
-    Map<StateDataType<?>, StateDataType.Holder<?>> biscuit_roll$getInjectedDataMap();
+    default Map<StateDataType<?>, StateDataType.Holder<?>> biscuit_roll$getInjectedDataMap() {
+        throw new AssertionError("Implemented in mixin");
+    }
 }

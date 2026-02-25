@@ -10,7 +10,7 @@ import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.renderer.layer.DroneGlowLayer;
-import nordmods.testmod.common.Drone;
+import nordmods.testmod.common.entity.Drone;
 import org.jspecify.annotations.NonNull;
 
 public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderState> {

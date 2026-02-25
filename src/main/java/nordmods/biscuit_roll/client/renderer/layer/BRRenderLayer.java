@@ -25,7 +25,7 @@ public abstract class BRRenderLayer {
     }
 
     @ApiStatus.Internal
-    public final void submitLayer(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+    public final void submitLayer(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {
         updateRenderState(state);
         poseStack.pushPose();
         beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
@@ -39,13 +39,13 @@ public abstract class BRRenderLayer {
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
     /// @param submitNodeCollector node collector to which submission will be made
     /// @param cameraRenderState camera render state
-    protected void beforeSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
+    protected void beforeSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {}
     
     /// @param state animated model state
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that will be used during rendering
     /// @param submitNodeCollector node collector to which submission will be made
     /// @param cameraRenderState camera render state
-    protected abstract void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState);
+    protected abstract void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState);
 
     /// Called after submitting the layer {@link BRRenderLayer#submit(BRState, PoseStack, SubmitNodeCollector, CameraRenderState)}. 
     /// Just like author of this library, this method exists for sake of existing
@@ -53,7 +53,7 @@ public abstract class BRRenderLayer {
     /// @param poseStack [gg.moonflower.pinwheel.api.transform.MatrixStack] that was used during rendering
     /// @param submitNodeCollector node collector to which submission was made
     /// @param cameraRenderState camera render state
-    protected void afterSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {}
+    protected void afterSubmit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {}
 
     /// Called before {@link BRRenderLayer#beforeSubmit(BRState, PoseStack, SubmitNodeCollector, CameraRenderState)}. 
     /// Used to update or add any extra information to state data

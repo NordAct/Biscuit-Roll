@@ -1,10 +1,15 @@
 package nordmods.testmod.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.renderer.SpecialBlockModelRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.testmod.TestMod;
+import nordmods.testmod.client.renderer.DonutRenderer;
 import nordmods.testmod.client.renderer.DragonRenderer;
 import nordmods.testmod.client.renderer.DroneRenderer;
 import nordmods.testmod.client.renderer.WaterDragonRenderer;
@@ -17,5 +22,8 @@ public class TestModClient implements ClientModInitializer {
         EntityRenderers.register(TestMod.DRONE, DroneRenderer::new);
         EntityRenderers.register(TestMod.DRAGON, DragonRenderer::new);
         EntityRenderers.register(TestMod.WATER_DRAGON, WaterDragonRenderer::new);
+
+        BlockEntityRenderers.register(TestMod.DONUT_BLOCK_ENTITY, (context -> new DonutRenderer()));
+        SpecialModelRenderers.ID_MAPPER.put(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "donut"), DonutRenderer.Unbaked.MAP_CODEC);
     }
 }

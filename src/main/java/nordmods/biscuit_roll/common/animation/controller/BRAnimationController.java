@@ -5,11 +5,13 @@ import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.biscuit_roll.common.util.BRAnimationManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -92,22 +94,21 @@ public abstract class BRAnimationController implements AnimationController {
         if (playingAnimations.containsKey(animation)) {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
             if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
-                playAnimation(
-                        new BRPlayingAnimation(
-                                getAnimationData(animation),
-                                transitionInTime,
-                                transitionOutTime,
-                                transitionInLerp,
-                                transitionOutLerp,
-                                playingAnimation.getRenderAnimationTime(),
-                                transitionInTime * transitionInLerp.apply(playingAnimation.getTransitionOutProgress())
-                        )
+                BRPlayingAnimation resumedAnimation = new BRPlayingAnimation(
+                        getAnimationData(animation),
+                        transitionInTime,
+                        transitionOutTime,
+                        transitionInLerp,
+                        transitionOutLerp,
+                        playingAnimation.getRenderAnimationTime()
                 );
+                resumedAnimation.setAnimationTime(transitionInTime * transitionInLerp.apply(playingAnimation.getTransitionOutProgress()));
+                playAnimation(resumedAnimation);
             }
             return;
         }
 
-        playAnimation(new BRPlayingAnimation(getAnimationData(animation), transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0, 0));
+        playAnimation(new BRPlayingAnimation(getAnimationData(animation), transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0));
     }
 
     /// Adds [BRPlayingAnimation] directly to the collection of playing animations. May override already playing animation if animation with same name is already playing
@@ -140,6 +141,7 @@ public abstract class BRAnimationController implements AnimationController {
 
     /// @return default easing to be used in animation transitions
     //todo figure out why some lerp modes cause twitching when they shouldn't
+    @ApiStatus.Experimental
     public AnimationData.LerpMode getDefaultEasingType() {
         return AnimationData.LerpMode.LINEAR;
     }
@@ -151,7 +153,7 @@ public abstract class BRAnimationController implements AnimationController {
         float previousAnimationTime = this.animationTime;
         this.animationTime = time;
         float diff = animationTime - previousAnimationTime;
-        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.setAnimationTime(diff));
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.advanceAnimationTime(diff));
     }
 
     /// Triggers effect keyframes on playing animations
@@ -192,6 +194,7 @@ public abstract class BRAnimationController implements AnimationController {
     public void update(BRState state) {
         animationFile = state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state);
         float animationTime = state.getStateData(StateDataTypes.ANIMATION_TIME, 0f);
+        if (animationTime < this.animationTime) BiscuitRoll.LOGGER.warn("Animation time went backwards ({})", animationTime - this.animationTime);
         setAnimationTime(animationTime);
         tick();
     }

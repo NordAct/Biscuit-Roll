@@ -13,7 +13,7 @@ import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.client.TestModClient;
 import nordmods.testmod.client.renderer.layer.RainbowGlowLayer;
-import nordmods.testmod.common.Dragon;
+import nordmods.testmod.common.entity.Dragon;
 import org.jspecify.annotations.NonNull;
 
 public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderState> {

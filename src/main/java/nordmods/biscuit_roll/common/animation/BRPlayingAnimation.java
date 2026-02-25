@@ -36,14 +36,13 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private float finishTime;
     /// Used for correct transition out interpolation calculation case when animation got finished during transition in
     private float transitionInProgress = 1;
-    public BRPlayingAnimation(AnimationData animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp, float startOffset, float initialTimeOffset) {
+    public BRPlayingAnimation(AnimationData animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp, float startOffset) {
         this.animation = animation;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);
         this.transitionInLerp = transitionInLerp;
         this.transitionOutLerp = transitionOutLerp;
         this.startOffset = startOffset;
-        this.time = initialTimeOffset;
     }
 
     @Override
@@ -71,14 +70,12 @@ public class BRPlayingAnimation implements PlayingAnimation {
 
     /// @return if animation is currently transitioning in
     public boolean isTransitioningIn() {
-        if (finished) return false;
-        return time <= transitionInTime;
+        return !finished && time <= transitionInTime;
     }
 
     /// @return if animation is currently transitioning out
     public boolean isTransitioningOut() {
-        if (!finished) return false;
-        return time - finishTime <= transitionOutTime;
+        return finished && time - finishTime <= transitionOutTime;
     }
 
     @Override
@@ -105,17 +102,18 @@ public class BRPlayingAnimation implements PlayingAnimation {
         return weight * environment.safeResolve(animation.blendWeight());
     }
 
-    /**
-     * Adds provided time difference to current animation running time if it's not paused. {@link BRPlayingAnimation#speed} how much of this time difference will be added
-     * @param timeDifference time difference between controller's previous animation time and current animation time
-     */
-    @Override
-    public void setAnimationTime(float timeDifference) {
+    /// Adds provided time difference to current animation running time if it's not paused. [BRPlayingAnimation#speed] how much of this time difference will be added
+    /// @param timeDifference time difference between controller's previous animation time and current animation time
+    public void advanceAnimationTime(float timeDifference) {
         if (paused) return;
         this.lastRenderTime = getRenderAnimationTime();
         this.time += timeDifference * speed;
     }
 
+    @Override
+    public void setAnimationTime(float time) {
+        this.time = time;
+    }
 
     @Override
     public void setWeight(float weight) {

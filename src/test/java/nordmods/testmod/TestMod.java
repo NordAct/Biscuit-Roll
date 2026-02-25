@@ -11,10 +11,23 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import nordmods.testmod.common.Dragon;
-import nordmods.testmod.common.Drone;
-import nordmods.testmod.common.WaterDragon;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import nordmods.testmod.common.block.DonutBlock;
+import nordmods.testmod.common.block.DonutBlockEntity;
+import nordmods.testmod.common.entity.Dragon;
+import nordmods.testmod.common.entity.Drone;
+import nordmods.testmod.common.entity.WaterDragon;
 import org.slf4j.Logger;
+
+import java.util.Set;
 
 public class TestMod implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -43,6 +56,22 @@ public class TestMod implements ModInitializer {
                     .of(WaterDragon::new, MobCategory.MISC)
                     .sized(2.9f, 1.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "water_dragon")))
+    );
+    public static final Block DONUT_BLOCK = Blocks.register(
+            ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MOD_ID, "donut")),
+            DonutBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(1.5F, 3.0F)
+                    .sound(SoundType.MUD_BRICKS)
+                    .noCollision()
+    );
+    public static final Item DONUT = Items.registerBlock(DONUT_BLOCK, new Item.Properties());
+    public static final BlockEntityType<DonutBlockEntity> DONUT_BLOCK_ENTITY = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "donut"),
+            new BlockEntityType<>(DonutBlockEntity::new, Set.of(DONUT_BLOCK))
     );
     @Override
     public void onInitialize() {

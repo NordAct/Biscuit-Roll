@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "testmod:block/donut",
+    "model": {
+      "type": "testmod:donut",
+      "texture": "testmod:block/donut"
+    }
+  }
+}
