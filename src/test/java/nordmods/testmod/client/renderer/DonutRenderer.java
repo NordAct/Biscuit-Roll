@@ -5,7 +5,6 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -116,7 +115,7 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
 
     @Override
     public int getCurrentTick(DonutBlockEntity blockEntity) {
-        return Minecraft.getInstance().player != null ? Minecraft.getInstance().player.tickCount : blockEntity.ticks;
+        return blockEntity.ticks;
     }
 
     @Environment(EnvType.CLIENT)
