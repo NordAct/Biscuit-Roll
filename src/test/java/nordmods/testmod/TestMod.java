@@ -2,6 +2,7 @@ package nordmods.testmod;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -11,8 +12,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -26,8 +27,6 @@ import nordmods.testmod.common.entity.Dragon;
 import nordmods.testmod.common.entity.Drone;
 import nordmods.testmod.common.entity.WaterDragon;
 import org.slf4j.Logger;
-
-import java.util.Set;
 
 public class TestMod implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -67,11 +66,19 @@ public class TestMod implements ModInitializer {
                     .sound(SoundType.MUD_BRICKS)
                     .noCollision()
     );
-    public static final Item DONUT = Items.registerBlock(DONUT_BLOCK, new Item.Properties());
+    public static final Item DONUT = Registry.register(
+            BuiltInRegistries.ITEM,
+            Identifier.fromNamespaceAndPath(MOD_ID, "donut"),
+            new BlockItem(
+                    DONUT_BLOCK,
+                    new Item.Properties().setId(ResourceKey.create(Registries.ITEM,
+                            Identifier.fromNamespaceAndPath(MOD_ID, "donut"))).useBlockDescriptionPrefix()
+            )
+    );
     public static final BlockEntityType<DonutBlockEntity> DONUT_BLOCK_ENTITY = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath(MOD_ID, "donut"),
-            new BlockEntityType<>(DonutBlockEntity::new, Set.of(DONUT_BLOCK))
+            FabricBlockEntityTypeBuilder.create(DonutBlockEntity::new, DONUT_BLOCK).build()
     );
     @Override
     public void onInitialize() {

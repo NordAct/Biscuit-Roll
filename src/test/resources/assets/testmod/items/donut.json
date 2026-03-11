@@ -1,7 +1,7 @@
 {
   "model": {
     "type": "minecraft:special",
-    "base": "testmod:block/donut",
+    "base": "testmod:item/donut",
     "model": {
       "type": "testmod:donut",
       "texture": "testmod:block/donut"

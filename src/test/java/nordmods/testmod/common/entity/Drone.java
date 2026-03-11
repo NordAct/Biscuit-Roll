@@ -1,5 +1,6 @@
 package nordmods.testmod.common.entity;
 
+import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,15 +12,46 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
 
 public class Drone extends Mob implements BRAnimatedObject {
-    private final BRAnimationController controller1 = new EntityAnimationController<>(this, true);
-    private final BRAnimationController controller2 = new EntityAnimationController<>(this, false);
+    private final BRAnimationController controller1 = new BRAnimationController(true) {
+        @Override
+        protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
+
+        }
+
+        @Override
+        protected void onParticleEffect(AnimationData.ParticleEffect particleEffect, BRModel model, BRState state) {
+
+        }
+
+        @Override
+        protected void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state) {
+
+        }
+    };
+    private final BRAnimationController controller2 = new BRAnimationController(false) {
+        @Override
+        protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
+
+        }
+
+        @Override
+        protected void onParticleEffect(AnimationData.ParticleEffect particleEffect, BRModel model, BRState state) {
+
+        }
+
+        @Override
+        protected void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state) {
+
+        }
+    };
     public Drone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }

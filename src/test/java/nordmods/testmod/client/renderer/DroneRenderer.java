@@ -40,7 +40,7 @@ public class DroneRenderer extends BREntityRenderer<Drone, LivingEntityRenderSta
 
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
-        return RenderTypes.entityCutoutNoCull(texture);
+        return RenderTypes.entityCutout(texture);
     }
 
     @Override

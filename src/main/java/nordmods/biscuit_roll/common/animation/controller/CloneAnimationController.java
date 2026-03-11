@@ -16,8 +16,8 @@ import java.util.Map;
  * All it does is making sure it doesn't keep done animations that are done on other controller so garbage collector can do its job
  */
 public class CloneAnimationController extends BRAnimationController {
-    public CloneAnimationController(boolean isClient) {
-        super(isClient, false);
+    public CloneAnimationController() {
+        super(false);
     }
 
     @Override

@@ -24,8 +24,8 @@ public class BiscuitRoll implements ModInitializer {
         PinwheelMolangCompiler.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, BiscuitRoll.class.getClassLoader())); //what
 
         if (loadServerside) {
-            ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("model"), ServerModelManager.instance());
-            ResourceLoader.get(PackType.SERVER_DATA).registerReloader(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
+            ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("model"), ServerModelManager.instance());
+            ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
         }
     }
 

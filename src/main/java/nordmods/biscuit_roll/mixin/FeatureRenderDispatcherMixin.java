@@ -28,8 +28,13 @@ public class FeatureRenderDispatcherMixin {
     @Unique
     private final BRModelRenderer biscuit_roll$modelRenderer = new BRModelRenderer();
 
-    @Inject(method = "renderAllFeatures", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ModelPartFeatureRenderer;render(Lnet/minecraft/client/renderer/SubmitNodeCollection;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V"))
-    private void renderBRModels(CallbackInfo ci, @Local SubmitNodeCollection submitNodeCollection) {
-        biscuit_roll$modelRenderer.render(submitNodeCollection, bufferSource, outlineBufferSource, crumblingBufferSource);
+    @Inject(method = "renderSolidFeatures", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer;renderSolid(Lnet/minecraft/client/renderer/SubmitNodeCollection;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V"))
+    private void renderSolidBRModels(CallbackInfo ci, @Local(name = "collection") SubmitNodeCollection submitNodeCollection) {
+        biscuit_roll$modelRenderer.renderSolid(submitNodeCollection, bufferSource, outlineBufferSource, crumblingBufferSource);
+    }
+
+    @Inject(method = "renderTranslucentFeatures", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer;renderTranslucent(Lnet/minecraft/client/renderer/SubmitNodeCollection;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V"))
+    private void renderTranslucentBRModels(CallbackInfo ci, @Local(name = "collection") SubmitNodeCollection submitNodeCollection) {
+        biscuit_roll$modelRenderer.renderSolid(submitNodeCollection, bufferSource, outlineBufferSource, crumblingBufferSource);
     }
 }

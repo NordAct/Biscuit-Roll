@@ -20,7 +20,7 @@
   ],
   "depends": {
     "fabricloader": "*",
-    "fabric": "*",
+    "fabric-object-builder-api-v1": "*",
     "minecraft": "*",
     "biscuit_roll": "*"
   }

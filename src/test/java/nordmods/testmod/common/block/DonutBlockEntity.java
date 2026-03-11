@@ -15,7 +15,7 @@ import java.util.List;
 
 public class DonutBlockEntity extends BlockEntity implements BRAnimatedObject {
     public int ticks;
-    public final BRAnimationController controller = new BRAnimationController(true, true) {
+    public final BRAnimationController controller = new BRAnimationController(true) {
         @Override
         protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
 

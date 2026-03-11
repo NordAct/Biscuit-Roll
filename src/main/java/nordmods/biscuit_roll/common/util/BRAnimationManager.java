@@ -63,14 +63,15 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     /// @param animationId id of animation file
     /// @param animationName name of animation to get
     /// @return [AnimationData] for specified animation
-    /// @throws NoSuchElementException if specified animation doesn't exist in specified animation file
+    /// @throws NoSuchElementException if specified animation doesn't exist in specified animation file or if specified animation file is not loaded
     public AnimationData getAnimation(Identifier animationId, String animationName) {
         AnimationData[] data = getAnimations(animationId);
+        if (data == null) throw new NoSuchElementException("Animation file " + "'" + animationId + "'" + " is not loaded. Check log for errors and ensure that specified animation file location is correct");
         return Arrays
                 .stream(data)
                 .filter(animationData -> animationData.name().equals(animationName))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + animationId));
+                .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + "'" + animationId + "'. Ensure that specified animation name is correct"));
     }
 
     protected abstract Map<Identifier, AnimationData[]> getHolderMap();

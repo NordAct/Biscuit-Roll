@@ -1,9 +1,17 @@
 package nordmods.testmod.common.entity;
 
+import com.mojang.math.Axis;
+import gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
+import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -14,15 +22,18 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
-    private final BRAnimationController controller0 = new EntityAnimationController<>(this, false);
-    private final BRAnimationController controller1 = new EntityAnimationController<>(this, true);
+    private final BRAnimationController controller0 = new DragonAnimationController(false);
+    private final BRAnimationController controller1 = new DragonAnimationController(true);
     private final String[] animations = {"idle", "walk", "dance", "fly.idle", "fly.straight"};
     public Dragon(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
@@ -94,5 +105,53 @@ public class Dragon extends Mob implements BRAnimatedObject {
             if (!player.isShiftKeyDown()) setAnimationOrdinal((getAnimationOrdinal() + 1) % animations.length);
         }
         return super.mobInteract(player, interactionHand);
+    }
+
+    // you might want to move this to separate class if you wish to use client-only stuff to avoid any issues with dedicated server during class loading
+    private class DragonAnimationController extends BRAnimationController {
+        public DragonAnimationController(boolean singleAnimation) {
+            super(singleAnimation);
+        }
+
+        @Override
+        protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
+            try {
+                if (level().isClientSide()) {
+                    playSound(
+                            SoundEvent.createVariableRangeEvent(Identifier.tryParse(soundEffect.effect())),
+                            DragonAnimationController.this.getEnvironment().resolve(soundEffect.pitch()),
+                            DragonAnimationController.this.getEnvironment().resolve(soundEffect.volume())
+                    );
+                }
+            } catch (MolangRuntimeException molangRuntimeException) {
+                throw (new RuntimeException("Failed to play sound effect " + soundEffect.effect() + " at " + soundEffect.time(), molangRuntimeException));
+            }
+        }
+
+        @Override
+        protected void onParticleEffect(AnimationData.ParticleEffect particleEffect, BRModel model, BRState state) {
+            if (level().isClientSide()) {
+                LocatorTransformation transformation = model.getLocatorTransformation(particleEffect.locator());
+                if (transformation != null) {
+                    ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.tryParse(particleEffect.effect()));
+                    if (!(particleType instanceof ParticleOptions particleOptions)) return;
+                    Vector4f vec = transformation.matrix().transform(new Vector4f(0, 0, 0, 1));
+                    //note: model rotation relative to entity's yaw is happening via transforming PoseStack during rendering
+                    // in reality model itself is still facing same direction, so we have to rotate it by ourselves
+                    Vector3f pos = new Vector3f(vec.x(), vec.y(), vec.z()).rotate(Axis.YP.rotationDegrees(180 - getYRot()));
+                    level().addParticle(
+                            particleOptions,
+                            pos.x() + getX(),
+                            pos.y() + getY(),
+                            pos.z() + getZ(),
+                            0, 0, 0);
+                }
+            }
+        }
+
+        @Override
+        protected void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state) {
+
+        }
     }
 }

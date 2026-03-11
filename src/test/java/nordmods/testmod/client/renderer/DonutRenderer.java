@@ -1,7 +1,6 @@
 package nordmods.testmod.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,8 +11,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemDisplayContext;
 import nordmods.biscuit_roll.client.renderer.BRBlockEntityRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.RenderUtil;
@@ -66,41 +63,13 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
     }
 
     @Override
-    public void submit(@NonNull ItemDisplayContext itemDisplayContext, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector submitNodeCollector, int light, int overlayTexture, boolean foil, int outlineColor) {
+    public void submit(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         BlockEntityRenderState state = createRenderState();
         state.setStateData(StateDataTypes.CONTROLLERS, List.of());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        state.setStateData(ClientStateDataTypes.LIGHT, light);
-        state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, overlayTexture);
+        state.setStateData(ClientStateDataTypes.LIGHT, lightCoords);
+        state.setStateData(ClientStateDataTypes.OVERLAY_TEXTURE, overlayCoords);
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, outlineColor);
-        switch (itemDisplayContext) {
-            case GUI -> {
-                poseStack.translate(-0.05, 0.3, 0);
-                poseStack.rotateXYZ(
-                        30f * Mth.DEG_TO_RAD,
-                        30f * Mth.DEG_TO_RAD,
-                        30f * Mth.DEG_TO_RAD
-                );
-            }
-            case FIRST_PERSON_LEFT_HAND,
-                 FIRST_PERSON_RIGHT_HAND -> {
-                boolean bl = itemDisplayContext.leftHand();
-                poseStack.translate((bl ? -2.5F : 2.5F) / 16.0F, 1, 0.0F);
-                poseStack.rotate(Axis.XN.rotationDegrees(-90));
-            }
-            case THIRD_PERSON_LEFT_HAND,
-                 THIRD_PERSON_RIGHT_HAND -> {
-                poseStack.scale(0.5);
-                poseStack.translate(1, 1, 1);
-                poseStack.rotate(Axis.XP.rotationDegrees(90));
-                poseStack.translate(-0.5, 0, -0.5);
-                poseStack.translate(0, 0.1, -0.25);
-            }
-            case GROUND -> {
-                poseStack.scale(0.5);
-                poseStack.translate(0.5, 0, 0.5);
-            }
-        }
         submit(state, poseStack, submitNodeCollector, null);
     }
 
@@ -119,7 +88,7 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
     }
 
     @Environment(EnvType.CLIENT)
-    public record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public record Unbaked() implements NoDataSpecialModelRenderer.Unbaked {
         public static final MapCodec<DonutRenderer.Unbaked> MAP_CODEC = MapCodec.unit(new DonutRenderer.Unbaked());
 
         @Override
@@ -128,7 +97,7 @@ public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, Block
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(SpecialModelRenderer.@NonNull BakingContext bakingContext) {
+        public @NonNull SpecialModelRenderer<Void> bake(@NonNull BakingContext bakingContext) {
             return new DonutRenderer();
         }
     }

@@ -13,7 +13,7 @@ public class BiscuitRollClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(BiscuitRoll.id("model"), ClientModelManager.instance());
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(BiscuitRoll.id("animation"), ClientAnimationManager.instance());
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(BiscuitRoll.id("model"), ClientModelManager.instance());
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(BiscuitRoll.id("animation"), ClientAnimationManager.instance());
     }
 }

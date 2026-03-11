@@ -23,16 +23,16 @@
   ],
   "depends": {
     "fabricloader": "*",
-    "fabric": "*",
+    "fabric-resource-loader-v1": "*",
     "minecraft": "*"
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_11788": ["nordmods/biscuit_roll/client/internal/BRModelSubmitCollection"],
-      "net/minecraft/class_11661": ["nordmods/biscuit_roll/client/internal/BRModelSubmitStorage"],
-      "net/minecraft/class_10017": ["nordmods/biscuit_roll/client/internal/InjectedBRState"],
-      "net/minecraft/class_11954": ["nordmods/biscuit_roll/client/internal/InjectedBRState"],
-      "net/minecraft/class_4587": ["nordmods/biscuit_roll/client/internal/BRMatrixStack"]
+      "net/minecraft/client/renderer/SubmitNodeCollection": ["nordmods/biscuit_roll/client/internal/BRModelSubmitCollection"],
+      "net/minecraft/client/renderer/SubmitNodeStorage": ["nordmods/biscuit_roll/client/internal/BRModelSubmitStorage"],
+      "net/minecraft/client/renderer/entity/state/EntityRenderState": ["nordmods/biscuit_roll/client/internal/InjectedBRState"],
+      "net/minecraft/client/renderer/blockentity/state/BlockEntityRenderState": ["nordmods/biscuit_roll/client/internal/InjectedBRState"],
+      "com/mojang/blaze3d/vertex/PoseStack": ["nordmods/biscuit_roll/client/internal/BRMatrixStack"]
     }
   }
 }

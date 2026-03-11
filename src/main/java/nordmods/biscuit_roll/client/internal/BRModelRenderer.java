@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollection;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.util.LightCoordsUtil;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -29,25 +29,15 @@ import java.util.*;
 @ApiStatus.Internal
 public class BRModelRenderer {
     private final PoseStack stack = new PoseStack();
-    public void render(
+    public void renderTranslucent(
             SubmitNodeCollection submitNodeCollection,
             MultiBufferSource.BufferSource bufferSource,
             OutlineBufferSource outlineBufferSource,
             MultiBufferSource.BufferSource crumblingBufferSource
     ) {
         Storage storage = submitNodeCollection.biscuit_roll$getSubmitStorage();
-        renderOpaque(bufferSource, outlineBufferSource, storage.opaque, crumblingBufferSource);
         storage.translucent.sort(Comparator.comparingDouble(translucentModelSubmit -> -translucentModelSubmit.position().lengthSquared()));
-        renderTranslucent(bufferSource, outlineBufferSource, storage.translucent, crumblingBufferSource);
-    }
-
-    private void renderTranslucent(
-            MultiBufferSource.BufferSource bufferSource,
-            OutlineBufferSource outlineBufferSource,
-            List<TranslucentSubmit> list,
-            MultiBufferSource.BufferSource crumblingBufferSource
-    ) {
-        for (TranslucentSubmit translucentModelSubmit : list) {
+        for (TranslucentSubmit translucentModelSubmit : storage.translucent) {
             this.renderModel(
                     translucentModelSubmit.submit(),
                     translucentModelSubmit.renderType(),
@@ -58,17 +48,18 @@ public class BRModelRenderer {
         }
     }
 
-    private void renderOpaque(
+    public void renderSolid(
+            SubmitNodeCollection submitNodeCollection,
             MultiBufferSource.BufferSource bufferSource,
             OutlineBufferSource outlineBufferSource,
-            Map<RenderType, List<Submit>> map,
-            MultiBufferSource.BufferSource bufferSource2
+            MultiBufferSource.BufferSource crumblingBufferSource
     ) {
-        for (Map.Entry<RenderType, List<Submit>> entry : map.entrySet()) {
+        Storage storage = submitNodeCollection.biscuit_roll$getSubmitStorage();
+        for (Map.Entry<RenderType, List<Submit>> entry : storage.solid.entrySet()) {
             VertexConsumer vertexConsumer = bufferSource.getBuffer(entry.getKey());
 
             for (Submit submit : entry.getValue()) {
-                this.renderModel(submit, entry.getKey(), vertexConsumer, outlineBufferSource, bufferSource2);
+                this.renderModel(submit, entry.getKey(), vertexConsumer, outlineBufferSource, crumblingBufferSource);
             }
         }
     }
@@ -87,7 +78,7 @@ public class BRModelRenderer {
 
         int color = submit.state.getStateData(ClientStateDataTypes.COLOR, -1);
         int overlayTexture = submit.state.getStateData(ClientStateDataTypes.OVERLAY_TEXTURE, OverlayTexture.NO_OVERLAY);
-        int light = submit.state.getStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+        int light = submit.state.getStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
 
         boolean invisible = submit.state.getStateData(ClientStateDataTypes.INVISIBLE, false);
         if (!invisible) {
@@ -159,22 +150,22 @@ public class BRModelRenderer {
     ) {}
 
     public static class Storage {
-        private final Map<RenderType, List<Submit>> opaque = new HashMap<>();
+        private final Map<RenderType, List<Submit>> solid = new HashMap<>();
         private final List<TranslucentSubmit> translucent = new ArrayList<>();
         private final Set<RenderType> used = new ObjectOpenHashSet<>();
 
         public void add(RenderType renderType, Submit submit) {
-            if (renderType.pipeline().getBlendFunction().isEmpty()) {
-                opaque.computeIfAbsent(renderType, renderTypex -> new ArrayList<>()).add(submit);
+            if (!renderType.hasBlending()) {
+                solid.computeIfAbsent(renderType, renderTypex -> new ArrayList<>()).add(submit);
             } else {
-                Vector3f vector3f = submit.pose().pose().transformPosition(new Vector3f());
-                translucent.add(new TranslucentSubmit(submit, renderType, vector3f));
+                Vector3f pos = submit.pose().pose().transformPosition(new Vector3f());
+                translucent.add(new TranslucentSubmit(submit, renderType, pos));
             }
         }
 
         public void clear() {
             this.translucent.clear();
-            for (Map.Entry<RenderType, List<Submit>> entry : opaque.entrySet()) {
+            for (Map.Entry<RenderType, List<Submit>> entry : solid.entrySet()) {
                 List<Submit> list = entry.getValue();
                 if (!list.isEmpty()) {
                     used.add(entry.getKey());
@@ -184,7 +175,7 @@ public class BRModelRenderer {
         }
 
         public void endFrame() {
-            opaque.keySet().removeIf(renderType -> !this.used.contains(renderType));
+            solid.keySet().removeIf(renderType -> !this.used.contains(renderType));
             used.clear();
         }
     }

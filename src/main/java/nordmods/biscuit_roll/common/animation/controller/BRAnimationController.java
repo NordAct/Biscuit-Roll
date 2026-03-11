@@ -5,7 +5,6 @@ import gg.moonflower.molangcompiler.api.MolangRuntime;
 import gg.moonflower.pinwheel.api.animation.AnimationController;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -15,7 +14,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /// Biscuit Roll Animation Controller or BRAnimationController for short
@@ -28,18 +29,14 @@ public abstract class BRAnimationController implements AnimationController {
     /// Current animation file
     @Nullable
     protected Identifier animationFile;
-    /// Defines on which logical side controller is
-    protected final boolean isClient;
     /// Defines if controller can have only one animation running at the time.
     /// If it is, when new animation is attempted to be played, previously running animation will be stopped via {@link BRPlayingAnimation#stop()}
     protected final boolean singleAnimation;
     /// Controller's current animation time
     private float animationTime = 0;
 
-    /// @param isClient is controller on client side
     /// @param singleAnimation is controller in single animation mode
-    public BRAnimationController(boolean isClient, boolean singleAnimation) {
-        this.isClient = isClient;
+    public BRAnimationController(boolean singleAnimation) {
         this.singleAnimation = singleAnimation;
     }
 
@@ -194,7 +191,6 @@ public abstract class BRAnimationController implements AnimationController {
     public void update(BRState state) {
         animationFile = state.getStateData(StateDataTypes.MODEL_PROVIDER).getAnimationId(state);
         float animationTime = state.getStateData(StateDataTypes.ANIMATION_TIME, 0f);
-        if (animationTime < this.animationTime) BiscuitRoll.LOGGER.warn("Animation time went backwards ({})", animationTime - this.animationTime);
         setAnimationTime(animationTime);
         tick();
     }
@@ -221,6 +217,6 @@ public abstract class BRAnimationController implements AnimationController {
     /// @param animation animation name
     /// @return AnimationData for specified animation
     public AnimationData getAnimationData(String animation) {
-        return BRAnimationManager.getAnimationManager(isClient).getAnimation(animationFile, animation);
+        return BRAnimationManager.getAnimationManager(true).getAnimation(animationFile, animation);
     }
 }

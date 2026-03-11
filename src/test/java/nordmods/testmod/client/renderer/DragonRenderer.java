@@ -44,7 +44,7 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
 
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
-        return RenderTypes.entityCutoutNoCull(texture);
+        return RenderTypes.entityCutout(texture);
     }
 
     @Override

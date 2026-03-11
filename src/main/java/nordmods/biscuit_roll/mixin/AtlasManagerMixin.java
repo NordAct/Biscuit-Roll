@@ -2,7 +2,7 @@ package nordmods.biscuit_roll.mixin;
 
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import org.spongepowered.asm.mixin.Final;

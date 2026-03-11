@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
     id 'maven-publish'
     id 'com.gradleup.shadow' version "9.3.0"
 }
@@ -21,13 +21,10 @@ shadowJar {
     configurations = [project.configurations.shade]
     relocate('gg.moonflower.molangcompiler', 'libs.gg.moonflower.molangcompiler')
     relocate('gg.moonflower.pinwheel', 'libs.gg.moonflower.pinwheel')
-}
-
-remapJar {
-    input = shadowJar.archiveFile
     from(".") {
         include 'LICENSE*'
     }
+    archiveClassifier = ''
 }
 
 repositories {
@@ -51,10 +48,21 @@ configurations {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    //todo do something to remove this as dependency completely
+    Set<String> apiModules = [
+            "fabric-api-base",
+            "fabric-resource-loader-v1",
+            "fabric-object-builder-api-v1",
+            "fabric-rendering-v1"
+    ]
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    apiModules.forEach {
+        implementation(fabricApi.module(it, project.fabric_version))
+    }
+
+    //implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
     shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
     shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
 
@@ -75,7 +83,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
@@ -185,7 +193,7 @@ publishing {
             artifact(fatSourcesJar) {
                 classifier = 'sources'
             }
-            artifact(remapJar) {
+            artifact(shadowJar) {
                 classifier = ''
             }
         }

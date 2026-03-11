@@ -1,9 +1,9 @@
 package nordmods.testmod.client.renderer.layer;
 
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.TextureRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
@@ -30,7 +30,7 @@ public class RainbowGlowLayer extends TextureRenderLayer {
 
     @Override
     protected void updateRenderState(BRState state) {
-        state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+        state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
         state.setStateData(ClientStateDataTypes.INVISIBLE, false);
     }
 
