@@ -35,6 +35,6 @@ public class FeatureRenderDispatcherMixin {
 
     @Inject(method = "renderTranslucentFeatures", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer;renderTranslucent(Lnet/minecraft/client/renderer/SubmitNodeCollection;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V"))
     private void renderTranslucentBRModels(CallbackInfo ci, @Local(name = "collection") SubmitNodeCollection submitNodeCollection) {
-        biscuit_roll$modelRenderer.renderSolid(submitNodeCollection, bufferSource, outlineBufferSource, crumblingBufferSource);
+        biscuit_roll$modelRenderer.renderTranslucent(submitNodeCollection, bufferSource, outlineBufferSource, crumblingBufferSource);
     }
 }
