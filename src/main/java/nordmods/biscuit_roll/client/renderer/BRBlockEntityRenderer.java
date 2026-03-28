@@ -58,6 +58,7 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
         state.setStateData(StateDataTypes.ANIMATION_TIME, ((getCurrentTick(blockEntity) + tickDelta) / 20f));
         state.setStateData(ClientStateDataTypes.CRUMBLING_OVERLAY, crumblingOverlay);
+        state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
     }
 
     public abstract int getCurrentTick(T blockEntity);

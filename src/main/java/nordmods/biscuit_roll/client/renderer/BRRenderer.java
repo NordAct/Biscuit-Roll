@@ -22,6 +22,7 @@ import java.util.Collection;
 /// Base class for renderers
 /// @see BRObjectRenderer
 /// @see BREntityRenderer
+/// @see BRBlockEntityRenderer
 public interface BRRenderer<S extends BRState> {
     /// @param state animated model state
     /// @return model for provided state
