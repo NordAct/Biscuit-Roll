@@ -138,4 +138,9 @@ public interface BRRenderer<S extends BRState> {
                 texture
         );
     }
+
+    /// @return name for debug
+    default String debugName() {
+        return "Unknown";
+    }
 }

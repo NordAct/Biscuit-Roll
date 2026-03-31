@@ -10,7 +10,7 @@ import java.util.Set;
 
 @ApiStatus.Internal
 public class DebugMixinPlugin implements IMixinConfigPlugin {
-    private static final boolean DEBUG_ENABLED = checkDebugEnabled();
+    public static final boolean DEBUG_ENABLED = checkDebugEnabled();
     @Override
     public void onLoad(String mixinPackage) {
 

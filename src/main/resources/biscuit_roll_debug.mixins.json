@@ -8,9 +8,10 @@
   ],
   "client": [
     "AnimatedBoneImpMixin",
+    "BRModelMixin",
     "BRModelRendererMixin",
     "PolygonRendererMixin",
-    "BRModelMixin"
+    "BRRenererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

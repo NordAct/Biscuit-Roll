@@ -56,4 +56,9 @@ public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRS
         extractRenderState(object, state, tickDelta);
         submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
     }
+
+    @Override
+    public String debugName() {
+        return "Object";
+    }
 }

@@ -163,4 +163,9 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
             renderer.extractRenderState(entity, state, tickDelta);
         }
     }
+
+    @Override
+    public String debugName() {
+        return "Entity";
+    }
 }

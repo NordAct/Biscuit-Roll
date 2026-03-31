@@ -62,4 +62,9 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
     }
 
     public abstract int getCurrentTick(T blockEntity);
+
+    @Override
+    public String debugName() {
+        return "Block Entity";
+    }
 }
