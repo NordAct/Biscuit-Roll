@@ -73,11 +73,10 @@ public class BRModel implements GeometryModel {
                 continue;
             }
 
-            AnimationData data = animation.getAnimation();
             float localAnimationTime = animation.getRenderAnimationTime();
             environment.edit().setQuery("anim_time", localAnimationTime);
 
-            for (AnimationData.BoneAnimation boneAnimation : data.boneAnimations()) {
+            for (AnimationData.BoneAnimation boneAnimation : animation.getAnimation().boneAnimations()) {
                 AnimatedBone bone = this.getBone(boneAnimation.name());
                 if (bone == null) {
                     continue;

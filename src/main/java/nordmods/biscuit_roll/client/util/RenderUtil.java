@@ -12,13 +12,10 @@ import java.util.function.Consumer;
 public class RenderUtil {
     public static void getExtentsForGui(BRModel model, PoseStack poseStack, Consumer<Vector3fc> consumer) {
         model.render((matrixStack, polygon) -> {
-            PoseStack.Pose pose = poseStack.last();
-            Matrix4f matrix4f = pose.pose();
+            Matrix4f matrix4f = poseStack.last().pose();
             Vector3f vector3f = new Vector3f();
 
-            for (int i = 0; i < 4; i ++) {
-                pose.transformNormal(polygon.normals()[i], vector3f);
-                Vertex vertex = polygon.vertices()[i];
+            for (Vertex vertex : polygon.vertices()) {
                 float vertexX = vertex.x();
                 float vertexY = vertex.y();
                 float vertexZ = vertex.z();

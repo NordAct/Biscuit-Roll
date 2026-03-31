@@ -19,7 +19,8 @@
     ]
   },
   "mixins": [
-    "biscuit_roll.mixins.json"
+    "biscuit_roll.mixins.json",
+    "biscuit_roll_debug.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",

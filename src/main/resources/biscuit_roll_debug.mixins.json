@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "nordmods.biscuit_roll.client.internal.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "plugin": "nordmods.biscuit_roll.common.internal.DebugMixinPlugin",
+  "mixins": [
+  ],
+  "client": [
+    "AnimatedBoneImpMixin",
+    "BRModelRendererMixin",
+    "PolygonRendererMixin",
+    "BRModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

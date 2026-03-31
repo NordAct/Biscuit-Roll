@@ -3,8 +3,10 @@ package nordmods.biscuit_roll.client.internal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import gg.moonflower.pinwheel.api.geometry.GeometryRenderer;
 import gg.moonflower.pinwheel.api.geometry.bone.Polygon;
 import gg.moonflower.pinwheel.api.geometry.bone.Vertex;
+import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
@@ -19,7 +21,6 @@ import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
@@ -29,6 +30,7 @@ import java.util.*;
 @ApiStatus.Internal
 public class BRModelRenderer {
     private final PoseStack stack = new PoseStack();
+    private final PolygonRenderer polygonRenderer = new PolygonRenderer();
     public void renderTranslucent(
             SubmitNodeCollection submitNodeCollection,
             MultiBufferSource.BufferSource bufferSource,
@@ -105,35 +107,12 @@ public class BRModelRenderer {
         stack.popPose();
     }
 
-    private void renderPolygon(PoseStack.Pose pose, Polygon polygon, VertexConsumer vertexConsumer, int color, int overlayTexture, int light) {
-        Matrix4f matrix4f = pose.pose();
-        Vector3f vector3f = new Vector3f();
-
-        for (int i = 0; i < 4; i ++) {
-            Vector3f normal = pose.transformNormal(polygon.normals()[i], vector3f);
-            float normalX = normal.x();
-            float normalY = normal.y();
-            float normalZ = normal.z();
-
-            Vertex vertex = polygon.vertices()[i];
-            float vertexX = vertex.x();
-            float vertexY = vertex.y();
-            float vertexZ = vertex.z();
-
-            Vector3f pos = matrix4f.transformPosition(vertexX, vertexY, vertexZ, vector3f);
-
-            vertexConsumer.addVertex(
-                    pos.x(), pos.y(), pos.z(),
-                    color,
-                    vertex.u(), vertex.v(),
-                    overlayTexture,
-                    light,
-                    normalX, normalY, normalZ);
-        }
-    }
-
     private void renderModel(BRModel model, PoseStack stack, VertexConsumer vertexConsumer, int color, int overlayTexture, int light) {
-        model.render((matrixStack, polygon) -> renderPolygon(stack.last(), polygon, vertexConsumer, color, overlayTexture, light), stack);
+        polygonRenderer.color = color;
+        polygonRenderer.overlayTexture = overlayTexture;
+        polygonRenderer.light = light;
+        polygonRenderer.vertexConsumer = vertexConsumer;
+        model.render(polygonRenderer, stack);
     }
 
     public record Submit(
@@ -177,6 +156,40 @@ public class BRModelRenderer {
         public void endFrame() {
             solid.keySet().removeIf(renderType -> !this.used.contains(renderType));
             used.clear();
+        }
+    }
+
+    public static class PolygonRenderer implements GeometryRenderer {
+        private int color;
+        private int overlayTexture;
+        private int light;
+        private VertexConsumer vertexConsumer;
+
+        @Override
+        public void render(MatrixStack matrixStack, Polygon polygon) {
+            Vector3f vector3f = new Vector3f();
+
+            for (int i = 0; i < polygon.vertices().length; i ++) {
+                Vector3f normal = ((PoseStack)matrixStack).last().transformNormal(polygon.normals()[i], vector3f);
+                float normalX = normal.x();
+                float normalY = normal.y();
+                float normalZ = normal.z();
+
+                Vertex vertex = polygon.vertices()[i];
+                float vertexX = vertex.x();
+                float vertexY = vertex.y();
+                float vertexZ = vertex.z();
+
+                Vector3f pos = matrixStack.position().transformPosition(vertexX, vertexY, vertexZ, vector3f);
+
+                vertexConsumer.addVertex(
+                        pos.x(), pos.y(), pos.z(),
+                        color,
+                        vertex.u(), vertex.v(),
+                        overlayTexture,
+                        light,
+                        normalX, normalY, normalZ);
+            }
         }
     }
 }
