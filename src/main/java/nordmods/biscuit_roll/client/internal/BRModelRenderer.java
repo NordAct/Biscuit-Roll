@@ -135,7 +135,7 @@ public class BRModelRenderer {
 
         public void add(RenderType renderType, Submit submit) {
             if (!renderType.hasBlending()) {
-                solid.computeIfAbsent(renderType, renderTypex -> new ArrayList<>()).add(submit);
+                solid.computeIfAbsent(renderType, _ -> new ArrayList<>()).add(submit);
             } else {
                 Vector3f pos = submit.pose().pose().transformPosition(new Vector3f());
                 translucent.add(new TranslucentSubmit(submit, renderType, pos));
@@ -154,7 +154,7 @@ public class BRModelRenderer {
         }
 
         public void endFrame() {
-            solid.keySet().removeIf(renderType -> !this.used.contains(renderType));
+            solid.keySet().removeIf(renderType -> !used.contains(renderType));
             used.clear();
         }
     }

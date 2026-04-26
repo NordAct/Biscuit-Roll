@@ -61,7 +61,9 @@ public interface BRRenderer<S extends BRState> {
     /// @param submitNodeCollector node collector to which model will be submitted
     /// @param cameraRenderState camera render state
     default void submitBRModel(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {
-        submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector);
+        if (submitNodeCollector instanceof BRModelSubmitStorage brModelSubmitStorage) {
+            submit(state, poseStack, submitNodeCollector, cameraRenderState, brModelSubmitStorage);
+        }
     }
 
     /// Submits model for render in specified order
@@ -70,7 +72,9 @@ public interface BRRenderer<S extends BRState> {
     /// @param submitNodeCollector node collector to which model will be submitted
     /// @param cameraRenderState camera render state
     default void submitBRModelOrdered(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState, int order) {
-        submit(state, poseStack, submitNodeCollector, cameraRenderState, (BRModelSubmitStorage) submitNodeCollector.order(order));
+        if (submitNodeCollector.order(order) instanceof BRModelSubmitStorage brModelSubmitStorage) {
+            submit(state, poseStack, submitNodeCollector, cameraRenderState, brModelSubmitStorage);
+        }
     }
 
     /// Animates and submits model and its layers for render
