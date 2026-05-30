@@ -4,7 +4,7 @@ plugins {
     id 'com.gradleup.shadow' version "9.3.0"
 }
 
-version = project.mod_version
+version = project.mod_version + "-" + project.minecraft_version
 group = project.maven_group
 
 base {
@@ -185,29 +185,29 @@ tasks.register('fatSourcesJar', Jar) {
 sourcesJar.finalizedBy fatSourcesJar
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = rootProject.properties.get("maven_group")
-            artifactId = rootProject.properties.get("archives_base_name")
-            version = rootProject.properties.get("mod_version")
-            artifact(fatSourcesJar) {
-                classifier = 'sources'
-            }
-            artifact(shadowJar) {
-                classifier = ''
-            }
-        }
-    }
+    //publications {
+    //    mavenJava(MavenPublication) {
+    //        groupId = rootProject.properties.get("maven_group")
+    //        artifactId = rootProject.properties.get("archives_base_name")
+    //        version = rootProject.properties.get("mod_version")
+    //        artifact(fatSourcesJar) {
+    //            classifier = 'sources'
+    //        }
+    //        artifact(shadowJar) {
+    //            classifier = ''
+    //        }
+    //    }
+    //}
 
-    repositories {
-        maven {
-            allowInsecureProtocol = true //todo fix this once done setting up maven
-            name = 'nordact-repo'
-            url = uri('http://192.168.2.57:8080/releases/')
-            credentials {
-                username = providers.environmentVariable("MAVEN_USERNAME").get()
-                password = providers.environmentVariable("MAVEN_TOKEN").get()
-            }
-        }
-    }
+    //repositories {
+    //    maven {
+    //        allowInsecureProtocol = true //todo fix this once done setting up maven
+    //        name = 'nordact-repo'
+    //        url = uri('http://192.168.2.57:8080/releases/')
+    //        credentials {
+    //            username = providers.environmentVariable("MAVEN_USERNAME").get()
+    //            password = providers.environmentVariable("MAVEN_TOKEN").get()
+    //        }
+    //    }
+    //}
 }
