@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
+import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -87,7 +89,7 @@ public interface BRRenderer<S extends BRState> {
 
         Identifier texture = getTextureId(state);
         BRModel model = getModel(state);
-        submitModel(poseStack, model, state, this::getRenderType, texture, brModelSubmitStorage);
+        submitModel(poseStack, model, state, this::getRenderType, texture, getSpriteForTexture(texture), brModelSubmitStorage);
 
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
         controllers.forEach(controller -> controller.update(state));
@@ -122,6 +124,11 @@ public interface BRRenderer<S extends BRState> {
         getRenderLayers().add(renderLayer);
     }
 
+    @Nullable
+    default TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return AnimatedTextureUtil.getAnimatedTextureSprite(texture);
+    }
+
     /// Submits {@link BRModel} for render
     static void submitModel(
             PoseStack poseStack,
@@ -129,6 +136,7 @@ public interface BRRenderer<S extends BRState> {
             BRState state,
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider,
             Identifier texture,
+            @Nullable TextureAtlasSprite sprite,
             BRModelSubmitStorage submitNodeCollector
     ) {
         if (model == null) {
@@ -139,7 +147,8 @@ public interface BRRenderer<S extends BRState> {
                 model,
                 state,
                 renderTypeProvider,
-                texture
+                texture,
+                sprite
         );
     }
 

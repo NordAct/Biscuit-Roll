@@ -6,9 +6,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelRenderer;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitCollection;
-import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,9 +28,8 @@ public class SubmitNodeCollectionMixin implements BRModelSubmitCollection {
     }
 
     @Override
-    public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderTypeProvider renderTypeProvider, Identifier texture) {
+    public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderTypeProvider renderTypeProvider, Identifier texture, @Nullable TextureAtlasSprite sprite) {
         wasUsed = true;
-        TextureAtlasSprite sprite = AnimatedTextureUtil.getAnimatedTextureSprite(texture);
         biscuit_roll$storage.add(renderTypeProvider.getRenderType(state, sprite == null ? texture : sprite.atlasLocation()),
                 new BRModelRenderer.Submit(
                         pose,

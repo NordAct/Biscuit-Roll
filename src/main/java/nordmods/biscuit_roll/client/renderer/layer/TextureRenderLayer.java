@@ -29,6 +29,6 @@ public abstract class TextureRenderLayer extends BRRenderLayer {
     @Override
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         Identifier texture = getTextureId(state);
-        BRRenderer.submitModel(poseStack, getModel(state), state, this::getRenderType, texture, (BRModelSubmitStorage)submitNodeCollector.order(renderOrder));
+        BRRenderer.submitModel(poseStack, getModel(state), state, this::getRenderType, texture, parentRenderer.getSpriteForTexture(texture), (BRModelSubmitStorage)submitNodeCollector.order(renderOrder));
     }
 }

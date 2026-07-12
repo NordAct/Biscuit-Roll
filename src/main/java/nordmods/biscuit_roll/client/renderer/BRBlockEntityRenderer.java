@@ -1,15 +1,20 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -62,6 +67,11 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
     }
 
     public abstract int getCurrentTick(T blockEntity);
+
+    @Override
+    public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return Minecraft.getInstance().getAtlasManager().get(AnimatedTextureUtil.getSpriteIdForAtlas(TextureAtlas.LOCATION_BLOCKS, texture));
+    }
 
     @Override
     public String debugName() {

@@ -2,10 +2,12 @@ package nordmods.biscuit_roll.client.internal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 @ApiStatus.NonExtendable
 public interface BRModelSubmitStorage {
@@ -15,7 +17,8 @@ public interface BRModelSubmitStorage {
             BRModel model,
             BRState state,
             RenderTypeProvider renderTypeProvider,
-            Identifier texture
+            Identifier texture,
+            @Nullable TextureAtlasSprite sprite
             ) {
         throw new AssertionError("Implemented in mixin");
     }

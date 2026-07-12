@@ -1,7 +1,9 @@
 package nordmods.biscuit_roll.client.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SpriteMapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.BiscuitRoll;
 
@@ -20,5 +22,25 @@ public class AnimatedTextureUtil {
         if (!path.contains(PATH_START)) return null;
         Identifier animatedTextureId = Identifier.fromNamespaceAndPath(texture.getNamespace(), path.substring(PATH_START.length(), path.indexOf(".png")));
         return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(ANIMATED_TEXTURES_ATLAS_ID).getSprite(animatedTextureId);
+    }
+
+    public static SpriteId getSpriteIdForMapper(SpriteMapper mapper, Identifier texture) {
+        String path = texture.getPath();
+        return mapper.apply(
+                Identifier.fromNamespaceAndPath(
+                        texture.getNamespace(),
+                        path.substring(10 + mapper.prefix().length(), path.indexOf(".png"))
+                )
+        );
+    }
+
+    public static SpriteId getSpriteIdForAtlas(Identifier atlasLocation, Identifier texture) {
+        String path = texture.getPath();
+        return new SpriteId(atlasLocation,
+                Identifier.fromNamespaceAndPath(
+                        texture.getNamespace(),
+                        path.substring(9, path.indexOf(".png"))
+                )
+        );
     }
 }
