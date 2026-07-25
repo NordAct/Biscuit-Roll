@@ -35,4 +35,20 @@ public final class QueryHelper { //todo add other queries
     public static void addPowerJump(MolangEnvironmentBuilder<?> builder, PlayerRideableJumping entity) {
         builder.setQuery("can_power_jump", entity.canJump() ? 1 : 0);
     }
+
+    public static void addBodyXRotation(MolangEnvironmentBuilder<?> builder, Entity entity, float tickDelta) {
+        builder.setQuery("body_x_rotation", entity.getXRot(tickDelta));
+    }
+
+    public static void addBodyYRotation(MolangEnvironmentBuilder<?> builder, Entity entity, float tickDelta) {
+        builder.setQuery("body_y_rotation", entity.getPreciseBodyRotation(tickDelta));
+    }
+
+    public static void addHeadXRotation(MolangEnvironmentBuilder<?> builder, Entity entity, float tickDelta) {
+        builder.setQuery("head_x_rotation", entity.getViewXRot(tickDelta));
+    }
+
+    public static void addHeadYRotation(MolangEnvironmentBuilder<?> builder, Entity entity, float tickDelta) {
+        builder.setQuery("head_y_rotation", entity.getViewYRot(tickDelta));
+    }
 }
