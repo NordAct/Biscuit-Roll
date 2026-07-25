@@ -49,19 +49,21 @@ configurations {
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    //todo do something to remove this as dependency completely
-    Set<String> apiModules = [
-            "fabric-api-base",
-            "fabric-resource-loader-v1",
-            "fabric-object-builder-api-v1",
-            "fabric-rendering-v1"
-    ]
 
-    apiModules.forEach {
-        implementation(fabricApi.module(it, project.fabric_version))
-    }
+    // maybe later
+    ////todo do something to remove this as dependency completely
+    //Set<String> apiModules = [
+    //        "fabric-api-base",
+    //        "fabric-resource-loader-v1",
+    //        "fabric-object-builder-api-v1",
+    //        "fabric-rendering-v1"
+    //]
+//
+    //apiModules.forEach {
+    //    implementation(fabricApi.module(it, project.fabric_version))
+    //}
 
-    //implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
     shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
