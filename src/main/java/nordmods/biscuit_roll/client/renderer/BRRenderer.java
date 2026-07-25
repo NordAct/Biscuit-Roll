@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
-import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -39,7 +38,8 @@ public interface BRRenderer<S extends BRState> {
     /// @return render type that will be used when model gets submitted
     RenderType getRenderType(BRState state, Identifier texture);
 
-    /// @return id of a texture that will be used during rendering
+    /// @return id of a texture that will be used during rendering.
+    /// **Note: texture id must specify full texture path**
     Identifier getTextureId(BRState state);
 
     /// Runs before model actually gets submitted. By this moment, state should already be initialized, but transformations from animations are not applied
@@ -124,9 +124,16 @@ public interface BRRenderer<S extends BRState> {
         getRenderLayers().add(renderLayer);
     }
 
+    /**
+     * Gets atlas sprite for given texture.
+     *
+     * @param texture texture identifier
+     * @return atlas sprite for given texture
+     * @see BRBlockEntityRenderer#getSpriteForTexture(Identifier)
+     */
     @Nullable
     default TextureAtlasSprite getSpriteForTexture(Identifier texture) {
-        return AnimatedTextureUtil.getAnimatedTextureSprite(texture);
+        return null;
     }
 
     /// Submits {@link BRModel} for render

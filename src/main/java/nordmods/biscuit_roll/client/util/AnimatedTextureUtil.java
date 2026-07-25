@@ -1,30 +1,22 @@
 package nordmods.biscuit_roll.client.util;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SpriteMapper;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.BiscuitRoll;
+import net.minecraft.util.Util;
+
+import java.util.function.BiFunction;
 
 /// Util class to help to deal with pain in the butt called animated textures.
 ///
-/// If you wish to use animated textures anywhere in your project with models from this mod, you should place them in `animated_textures` folder in `textures` folder, i.e.:
-/// `your_name_space:textures/animated_textures/your_texture.png`. To animate the texture, do same steps as for animating vanilla textures
+/// If you wish to use animated textures anywhere in your project with models from this mod, you need to
+/// 1) Register your own atlas via {@link net.fabricmc.fabric.api.client.rendering.v1.AtlasRegistry#register(AtlasManager.AtlasConfig)} or use existing one
+/// 2) Override {@link nordmods.biscuit_roll.client.renderer.BRRenderer#getSpriteForTexture(Identifier)} in your renderer to get sprite from your atlas
+///
+/// Using this util class is not necessary to get them working
 public class AnimatedTextureUtil {
-    private static final String ANIMATED_TEXTURES = "animated_textures";
-    private static final String PATH_START = "textures/" + ANIMATED_TEXTURES + "/";
-    public static final Identifier ANIMATED_TEXTURES_TEXTURE_ID = BiscuitRoll.id("textures/" + ANIMATED_TEXTURES + ".png");
-    public static final Identifier ANIMATED_TEXTURES_ATLAS_ID = BiscuitRoll.id(ANIMATED_TEXTURES);
-
-    public static TextureAtlasSprite getAnimatedTextureSprite(Identifier texture) {
-        String path = texture.getPath();
-        if (!path.contains(PATH_START)) return null;
-        Identifier animatedTextureId = Identifier.fromNamespaceAndPath(texture.getNamespace(), path.substring(PATH_START.length(), path.indexOf(".png")));
-        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(ANIMATED_TEXTURES_ATLAS_ID).getSprite(animatedTextureId);
-    }
-
-    public static SpriteId getSpriteIdForMapper(SpriteMapper mapper, Identifier texture) {
+    private static final BiFunction<SpriteMapper, Identifier, SpriteId> SPRITE_ID_FOR_MAPPER = Util.memoize((mapper, texture) -> {
         String path = texture.getPath();
         return mapper.apply(
                 Identifier.fromNamespaceAndPath(
@@ -32,15 +24,23 @@ public class AnimatedTextureUtil {
                         path.substring(10 + mapper.prefix().length(), path.indexOf(".png"))
                 )
         );
-    }
+    });
 
-    public static SpriteId getSpriteIdForAtlas(Identifier atlasLocation, Identifier texture) {
+    private static final BiFunction<Identifier, Identifier, SpriteId> SPRITE_ID_FOR_ATLAS = Util.memoize((atlasLocation, texture) -> {
         String path = texture.getPath();
         return new SpriteId(atlasLocation,
                 Identifier.fromNamespaceAndPath(
                         texture.getNamespace(),
-                        path.substring(9, path.indexOf(".png"))
+                        path.substring(9 + (atlasLocation.getPath().lastIndexOf(".png") - atlasLocation.getPath().lastIndexOf("/")), path.indexOf(".png"))
                 )
         );
+    });
+
+    public static SpriteId getSpriteIdForMapper(SpriteMapper mapper, Identifier texture) {
+        return SPRITE_ID_FOR_MAPPER.apply(mapper, texture);
+    }
+
+    public static SpriteId getSpriteIdForAtlas(Identifier atlasLocation, Identifier texture) {
+        return SPRITE_ID_FOR_ATLAS.apply(atlasLocation, texture);
     }
 }

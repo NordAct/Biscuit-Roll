@@ -1,11 +1,14 @@
 package nordmods.testmod.client.renderer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -15,6 +18,7 @@ import nordmods.testmod.client.TestModClient;
 import nordmods.testmod.client.renderer.layer.RainbowGlowLayer;
 import nordmods.testmod.common.entity.Dragon;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderState> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/dragon.geo.json");
@@ -73,5 +77,10 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
         }
         model.getBone("leg_left").setVisible(!bl);
         model.getBone("leg_right").setVisible(!bl);
+    }
+
+    @Override
+    public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return Minecraft.getInstance().getAtlasManager().get(AnimatedTextureUtil.getSpriteIdForAtlas(TestModClient.ANIMATED_TEXTURES_TEXTURE_ID, texture));
     }
 }
