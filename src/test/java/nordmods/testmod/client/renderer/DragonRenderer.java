@@ -1,6 +1,5 @@
 package nordmods.testmod.client.renderer;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -8,7 +7,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
-import nordmods.biscuit_roll.client.util.AnimatedTextureUtil;
+import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -81,6 +80,6 @@ public class DragonRenderer extends BREntityRenderer<Dragon, LivingEntityRenderS
 
     @Override
     public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
-        return Minecraft.getInstance().getAtlasManager().get(AnimatedTextureUtil.getSpriteIdForAtlas(TestModClient.ANIMATED_TEXTURES_TEXTURE_ID, texture));
+        return TextureAtlasSpriteUtil.getTextureAtlasSprite(TestModClient.ANIMATED_TEXTURES_SHEET, texture, TestModClient.ANIMATED_TEXTURES_ATLAS_ID.getPath());
     }
 }

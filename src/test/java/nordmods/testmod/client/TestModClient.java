@@ -17,7 +17,7 @@ import nordmods.testmod.client.renderer.WaterDragonRenderer;
 public class TestModClient implements ClientModInitializer {
     public static final StateDataType<Boolean> IS_DRAGON_RAINBOW = new StateDataType<>(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "is_dragon_brown"));
     public static final Identifier ANIMATED_TEXTURES_ATLAS_ID = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "animated_textures");
-    public static final Identifier ANIMATED_TEXTURES_TEXTURE_ID = AtlasRegistry.generateTextureLocation(ANIMATED_TEXTURES_ATLAS_ID);
+    public static final Identifier ANIMATED_TEXTURES_SHEET = AtlasRegistry.generateTextureLocation(ANIMATED_TEXTURES_ATLAS_ID);
 
     @Override
     public void onInitializeClient() {
@@ -32,9 +32,9 @@ public class TestModClient implements ClientModInitializer {
 
         AtlasRegistry.register( //if we want to use animated textures, we have to create our own atlas
                 new AtlasManager.AtlasConfig(
-                ANIMATED_TEXTURES_TEXTURE_ID,
-                ANIMATED_TEXTURES_ATLAS_ID,
-                false
+                        ANIMATED_TEXTURES_SHEET,
+                        ANIMATED_TEXTURES_ATLAS_ID,
+                        false
                 )
         );
     }
