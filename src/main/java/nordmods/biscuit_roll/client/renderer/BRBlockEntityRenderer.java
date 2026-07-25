@@ -41,7 +41,7 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
     }
 
     @Override
-    public void submit(S state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {
+    public void submit(@NonNull S state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector submitNodeCollector, @Nullable CameraRenderState cameraRenderState) {
         submitBRModel(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 
@@ -56,7 +56,7 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
     }
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float tickDelta, @NonNull Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(@NonNull T blockEntity, @NonNull S state, float tickDelta, @NonNull Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickDelta, cameraPos, crumblingOverlay);
         state.setStateData(StateDataTypes.CONTROLLERS, blockEntity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());

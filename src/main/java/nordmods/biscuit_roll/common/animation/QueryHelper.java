@@ -29,7 +29,7 @@ public final class QueryHelper { //todo add other queries
     }
 
     public static void addCanDamageNearbyMobs(MolangEnvironmentBuilder<?> builder, Mob entity) {
-        builder.setQuery("can_damage_nearby_mobs", !entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(5), target -> ((Mob) entity).canAttack(target)).isEmpty() ? 1 : 0);
+        builder.setQuery("can_damage_nearby_mobs", !entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(5), entity::canAttack).isEmpty() ? 1 : 0);
     }
 
     public static void addPowerJump(MolangEnvironmentBuilder<?> builder, PlayerRideableJumping entity) {
