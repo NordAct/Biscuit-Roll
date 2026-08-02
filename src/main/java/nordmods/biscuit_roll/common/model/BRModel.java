@@ -15,11 +15,13 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /// Model to be animated and rendered
 /// @see nordmods.biscuit_roll.common.util.BRModelManager
 public class BRModel implements GeometryModel {
     private final GeometryTree tree;
+    private static final Collection<BRAnimationController> EMPTY_CONTROLLER_COLLECTION = List.of();
 
     public BRModel(GeometryModelData model) throws GeometryCompileException {
         this.tree = GeometryTree.create(model);
@@ -89,9 +91,9 @@ public class BRModel implements GeometryModel {
 
     @ApiStatus.Internal
     public void applyAnimations(BRState state) {
-        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS, EMPTY_CONTROLLER_COLLECTION);
         resetTransformation();
         controllers.forEach(this::applyAnimations);
-        state.getStateData(StateDataTypes.ANIMATION_ADJUSTMENT).accept(state, this);
+        state.getStateData(StateDataTypes.ANIMATION_ADJUSTMENT, (_, _) -> {}).accept(state, this);
     }
 }
