@@ -91,7 +91,7 @@ public interface BRRenderer<S extends BRState> {
         BRModel model = getModel(state);
         submitModel(poseStack, model, state, this::getRenderType, texture, getSpriteForTexture(texture), brModelSubmitStorage);
 
-        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS, BRModel.EMPTY_CONTROLLER_COLLECTION);
         controllers.forEach(controller -> controller.update(state));
         state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers

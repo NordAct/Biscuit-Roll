@@ -21,7 +21,7 @@ import java.util.List;
 /// @see nordmods.biscuit_roll.common.util.BRModelManager
 public class BRModel implements GeometryModel {
     private final GeometryTree tree;
-    private static final Collection<BRAnimationController> EMPTY_CONTROLLER_COLLECTION = List.of();
+    public static final Collection<BRAnimationController> EMPTY_CONTROLLER_COLLECTION = List.of();
 
     public BRModel(GeometryModelData model) throws GeometryCompileException {
         this.tree = GeometryTree.create(model);
