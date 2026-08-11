@@ -1,5 +1,6 @@
 package nordmods.biscuit_roll.common.util;
 
+import gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelParser;
 import net.minecraft.resources.Identifier;
@@ -22,12 +23,14 @@ import java.util.Map;
 
 /// Responsible for loading models. Use [BRModelManager#getModelManager(boolean isClient)] to get model manager for correct side
 @ApiStatus.NonExtendable
-public abstract class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, BRModel>>{
+public abstract class BRModelManager extends SimplePreparableReloadListener<Map<Identifier, GeometryModelData>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
+    private final Map<Identifier, BRModel> modelRegistry = new HashMap<>();
+    private final Map<Identifier, GeometryModelData> modelRegistryRaw = new HashMap<>();
 
     @Override
-    protected Map<Identifier, BRModel> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
-        Map<Identifier, BRModel> holder = new HashMap<>();
+    protected Map<Identifier, GeometryModelData> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
+        Map<Identifier, GeometryModelData> holder = new HashMap<>();
 
         Map<Identifier, Resource> resourceMap = resourceManager.listResources(FOLDER, path -> path.getPath().endsWith(".json"));
 
@@ -38,7 +41,7 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
                 InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
                 GeometryModelData[] data = GeometryModelParser.parseModel(inputStreamReader);
                 if (data.length == 1) {
-                    holder.put(fileId, new BRModel(data[0]));
+                    holder.put(fileId, data[0]);
                     BiscuitRoll.LOGGER.info("Registered model with id {}", fileId);
                 } else {
                     BiscuitRoll.LOGGER.warn("Model file {} got more or less than 1 model and will be skipped", fileId);
@@ -51,19 +54,37 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     }
 
     @Override
-    protected void apply(Map<Identifier, BRModel> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
-        getHolderMap().clear();
-        getHolderMap().putAll(map);
+    protected void apply(Map<Identifier, GeometryModelData> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
+        getRegistryRaw().clear();
+        getRegistryRaw().putAll(map);
+        getRegistry().clear();
     }
 
     /// @param modelId id of model file
     /// @return model if it was loaded
     @Nullable
     public BRModel getModel(Identifier modelId) {
-        return getHolderMap().get(modelId);
+        return getRegistry().computeIfAbsent(modelId, id -> {
+            try {
+                return new BRModel(getModelData(id));
+            } catch (GeometryCompileException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    protected abstract Map<Identifier, BRModel> getHolderMap();
+    @Nullable
+    public GeometryModelData getModelData(Identifier modelId) {
+        return getRegistryRaw().get(modelId);
+    }
+
+    protected Map<Identifier, BRModel> getRegistry() {
+        return modelRegistry;
+    }
+
+    protected Map<Identifier, GeometryModelData> getRegistryRaw() {
+        return modelRegistryRaw;
+    }
 
     /// @param isClient is client side
     /// @return model manager for specified side

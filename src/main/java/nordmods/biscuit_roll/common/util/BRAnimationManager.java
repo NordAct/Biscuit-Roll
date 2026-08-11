@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 @ApiStatus.NonExtendable
 public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
+    private final Map<Identifier, AnimationData[]> animationRegistry = new HashMap<>();
 
     @Override
     protected Map<Identifier, AnimationData[]> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
@@ -49,15 +50,15 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
 
     @Override
     protected void apply(Map<Identifier, AnimationData[]> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
-        getHolderMap().clear();
-        getHolderMap().putAll(map);
+        getRegistry().clear();
+        getRegistry().putAll(map);
     }
 
     /// @param animationId id of animation file
     /// @return all animations from the file as [AnimationData]
     @Nullable
     public AnimationData[] getAnimations(Identifier animationId) {
-        return getHolderMap().get(animationId);
+        return getRegistry().get(animationId);
     }
 
     /// @param animationId id of animation file
@@ -74,7 +75,9 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                 .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + "'" + animationId + "'. Ensure that specified animation name is correct"));
     }
 
-    protected abstract Map<Identifier, AnimationData[]> getHolderMap();
+    protected Map<Identifier, AnimationData[]> getRegistry() {
+        return animationRegistry;
+    }
 
     /// @param isClient is client side
     /// @return animation manager for specified side
