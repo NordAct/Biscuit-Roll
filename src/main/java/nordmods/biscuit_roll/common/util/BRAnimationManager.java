@@ -75,7 +75,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                 .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + "'" + animationId + "'. Ensure that specified animation name is correct"));
     }
 
-    protected Map<Identifier, AnimationData[]> getRegistry() {
+    public Map<Identifier, AnimationData[]> getRegistry() {
         return animationRegistry;
     }
 

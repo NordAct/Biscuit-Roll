@@ -1,39 +1,80 @@
 package nordmods.biscuit_roll.common.util;
 
 import gg.moonflower.molangcompiler.api.MolangExpression;
+import gg.moonflower.molangcompiler.api.bridge.MolangVariable;
+import gg.moonflower.molangcompiler.impl.node.MolangCompoundNode;
+import gg.moonflower.molangcompiler.impl.node.MolangConstantNode;
+import gg.moonflower.molangcompiler.impl.node.MolangVariableNode;
+import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
+import nordmods.biscuit_roll.BiscuitRoll;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
 public class BRStreamCodecs {
-    public static final StreamCodec<ByteBuf, Optional<String>> STRING_OPTIONAL = ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8);
-
-    public static final StreamCodec<ByteBuf, Vector3f[]> VECTOR3F_ARRAY = new StreamCodec<>() {
+    private static final byte UNSUPPORTED_EXPRESSION = -1;
+    public static final StreamCodec<ByteBuf, MolangExpression> MOLANG_EXPRESSION = new StreamCodec<>() { //todo think about better looking solution
         @Override
-        public Vector3f @NonNull [] decode(ByteBuf input) {
-            Vector3f[] vectors = new Vector3f[input.readInt()];
-            for (int i = 0; i < vectors.length; i++) {
-                vectors[i] = (Vector3f) ByteBufCodecs.VECTOR3F.decode(input);
-            }
-            return vectors;
+        public MolangExpression decode(ByteBuf input) {
+            byte id = input.readByte();
+            return switch (id) {
+                case 0 -> new MolangVariableNode(MolangVariable.create(input.readFloat()));
+                case 1 -> new MolangConstantNode(input.readFloat());
+                case 2 -> {
+                    int length = input.readInt();
+                    MolangExpression[] expressions = new MolangExpression[length];
+                    for (int i = 0; i < length; i++) {
+                        expressions[i] = decode(input);
+                    }
+                    yield new MolangCompoundNode(expressions);
+                }
+                default -> {
+                    if (id != UNSUPPORTED_EXPRESSION) BiscuitRoll.LOGGER.warn("Attempted to decode unsupported molang expression with id {}", id);
+                    yield  MolangExpression.ZERO;
+                }
+            };
         }
 
         @Override
-        public void encode(ByteBuf output, Vector3f[] value) {
-            output.writeInt(value.length);
-            for (Vector3f vector3f : value) {
-                ByteBufCodecs.VECTOR3F.encode(output, vector3f);
+        public void encode(ByteBuf output, MolangExpression value) { //other nodes that are not supported by this codec are either rely on suppliers or idk how encode them
+            switch (value) {
+                case MolangVariableNode expr -> {
+                    output.writeByte(0);
+                    output.writeFloat(expr.getValue());
+                }
+                case MolangConstantNode expr -> {
+                    output.writeByte(1);
+                    output.writeFloat(expr.getConstant());
+                }
+                case MolangCompoundNode expr -> {
+                    output.writeByte(2);
+                    output.writeInt(expr.expressions().length);
+                    for (int i = 0; i < expr.expressions().length; i++) {
+                        encode(output, expr.expressions()[i]);
+                    }
+                }
+                default -> {
+                    output.writeByte(UNSUPPORTED_EXPRESSION);
+                    BiscuitRoll.LOGGER.warn("Sending {} over network is not supported", value.getClass().getName());
+                }
             }
         }
     };
+
+    public static final StreamCodec<ByteBuf, Optional<MolangExpression>> MOLANG_EXPRESSION_OPTIONAL = ByteBufCodecs.optional(MOLANG_EXPRESSION);
+
+    public static final StreamCodec<ByteBuf, Optional<String>> STRING_OPTIONAL = ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8);
+
+    public static final StreamCodec<ByteBuf, Vector3fc[]> VECTOR3F_ARRAY = array(ByteBufCodecs.VECTOR3F);
 
     public static final StreamCodec<ByteBuf, Vector2f> VECTOR2F = new StreamCodec<>() {
         @Override
@@ -50,24 +91,7 @@ public class BRStreamCodecs {
         }
     };
 
-    public static final StreamCodec<ByteBuf, Vector2f[]> VECTOR2F_ARRAY = new StreamCodec<>() {
-        @Override
-        public Vector2f @NonNull [] decode(ByteBuf input) {
-            Vector2f[] vectors = new Vector2f[input.readInt()];
-            for (int i = 0; i < vectors.length; i++) {
-                vectors[i] = VECTOR2F.decode(input);
-            }
-            return vectors;
-        }
-
-        @Override
-        public void encode(ByteBuf output, Vector2f[] value) {
-            output.writeInt(value.length);
-            for (Vector2f vector2f : value) {
-                VECTOR2F.encode(output, vector2f);
-            }
-        }
-    };
+    public static final StreamCodec<ByteBuf, Vector2f[]> VECTOR2F_ARRAY = array(VECTOR2F);
 
     public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Polygon> POLYGON = new StreamCodec<>() {
         @Override
@@ -86,24 +110,7 @@ public class BRStreamCodecs {
         }
     };
 
-    public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Polygon[]> POLYGON_ARRAY = new StreamCodec<>() {
-        @Override
-        public GeometryModelData.Polygon @NonNull [] decode(FriendlyByteBuf input) {
-            GeometryModelData.Polygon[] polygons = new GeometryModelData.Polygon[input.readInt()];
-            for (int i = 0; i < polygons.length; i++) {
-                polygons[i] = POLYGON.decode(input);
-            }
-            return polygons;
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf output, GeometryModelData.Polygon[] value) {
-            output.writeInt(value.length);
-            for (GeometryModelData.Polygon polygon : value) {
-                POLYGON.encode(output, polygon);
-            }
-        }
-    };
+    public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Polygon[]> POLYGON_ARRAY = array(POLYGON);
 
     public static final StreamCodec<ByteBuf, GeometryModelData.PolyType> POLY_TYPE = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, GeometryModelData.PolyType.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
 
@@ -111,8 +118,8 @@ public class BRStreamCodecs {
         @Override
         public GeometryModelData.@NonNull PolyMesh decode(FriendlyByteBuf input) {
             boolean normalizedUvs = input.readBoolean();
-            Vector3f[] positions = VECTOR3F_ARRAY.decode(input);
-            Vector3f[] normals = VECTOR3F_ARRAY.decode(input);
+            Vector3f[] positions = (Vector3f[]) VECTOR3F_ARRAY.decode(input);
+            Vector3f[] normals = (Vector3f[]) VECTOR3F_ARRAY.decode(input);
             Vector2f[] uvs = VECTOR2F_ARRAY.decode(input);
             GeometryModelData.Polygon[] polys = POLYGON_ARRAY.decode(input);
             GeometryModelData.PolyType polyType = POLY_TYPE.decode(input);
@@ -157,24 +164,7 @@ public class BRStreamCodecs {
         }
     };
 
-    public static final StreamCodec<ByteBuf, GeometryModelData.CubeUV[]> CUBE_UV_ARRAY = new StreamCodec<>() {
-        @Override
-        public GeometryModelData.CubeUV @NonNull [] decode(ByteBuf input) {
-            GeometryModelData.CubeUV[] cubeUVS = new GeometryModelData.CubeUV[input.readInt()];
-            for (int i = 0; i < cubeUVS.length; i++) {
-                cubeUVS[i] = CUBE_UV.decode(input);
-            }
-            return cubeUVS;
-        }
-
-        @Override
-        public void encode(ByteBuf output, GeometryModelData.CubeUV[] value) {
-            output.writeInt(value.length);
-            for (GeometryModelData.CubeUV cubeUV : value) {
-                CUBE_UV.encode(output, cubeUV);
-            }
-        }
-    };
+    public static final StreamCodec<ByteBuf, GeometryModelData.CubeUV[]> CUBE_UV_ARRAY = array(CUBE_UV);
 
     public static final StreamCodec<ByteBuf, GeometryModelData.Cube> CUBE = new StreamCodec<>() {
         @Override
@@ -204,24 +194,7 @@ public class BRStreamCodecs {
         }
     };
 
-    public static final StreamCodec<ByteBuf, GeometryModelData.Cube[]> CUBE_ARRAY = new StreamCodec<>() {
-        @Override
-        public GeometryModelData.Cube @NonNull [] decode(ByteBuf input) {
-            GeometryModelData.Cube[] cubes = new GeometryModelData.Cube[input.readInt()];
-            for (int i = 0; i < cubes.length; i++) {
-                cubes[i] = CUBE.decode(input);
-            }
-            return cubes;
-        }
-
-        @Override
-        public void encode(ByteBuf output, GeometryModelData.Cube[] value) {
-            output.writeInt(value.length);
-            for (GeometryModelData.Cube cube : value) {
-                CUBE.encode(output, cube);
-            }
-        }
-    };
+    public static final StreamCodec<ByteBuf, GeometryModelData.Cube[]> CUBE_ARRAY = array(CUBE);
 
     public static final StreamCodec<ByteBuf, GeometryModelData.Locator> LOCATOR = new StreamCodec<>() {
         @Override
@@ -238,24 +211,7 @@ public class BRStreamCodecs {
         }
     };
 
-    public static final StreamCodec<ByteBuf, GeometryModelData.Locator[]> LOCATOR_ARRAY = new StreamCodec<>() {
-        @Override
-        public GeometryModelData.Locator @NonNull [] decode(ByteBuf input) {
-            GeometryModelData.Locator[] locators = new GeometryModelData.Locator[input.readInt()];
-            for (int i = 0; i < locators.length; i++) {
-                locators[i] = LOCATOR.decode(input);
-            }
-            return locators;
-        }
-
-        @Override
-        public void encode(ByteBuf output, GeometryModelData.Locator[] value) {
-            output.writeInt(value.length);
-            for (GeometryModelData.Locator locator : value) {
-                LOCATOR.encode(output, locator);
-            }
-        }
-    };
+    public static final StreamCodec<ByteBuf, GeometryModelData.Locator[]> LOCATOR_ARRAY = array(LOCATOR);
 
     public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Bone> BONE = new StreamCodec<>() {
         @Override
@@ -272,7 +228,7 @@ public class BRStreamCodecs {
             boolean debug = input.readBoolean();
             GeometryModelData.Cube[] cubes = CUBE_ARRAY.decode(input);
             GeometryModelData.Locator[] locators = LOCATOR_ARRAY.decode(input);
-            MolangExpression binding = null;
+            MolangExpression binding = MOLANG_EXPRESSION_OPTIONAL.decode(input).orElse(null);
             GeometryModelData.PolyMesh polyMesh = POLY_MESH_OPTIONAL.decode(input).orElse(null);
             return new GeometryModelData.Bone(name, reset2588, neverRender2588, parent, pivot, rotation, bindPoseRotation2588, mirror, inflate, debug, cubes, locators, binding, polyMesh);
         }
@@ -291,29 +247,12 @@ public class BRStreamCodecs {
             output.writeBoolean(value.debug());
             CUBE_ARRAY.encode(output, value.cubes());
             LOCATOR_ARRAY.encode(output, value.locators());
-            //todo binding
+            MOLANG_EXPRESSION_OPTIONAL.encode(output, Optional.ofNullable(value.binding()));
             POLY_MESH_OPTIONAL.encode(output, Optional.ofNullable(value.polyMesh()));
         }
     };
 
-    public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Bone[]> BONE_ARRAY = new StreamCodec<>() {
-        @Override
-        public GeometryModelData.Bone @NonNull [] decode(FriendlyByteBuf input) {
-            GeometryModelData.Bone[] bones = new GeometryModelData.Bone[input.readInt()];
-            for (int i = 0; i < bones.length; i++) {
-                bones[i] = BONE.decode(input);
-            }
-            return bones;
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf output, GeometryModelData.Bone[] value) {
-            output.writeInt(value.length);
-            for (GeometryModelData.Bone bone : value) {
-                BONE.encode(output, bone);
-            }
-        }
-    };
+    public static final StreamCodec<FriendlyByteBuf, GeometryModelData.Bone[]> BONE_ARRAY = array(BONE);
 
     public static final StreamCodec<ByteBuf, GeometryModelData.Description> DESCRIPTION = new StreamCodec<>() {
         @Override
@@ -356,4 +295,169 @@ public class BRStreamCodecs {
             BONE_ARRAY.encode(output, value.bones());
         }
     };
+
+    public static final StreamCodec<ByteBuf, AnimationData.Loop> LOOP = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, AnimationData.Loop.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+    public static final StreamCodec<ByteBuf, AnimationData.LerpMode> LERP_MODE = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, AnimationData.LerpMode.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+    public static final StreamCodec<ByteBuf, AnimationData.KeyFrame> KEY_FRAME = new StreamCodec<>() {
+        @Override
+        public AnimationData.KeyFrame decode(ByteBuf input) {
+            float time = input.readFloat();
+            AnimationData.LerpMode lerpMode = LERP_MODE.decode(input);
+            MolangExpression transformPreX = MOLANG_EXPRESSION.decode(input);
+            MolangExpression transformPreY = MOLANG_EXPRESSION.decode(input);
+            MolangExpression transformPreZ = MOLANG_EXPRESSION.decode(input);
+            MolangExpression transformPostX = MOLANG_EXPRESSION.decode(input);
+            MolangExpression transformPostY = MOLANG_EXPRESSION.decode(input);
+            MolangExpression transformPostZ = MOLANG_EXPRESSION.decode(input);
+            return new AnimationData.KeyFrame(time, lerpMode, transformPreX, transformPreY, transformPreZ, transformPostX, transformPostY, transformPostZ);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData.KeyFrame value) {
+            output.writeFloat(value.time());
+            LERP_MODE.encode(output, value.lerpMode());
+            MOLANG_EXPRESSION.encode(output, value.transformPreX());
+            MOLANG_EXPRESSION.encode(output, value.transformPreY());
+            MOLANG_EXPRESSION.encode(output, value.transformPreZ());
+            MOLANG_EXPRESSION.encode(output, value.transformPostX());
+            MOLANG_EXPRESSION.encode(output, value.transformPostY());
+            MOLANG_EXPRESSION.encode(output, value.transformPostZ());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData.KeyFrame[]> KEY_FRAME_ARRAY = array(KEY_FRAME);
+
+    public static final StreamCodec<ByteBuf, AnimationData.BoneAnimation> BONE_ANIMATION = new StreamCodec<>() {
+        @Override
+        public AnimationData.BoneAnimation decode(ByteBuf input) {
+            String name = ByteBufCodecs.STRING_UTF8.decode(input);
+            AnimationData.KeyFrame[] positionFrames = KEY_FRAME_ARRAY.decode(input);
+            AnimationData.KeyFrame[] rotationFrames = KEY_FRAME_ARRAY.decode(input);
+            AnimationData.KeyFrame[] scaleFrames = KEY_FRAME_ARRAY.decode(input);
+            return new AnimationData.BoneAnimation(name, positionFrames, rotationFrames,scaleFrames);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData.BoneAnimation value) {
+            ByteBufCodecs.STRING_UTF8.encode(output, value.name());
+            KEY_FRAME_ARRAY.encode(output, value.positionFrames());
+            KEY_FRAME_ARRAY.encode(output, value.rotationFrames());
+            KEY_FRAME_ARRAY.encode(output, value.scaleFrames());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData.BoneAnimation[]> BONE_ANIMATION_ARRAY = array(BONE_ANIMATION);
+
+    public static final StreamCodec<ByteBuf, AnimationData.SoundEffect> SOUND_EFFECT = new StreamCodec<>() {
+        @Override
+        public AnimationData.SoundEffect decode(ByteBuf input) {
+            float time = input.readFloat();
+            String effect = ByteBufCodecs.STRING_UTF8.decode(input);
+            MolangExpression pitch = MOLANG_EXPRESSION.decode(input);
+            MolangExpression volume = MOLANG_EXPRESSION.decode(input);
+            boolean loop = input.readBoolean();
+            return new AnimationData.SoundEffect(time, effect, pitch, volume, loop);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData.SoundEffect value) {
+            output.writeFloat(value.time());
+            ByteBufCodecs.STRING_UTF8.encode(output, value.effect());
+            MOLANG_EXPRESSION.encode(output, value.pitch());
+            MOLANG_EXPRESSION.encode(output, value.volume());
+            output.writeBoolean(value.loop());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData.SoundEffect[]> SOUND_EFFECT_ARRAY = array(SOUND_EFFECT);
+
+    public static final StreamCodec<ByteBuf, AnimationData.ParticleEffect> PARTICLE_EFFECT = new StreamCodec<>() {
+        @Override
+        public AnimationData.ParticleEffect decode(ByteBuf input) {
+            float time = input.readFloat();
+            String effect = ByteBufCodecs.STRING_UTF8.decode(input);
+            String locator = ByteBufCodecs.STRING_UTF8.decode(input);
+            return new AnimationData.ParticleEffect(time, effect, locator);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData.ParticleEffect value) {
+            output.writeFloat(value.time());
+            ByteBufCodecs.STRING_UTF8.encode(output, value.effect());
+            ByteBufCodecs.STRING_UTF8.encode(output, value.locator());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData.ParticleEffect[]> PARTICLE_EFFECT_ARRAY = array(PARTICLE_EFFECT);
+
+    public static final StreamCodec<ByteBuf, AnimationData.TimelineEffect> TIMELINE_EFFECT = new StreamCodec<>() {
+        @Override
+        public AnimationData.TimelineEffect decode(ByteBuf input) {
+            float time = input.readFloat();
+            String data = ByteBufCodecs.STRING_UTF8.decode(input);
+            return new AnimationData.TimelineEffect(time, data);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData.TimelineEffect value) {
+            output.writeFloat(value.time());
+            ByteBufCodecs.STRING_UTF8.encode(output, value.data());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData.TimelineEffect[]> TIMELINE_EFFECT_ARRAY = array(TIMELINE_EFFECT);
+
+    public static final StreamCodec<ByteBuf, AnimationData> ANIMATION_DATA = new StreamCodec<>() {
+        @Override
+        public AnimationData decode(ByteBuf input) {
+            String name = ByteBufCodecs.STRING_UTF8.decode(input);
+            AnimationData.Loop loop = LOOP.decode(input);
+            MolangExpression blendWeight = MOLANG_EXPRESSION.decode(input);
+            float animationLength = input.readFloat();
+            boolean overridePreviousAnimation = input.readBoolean();
+            AnimationData.BoneAnimation[] boneAnimations = BONE_ANIMATION_ARRAY.decode(input);
+            AnimationData.SoundEffect[] soundEffects = SOUND_EFFECT_ARRAY.decode(input);
+            AnimationData.ParticleEffect[] particleEffects = PARTICLE_EFFECT_ARRAY.decode(input);
+            AnimationData.TimelineEffect[] timelineEffects = TIMELINE_EFFECT_ARRAY.decode(input);
+            return new AnimationData(name, loop, blendWeight, animationLength, overridePreviousAnimation, boneAnimations, soundEffects, particleEffects, timelineEffects);
+        }
+
+        @Override
+        public void encode(ByteBuf output, AnimationData value) {
+            ByteBufCodecs.STRING_UTF8.encode(output, value.name());
+            LOOP.encode(output, value.loop());
+            MOLANG_EXPRESSION.encode(output, value.blendWeight());
+            output.writeFloat(value.animationLength());
+            output.writeBoolean(value.overridePreviousAnimation());
+            BONE_ANIMATION_ARRAY.encode(output, value.boneAnimations());
+            SOUND_EFFECT_ARRAY.encode(output, value.soundEffects());
+            PARTICLE_EFFECT_ARRAY.encode(output, value.particleEffects());
+            TIMELINE_EFFECT_ARRAY.encode(output, value.timelineEffects());
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, AnimationData[]> ANIMATION_DATA_ARRAY = array(ANIMATION_DATA);
+
+    public static <B extends ByteBuf, T> StreamCodec<B, T[]> array(final @NonNull StreamCodec<B, T> streamCodec) {
+        return new StreamCodec<>() {
+            @Override
+            public T @NonNull [] decode(@NonNull B input) {
+                T[] keyFrames = (T[]) new Object[input.readInt()];
+                for (int i = 0; i < keyFrames.length; i++) {
+                    keyFrames[i] = streamCodec.decode(input);
+                }
+                return keyFrames;
+            }
+
+            @Override
+            public void encode(@NonNull B output, T @NonNull [] value) {
+                output.writeInt(value.length);
+                for (T keyFrame : value) {
+                    streamCodec.encode(output, keyFrame);
+                }
+            }
+        };
+    }
 }

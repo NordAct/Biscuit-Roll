@@ -65,8 +65,9 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     @Nullable
     public BRModel getModel(Identifier modelId) {
         return getRegistry().computeIfAbsent(modelId, id -> {
+            GeometryModelData data = getModelData(id);
             try {
-                return new BRModel(getModelData(id));
+                return data == null ? null : new BRModel(data);
             } catch (GeometryCompileException e) {
                 throw new RuntimeException(e);
             }
@@ -78,11 +79,11 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         return getRegistryRaw().get(modelId);
     }
 
-    protected Map<Identifier, BRModel> getRegistry() {
+    public Map<Identifier, BRModel> getRegistry() {
         return modelRegistry;
     }
 
-    protected Map<Identifier, GeometryModelData> getRegistryRaw() {
+    public Map<Identifier, GeometryModelData> getRegistryRaw() {
         return modelRegistryRaw;
     }
 
