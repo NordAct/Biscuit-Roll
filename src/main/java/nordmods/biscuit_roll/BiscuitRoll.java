@@ -32,7 +32,7 @@ public class BiscuitRoll implements ModInitializer {
 
         PayloadTypeRegistry.clientboundConfiguration().register(SendServerData.TYPE, SendServerData.STREAM_CODEC);
 
-        ServerConfigurationConnectionEvents.BEFORE_CONFIGURE.register((listener, server) -> {
+        ServerConfigurationConnectionEvents.CONFIGURE.register((listener, _) -> {
             if (ServerConfigurationNetworking.canSend(listener, SendServerData.TYPE)) {
                 listener.send(new ClientboundCustomPayloadPacket(new SendServerData()));
             }
