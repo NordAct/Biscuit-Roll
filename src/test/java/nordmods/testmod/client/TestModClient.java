@@ -9,10 +9,7 @@ import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.testmod.TestMod;
-import nordmods.testmod.client.renderer.DonutRenderer;
-import nordmods.testmod.client.renderer.DragonRenderer;
-import nordmods.testmod.client.renderer.DroneRenderer;
-import nordmods.testmod.client.renderer.WaterDragonRenderer;
+import nordmods.testmod.client.renderer.*;
 
 public class TestModClient implements ClientModInitializer {
     public static final StateDataType<Boolean> IS_DRAGON_RAINBOW = new StateDataType<>(Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "is_dragon_brown"));
@@ -24,6 +21,7 @@ public class TestModClient implements ClientModInitializer {
         EntityRenderers.register(TestMod.DRONE, DroneRenderer::new);
         EntityRenderers.register(TestMod.DRAGON, DragonRenderer::new);
         EntityRenderers.register(TestMod.WATER_DRAGON, WaterDragonRenderer::new);
+        EntityRenderers.register(TestMod.MESHTEST, MeshtestRenderer::new);
 
         // You may or may not need context depending on your use case. Most of the time, you don't
         BlockEntityRenderers.register(TestMod.DONUT_BLOCK_ENTITY, (context -> new DonutRenderer()));

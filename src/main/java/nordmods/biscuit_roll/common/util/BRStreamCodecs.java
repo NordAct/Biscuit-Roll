@@ -15,12 +15,15 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
 import nordmods.biscuit_roll.BiscuitRoll;
+import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class BRStreamCodecs {
@@ -473,6 +476,20 @@ public class BRStreamCodecs {
     };
 
     public static final StreamCodec<ByteBuf, AnimationData[]> ANIMATION_DATA_ARRAY = array(ANIMATION_DATA, new AnimationData[0]);
+
+    public static final StreamCodec<ByteBuf, PolyMeshAttachments> POLY_MESH_ATTACHMENTS = new StreamCodec<>() {
+        private static final StreamCodec<ByteBuf, Map<String, Vector3fc>> ATTACHMENTS = ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VECTOR3F);
+        private static final StreamCodec<ByteBuf, Map<String, Map<String, Vector3fc>>> BONE_MAP = ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ATTACHMENTS);
+        @Override
+        public PolyMeshAttachments decode(ByteBuf input) {
+            return new PolyMeshAttachments(BONE_MAP.decode(input));
+        }
+
+        @Override
+        public void encode(ByteBuf output, PolyMeshAttachments value) {
+            BONE_MAP.encode(output, value.attachments());
+        }
+    };
 
     public static <B extends ByteBuf, T> StreamCodec<B, T[]> array(final @NonNull StreamCodec<B, T> streamCodec, T[] dummyArray) {
         return new StreamCodec<>() {

@@ -3,6 +3,7 @@ package nordmods.biscuit_roll.common.resource_managers;
 import gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelParser;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -11,6 +12,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +29,7 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/models";
     private final Map<Identifier, BRModel> modelRegistry = new HashMap<>();
     private final Map<Identifier, GeometryModelData> modelRegistryRaw = new HashMap<>();
+    protected final static FileToIdConverter CONVERTER = FileToIdConverter.json(BiscuitRoll.MOD_ID + "/models");
 
     @Override
     protected Map<Identifier, GeometryModelData> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
@@ -67,12 +70,15 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         return getRegistry().computeIfAbsent(modelId, id -> {
             GeometryModelData data = getModelData(id);
             try {
-                return data == null ? null : new BRModel(data);
+                return data == null ? null : new BRModel(data, getPolymeshAttachments(id));
             } catch (GeometryCompileException e) {
                 throw new RuntimeException(e);
             }
         });
     }
+
+    @Nullable
+    public abstract PolyMeshAttachments getPolymeshAttachments(Identifier modelId);
 
     @Nullable
     public GeometryModelData getModelData(Identifier modelId) {

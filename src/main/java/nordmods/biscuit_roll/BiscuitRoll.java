@@ -14,11 +14,12 @@ import net.minecraft.server.packs.PackType;
 import nordmods.biscuit_roll.common.networking.SendServerData;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerPolyMeshAttachmentsManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 /// Initializer class for both sides
-//todo: reminder to self - change license once done
+//reminder to self - change license once done
 public class BiscuitRoll implements ModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "biscuit_roll";
@@ -27,6 +28,7 @@ public class BiscuitRoll implements ModInitializer {
     public void onInitialize() {
         PinwheelMolangCompiler.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, BiscuitRoll.class.getClassLoader())); //what
 
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("poly_mesh_attachments"), ServerPolyMeshAttachmentsManager.instance());
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("model"), ServerModelManager.instance());
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
 

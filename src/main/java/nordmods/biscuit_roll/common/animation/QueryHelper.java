@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PlayerRideableJumping;
 
 /// Util class with a collection of methods made to simplify query application process
-public final class QueryHelper { //todo add other queries
+public final class QueryHelper {
     public static void addIsSwimming(MolangEnvironmentBuilder<?> builder, Entity entity) {
         builder.setQuery("is_swimming", entity.isSwimming() ? 1 : 0);
     }

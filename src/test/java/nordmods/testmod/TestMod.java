@@ -25,6 +25,7 @@ import nordmods.testmod.common.block.DonutBlock;
 import nordmods.testmod.common.block.DonutBlockEntity;
 import nordmods.testmod.common.entity.Dragon;
 import nordmods.testmod.common.entity.Drone;
+import nordmods.testmod.common.entity.MeshtestEntity;
 import nordmods.testmod.common.entity.WaterDragon;
 import org.slf4j.Logger;
 
@@ -56,6 +57,16 @@ public class TestMod implements ModInitializer {
                     .sized(2.9f, 1.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "water_dragon")))
     );
+
+    public static final EntityType<MeshtestEntity> MESHTEST = Registry.register(
+            BuiltInRegistries.ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "meshtest"),
+            EntityType.Builder
+                    .of(MeshtestEntity::new, MobCategory.MISC)
+                    .sized(2.9f, 2.9f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE,  Identifier.fromNamespaceAndPath(MOD_ID, "meshtest")))
+    );
+
     public static final Block DONUT_BLOCK = Blocks.register(
             ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MOD_ID, "donut")),
             DonutBlock::new,

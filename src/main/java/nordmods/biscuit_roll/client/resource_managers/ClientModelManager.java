@@ -4,9 +4,11 @@ import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
 import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
+import nordmods.biscuit_roll.common.resource_managers.BRPolyMeshAttachmentsManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerPolyMeshAttachmentsManager;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -15,7 +17,6 @@ import java.util.Map;
 
 public class ClientModelManager extends BRModelManager {
     private static final ClientModelManager INSTANCE = new ClientModelManager();
-    private final Map<Identifier, BRModel> modelCache = new HashMap<>();
     private final Map<Identifier, GeometryModelData> modelDataCache = new HashMap<>();
 
     private ClientModelManager() {}
@@ -34,12 +35,12 @@ public class ClientModelManager extends BRModelManager {
     }
 
     @Override
-    public @Nullable BRModel getModel(Identifier modelId) {
-        return modelCache.computeIfAbsent(modelId, id -> {
-            BRModel model = ServerModelManager.instance().getModel(id);
-            if (model != null) return model;
-            return super.getModel(id);
-        });
+    public @Nullable PolyMeshAttachments getPolymeshAttachments(Identifier modelId) {
+        Identifier id = BRPolyMeshAttachmentsManager.CONVERTER.idToFile(CONVERTER.fileToId(modelId));
+        PolyMeshAttachments attachments = ServerPolyMeshAttachmentsManager.instance().getAttachments(id);
+        if (attachments != null) return attachments;
+        return ClientPolyMeshAttachmentsManager.instance().getAttachments(id);
+
     }
 
     @Override
@@ -50,6 +51,5 @@ public class ClientModelManager extends BRModelManager {
 
     public void clearCache() {
         modelDataCache.clear();
-        modelCache.clear();
     }
 }
