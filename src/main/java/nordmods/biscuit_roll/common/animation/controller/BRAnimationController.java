@@ -9,7 +9,7 @@ import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
-import nordmods.biscuit_roll.common.util.BRAnimationManager;
+import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

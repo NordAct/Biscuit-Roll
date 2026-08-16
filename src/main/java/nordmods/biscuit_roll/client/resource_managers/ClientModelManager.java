@@ -1,12 +1,12 @@
-package nordmods.biscuit_roll.client.util;
+package nordmods.biscuit_roll.client.resource_managers;
 
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.common.model.BRModel;
-import nordmods.biscuit_roll.common.util.BRModelManager;
-import nordmods.biscuit_roll.common.util.ServerModelManager;
+import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 

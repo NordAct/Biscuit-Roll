@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.common.util.BRStreamCodecs;
-import nordmods.biscuit_roll.common.util.ServerAnimationManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 
 import java.util.HashMap;
 import java.util.Map;

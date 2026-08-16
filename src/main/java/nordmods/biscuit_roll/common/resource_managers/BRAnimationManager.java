@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.common.util;
+package nordmods.biscuit_roll.common.resource_managers;
 
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.AnimationParser;
@@ -8,7 +8,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.BiscuitRoll;
-import nordmods.biscuit_roll.client.util.ClientAnimationManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

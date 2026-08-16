@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworkin
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.packs.PackType;
 import nordmods.biscuit_roll.BiscuitRoll;
-import nordmods.biscuit_roll.client.util.ClientAnimationManager;
-import nordmods.biscuit_roll.client.util.ClientModelManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.common.networking.SendServerData;
-import nordmods.biscuit_roll.common.util.ServerAnimationManager;
-import nordmods.biscuit_roll.common.util.ServerModelManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 
 /// Initializer class for client side
 //todo move from FAPI to loader agnostic approach

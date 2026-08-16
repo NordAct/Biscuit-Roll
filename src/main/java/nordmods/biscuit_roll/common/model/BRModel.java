@@ -9,6 +9,7 @@ import gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import gg.moonflower.pinwheel.api.transform.MatrixStack;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 /// Model to be animated and rendered
-/// @see nordmods.biscuit_roll.common.util.BRModelManager
+/// @see BRModelManager
 public class BRModel implements GeometryModel {
     private final GeometryTree tree;
     public static final Collection<BRAnimationController> EMPTY_CONTROLLER_COLLECTION = List.of();

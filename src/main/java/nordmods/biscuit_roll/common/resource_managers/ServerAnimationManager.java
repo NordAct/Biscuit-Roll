@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.common.util;
+package nordmods.biscuit_roll.common.resource_managers;
 
 public class ServerAnimationManager extends BRAnimationManager {
     private static final ServerAnimationManager INSTANCE = new ServerAnimationManager();
