@@ -57,7 +57,9 @@ public class BRModel implements GeometryModel {
     @Override
     @ApiStatus.Internal
     public void render(GeometryRenderer renderer, MatrixStack matrixStack) {
-        for (AnimatedBone bone : tree.getRootBones()) {
+        List<AnimatedBone> rootBones = tree.getRootBones();
+        for (int i = 0, rootBonesSize = rootBones.size(); i < rootBonesSize; i++) {
+            AnimatedBone bone = rootBones.get(i);
             bone.render(renderer, matrixStack);
         }
     }
@@ -68,12 +70,12 @@ public class BRModel implements GeometryModel {
     }
 
     @Override
-    public Collection<AnimatedBone> getBones() {
+    public List<AnimatedBone> getBones() {
         return tree.getBones();
     }
 
     @Override
-    public Collection<AnimatedBone> getRootBones() {
+    public List<AnimatedBone> getRootBones() {
         return tree.getRootBones();
     }
 
@@ -119,9 +121,11 @@ public class BRModel implements GeometryModel {
     @ApiStatus.Internal
     public void applyAnimations(BRState state) {
         resetTransformation();
-        state.getStateData(StateDataTypes.CONTROLLERS, EMPTY_CONTROLLER_COLLECTION).forEach(controller -> {
+        List<BRAnimationController> stateData = state.getStateData(StateDataTypes.CONTROLLERS, List.of());
+        for (int i = 0, stateDataSize = stateData.size(); i < stateDataSize; i++) {
+            BRAnimationController controller = stateData.get(i);
             applyAnimations(controller.getEnvironment(), controller.getPlayingAnimations());
-        });
+        }
         state.getStateData(StateDataTypes.ANIMATION_ADJUSTMENT, (_, _) -> {}).accept(state, this);
         updateLocators();
     }

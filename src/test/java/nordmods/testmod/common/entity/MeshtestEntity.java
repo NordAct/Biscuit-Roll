@@ -66,7 +66,7 @@ public class MeshtestEntity extends Entity implements BRAnimatedObject {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /// Biscuit Roll Renderer or BRRenderer for short.
 /// Base class for renderers
@@ -91,11 +92,10 @@ public interface BRRenderer<S extends BRState> {
         BRModel model = getModel(state);
         submitModel(poseStack, model, state, this::getRenderType, texture, getSpriteForTexture(texture), brModelSubmitStorage);
 
-        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS, BRModel.EMPTY_CONTROLLER_COLLECTION);
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS, List.of());
         controllers.forEach(controller -> controller.update(state));
         state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
         model.applyAnimations(state); //vanilla does this as well because there's no other way to obtain accurate bone/locator transformations in render layers
-        model.updateLocators();
         controllers.forEach(controller -> controller.triggerAnimationEffects(model, state));
 
         for (BRRenderLayer renderLayer : getRenderLayers()) {

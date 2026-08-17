@@ -77,7 +77,7 @@ public class Dragon extends Mob implements BRAnimatedObject {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return List.of(controller1, controller0);
     }
 

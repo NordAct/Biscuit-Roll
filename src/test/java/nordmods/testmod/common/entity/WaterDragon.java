@@ -35,7 +35,7 @@ public class WaterDragon extends Mob implements BRAnimatedObject {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return List.of(controller);
     }
 

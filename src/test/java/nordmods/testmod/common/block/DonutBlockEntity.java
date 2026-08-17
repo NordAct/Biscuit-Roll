@@ -31,13 +31,13 @@ public class DonutBlockEntity extends BlockEntity implements BRAnimatedObject {
 
         }
     };
-    public final Collection<BRAnimationController> controllers = List.of(controller);
+    public final List<BRAnimationController> controllers = List.of(controller);
     public DonutBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(TestMod.DONUT_BLOCK_ENTITY, blockPos, blockState);
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 }
