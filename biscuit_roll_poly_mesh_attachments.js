@@ -16,7 +16,8 @@
  *  - Create locators to which you plan attach mesh's vertices
  *  - Select vertex you want attach to specific locator
  *  - Open Tools->Bind Vertices to Locator (shows up only when you have at least one vertex selected) and select locator you need from the list
- *  - To unbind vertex from locator do exact same steps, but select Unind Vertices to Locator
+ *  - Alternatively to manually making all of the locators and attaching them by hand, you can open context menu for your mesh and select "Generate Locators for Vertices". This will generate and automatically bind locators for mesh (or selected vertices) and place them in same group as mesh
+ *  - To unbind vertex from locator, select vertices you want to unbind and go to Tools->Unind Selected Vertices
  *
  * This plugin as well supports accurate preview of how mesh is going to look in game with all of this attachments. There's a few specifics on how mesh must be set up in order to work correctly:
  *  - Since Bedrock format supports only single mesh per bone, you must know that if you add several meshes to the bone all of them are going to be merged into single one after export
@@ -31,7 +32,7 @@
     const BINDINGS_KEY = 'biscuit_roll_poly_mesh_attachments';
     const REST_KEY = '_vlb_rest_vertices';
 
-    let bindAction, unbindAction, exportAction, clearAction, followToggle;
+    let bindAction, unbindAction, exportAction, clearAction, followToggle, generateLocatorsAction;
     let originalGetSaveCopy, originalExtend, originalAnimatorPreview;
     let followEnabled = true;
     let previewActive = false;
@@ -74,11 +75,27 @@
         });
     }
 
-    /** Animate + Paint */
     function isPreviewMode() {
         if (typeof Mode === 'undefined' || !Mode.selected) return false;
         const id = Mode.selected.id;
         return id === 'animate' || id === 'paint';
+    }
+
+    function sanitizeNamePart(name) {
+        return String(name || 'mesh').replace(/\s+/g, '_');
+    }
+
+    /** Vertex keys: selected if any, otherwise all */
+    function getVertexKeysForGenerate(mesh) {
+        const selected = mesh.getSelectedVertices();
+        if (selected && selected.length) return selected.slice();
+        return Object.keys(mesh.vertices || {});
+    }
+
+    function getParentGroupForMesh(mesh) {
+        const parent = mesh.parent;
+        if (parent && parent !== 'root' && parent instanceof Group) return parent;
+        return undefined; // root
     }
 
     // ─── Rest pose ─────────────────────────────────────────────
@@ -223,7 +240,6 @@
         restoreAllRestPoses();
     }
 
-    /** In Paint mode Animator.preview may not run every frame — poll lightly */
     function startPaintPreviewLoop() {
         stopPaintPreviewLoop();
         paintPreviewTimer = setInterval(() => {
@@ -231,7 +247,6 @@
                 stopPaintPreviewLoop();
                 return;
             }
-            // Only needed when animate stack isn't driving the frame
             if (typeof Mode !== 'undefined' && Mode.selected && Mode.selected.id === 'paint') {
                 try {
                     applyBindingsForPreview();
@@ -343,6 +358,139 @@
         });
 
         return result;
+    }
+
+    // ─── Generate locators from vertices ───────────────────────
+
+    function makeLocatorName(meshName, index, side) {
+        const base = sanitizeNamePart(meshName);
+        const n = index; // 1-based
+        if (side === 'right') {
+            return base + '_locator' + n;
+        }
+        return 'locator' + n + '_' + base;
+    }
+
+    function generateLocatorsForMeshes(meshes, nameSide) {
+        const created = [];
+        let totalVerts = 0;
+
+        meshes.forEach(mesh => {
+            const vkeys = getVertexKeysForGenerate(mesh);
+            if (!vkeys.length) return;
+
+            if (previewActive) restoreRestPose(mesh);
+            captureRestPose(mesh);
+
+            const origin = mesh.origin || [0, 0, 0];
+            const parent = getParentGroupForMesh(mesh);
+            const bindings = ensureBindings(mesh);
+            const meshName = mesh.name || 'mesh';
+
+            vkeys.forEach((vkey, i) => {
+                const local = (mesh[REST_KEY] && mesh[REST_KEY][vkey]) || mesh.vertices[vkey];
+                if (!local) return;
+
+                const pos = [
+                    origin[0] + local[0],
+                    origin[1] + local[1],
+                    origin[2] + local[2]
+                ];
+
+                const name = makeLocatorName(meshName, i + 1, nameSide);
+
+                const locator = new Locator({
+                    name: name,
+                    position: pos.slice(),
+                                            from: pos.slice(), // compatibility with older BB if needed
+                                            visibility: true,
+                                            export: true
+                });
+
+                locator.init();
+                if (parent) {
+                    locator.addTo(parent);
+                } else {
+                    locator.addTo();
+                }
+
+                bindings[vkey] = locator.uuid;
+                created.push(locator);
+                totalVerts++;
+            });
+        });
+
+        return { created, totalVerts };
+    }
+
+    function openGenerateLocatorsDialog(meshes) {
+        if (!meshes || !meshes.length) {
+            Blockbench.showQuickMessage('Select a mesh first');
+            return;
+        }
+
+        let totalKeys = 0;
+        meshes.forEach(m => {
+            totalKeys += getVertexKeysForGenerate(m).length;
+        });
+        if (!totalKeys) {
+            Blockbench.showQuickMessage('No vertices to generate locators from');
+            return;
+        }
+
+        new Dialog({
+            id: 'vlb_generate_locators_dialog',
+            title: 'Generate Locators for Vertices',
+            form: {
+                info: {
+                    type: 'info',
+                    text: `Will create ${totalKeys} locator(s) from selected/all vertices.`
+                },
+                name_side: {
+                    label: 'Locator name placement',
+                    type: 'select',
+                    value: 'left',
+                    options: {
+                        left: 'Left — locatorN_meshName',
+                        right: 'Right — meshName_locatorN'
+                    }
+                }
+            },
+            buttons: ['Generate', 'Cancel'],
+            onConfirm(formResult) {
+                const nameSide = (formResult && formResult.name_side) || 'left';
+
+                Undo.initEdit({
+                    elements: [...meshes, ...Locator.all],
+                    outliner: true,
+                    selection: true
+                });
+
+                const { created, totalVerts } = generateLocatorsForMeshes(meshes, nameSide);
+
+                Undo.finishEdit('Generate locators for vertices');
+
+                if (created.length) {
+                    Canvas.updateView({
+                        elements: [...meshes, ...created],
+                        element_aspects: { transform: true, geometry: true },
+                        selection: true
+                    });
+                }
+
+                Blockbench.showQuickMessage(
+                    created.length
+                    ? `Generated ${created.length} locator(s) and bound to vertices`
+                    : 'No locators generated'
+                );
+
+                if (typeof Animator !== 'undefined' && Animator.open) {
+                    Animator.preview();
+                } else if (isPreviewMode()) {
+                    applyBindingsForPreview();
+                }
+            }
+        }).show();
     }
 
     // ─── Actions ───────────────────────────────────────────────
@@ -469,6 +617,17 @@
                                  }
         });
 
+        generateLocatorsAction = new Action('vlb_generate_locators', {
+            name: 'Generate Locators for Vertices',
+            description: 'Create locators at mesh vertices, parent them to the mesh group, and bind them',
+            icon: 'control_point',
+            category: 'edit',
+            condition: () => isBedrockFormat() && Mesh.selected.length > 0,
+                                            click() {
+                                                openGenerateLocatorsDialog(Mesh.selected.slice());
+                                            }
+        });
+
         exportAction = new Action('vlb_export_bindings', {
             name: 'Export Vertex–Locator Bindings',
             description: 'Export bound vertices as JSON (bone → locator → [x,y,z], X inverted)',
@@ -520,8 +679,25 @@
         MenuBar.menus.tools.addAction(bindAction);
         MenuBar.menus.tools.addAction(unbindAction);
         MenuBar.menus.tools.addAction(clearAction);
+        MenuBar.menus.tools.addAction(generateLocatorsAction);
         MenuBar.menus.tools.addAction(followToggle);
         MenuBar.addAction(exportAction, 'file.export');
+
+        // Context menu on mesh (outliner / element menu)
+        try {
+            if (Mesh.prototype.menu && Mesh.prototype.menu.addAction) {
+                Mesh.prototype.menu.addAction(generateLocatorsAction);
+            }
+        } catch (e) {
+            console.warn('[Vertex Locator Binder] Could not add to Mesh.prototype.menu', e);
+        }
+
+        // Fallback: outliner panel menu
+        try {
+            if (Interface && Interface.Panels && Interface.Panels.outliner && Interface.Panels.outliner.menu) {
+                Interface.Panels.outliner.menu.addAction(generateLocatorsAction);
+            }
+        } catch (e) { /* ignore */ }
     }
 
     function removeFromMenus() {
@@ -533,10 +709,23 @@
                 MenuBar.menus.file.removeAction('export.vlb_export_bindings');
             } catch (e) { /* ignore */ }
         }
-        [bindAction, unbindAction, clearAction, exportAction, followToggle].forEach(a => {
+
+        try {
+            if (Mesh.prototype.menu && Mesh.prototype.menu.removeAction) {
+                Mesh.prototype.menu.removeAction(generateLocatorsAction);
+            }
+        } catch (e) { /* ignore */ }
+
+        try {
+            if (Interface && Interface.Panels && Interface.Panels.outliner && Interface.Panels.outliner.menu) {
+                Interface.Panels.outliner.menu.removeAction(generateLocatorsAction);
+            }
+        } catch (e) { /* ignore */ }
+
+        [bindAction, unbindAction, clearAction, generateLocatorsAction, exportAction, followToggle].forEach(a => {
             if (a && a.delete) a.delete();
         });
-            bindAction = unbindAction = clearAction = exportAction = followToggle = null;
+            bindAction = unbindAction = clearAction = generateLocatorsAction = exportAction = followToggle = null;
     }
 
     // ─── Plugin registration ───────────────────────────────────
@@ -547,7 +736,7 @@
         description:
         'Allows attaching vertices to locators and expirting attachments as poly mesh attachments for Biscuit Roll. Note: this is very much vibecoded plugin. Please do not throw your slippers at me',
         icon: 'link',
-        version: '1.0.0',
+        version: '1.1.0',
         variant: 'both',
         tags: ['Minecraft: Java Edition'],
         min_version: '5.0.0',
