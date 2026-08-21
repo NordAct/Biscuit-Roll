@@ -223,6 +223,7 @@ public class BRStreamCodecs {
             output.writeBoolean(value.overrideInflate());
             output.writeFloat(value.inflate());
             output.writeBoolean(value.overrideMirror());
+            output.writeBoolean(value.mirror());
             Optional<GeometryModelData.CubeUV>[] uvs = new Optional[value.uv().length];
             for (int i = 0; i < value.uv().length; i++) {
                 uvs[i] = Optional.ofNullable(value.uv()[i]);
