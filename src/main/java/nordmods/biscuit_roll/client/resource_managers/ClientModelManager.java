@@ -51,5 +51,11 @@ public class ClientModelManager extends BRModelManager {
 
     public void clearCache() {
         modelDataCache.clear();
+        getRegistry().clear();
+    }
+
+    @Override
+    public boolean hasModel(Identifier modelId) {
+        return super.hasModel(modelId) || ServerModelManager.instance().hasModel(modelId);
     }
 }

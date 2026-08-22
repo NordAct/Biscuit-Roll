@@ -29,4 +29,8 @@ public abstract class BRPolyMeshAttachmentsManager extends SimpleJsonResourceRel
     public PolyMeshAttachments getAttachments(Identifier id) {
         return getRegistry().get(id);
     }
+
+    public boolean hasAttachments(Identifier id) {
+        return getRegistry().containsKey(id);
+    }
 }

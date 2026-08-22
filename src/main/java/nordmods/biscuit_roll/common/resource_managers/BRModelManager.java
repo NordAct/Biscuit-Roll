@@ -98,4 +98,8 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
     public static BRModelManager getModelManager(boolean isClient) {
         return isClient ? ClientModelManager.instance() : ServerModelManager.instance();
     }
+
+    public boolean hasModel(Identifier modelId) {
+        return getRegistryRaw().containsKey(modelId);
+    }
 }

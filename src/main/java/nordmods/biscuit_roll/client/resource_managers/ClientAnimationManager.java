@@ -40,4 +40,9 @@ public class ClientAnimationManager extends BRAnimationManager {
     public void clearCache() {
         animationCache.clear();
     }
+
+    @Override
+    public boolean hasAnimations(Identifier animationId) {
+        return super.hasAnimations(animationId) || ServerAnimationManager.instance().hasAnimations(animationId);
+    }
 }

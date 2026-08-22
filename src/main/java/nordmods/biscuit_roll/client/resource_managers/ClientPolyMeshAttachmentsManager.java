@@ -3,6 +3,7 @@ package nordmods.biscuit_roll.client.resource_managers;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
 import nordmods.biscuit_roll.common.resource_managers.BRPolyMeshAttachmentsManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerPolyMeshAttachmentsManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,5 +21,10 @@ public class ClientPolyMeshAttachmentsManager extends BRPolyMeshAttachmentsManag
 
     public static ClientPolyMeshAttachmentsManager instance() {
         return INSTANCE;
+    }
+
+    @Override
+    public boolean hasAttachments(Identifier id) {
+        return super.hasAttachments(id) || ServerPolyMeshAttachmentsManager.instance().hasAttachments(id);
     }
 }

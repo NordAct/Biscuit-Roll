@@ -84,4 +84,8 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     public static BRAnimationManager getAnimationManager(boolean isClient) {
         return isClient ? ClientAnimationManager.instance() : ServerAnimationManager.instance();
     }
+
+    public boolean hasAnimations(Identifier animationId) {
+        return getRegistry().containsKey(animationId);
+    }
 }
