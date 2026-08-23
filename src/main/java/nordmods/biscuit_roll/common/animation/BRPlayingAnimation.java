@@ -115,6 +115,10 @@ public class BRPlayingAnimation implements PlayingAnimation {
         this.time = time;
     }
 
+    public float getActualAnimationTime() {
+        return time;
+    }
+
     @Override
     public void setWeight(float weight) {
         this.weight = weight;
