@@ -31,7 +31,7 @@ public abstract class BRAnimationController implements AnimationController {
     protected Identifier animationFile;
     /// Defines if controller can have only one animation running at the time.
     /// If it is, when new animation is attempted to be played, previously running animation will be stopped via {@link BRPlayingAnimation#stop()}
-    protected final boolean singleAnimation;
+    public final boolean singleAnimation;
     /// Controller's current animation time
     private float animationTime = 0;
 
