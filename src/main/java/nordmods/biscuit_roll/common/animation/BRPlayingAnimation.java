@@ -4,6 +4,7 @@ import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.PlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import org.jspecify.annotations.NonNull;
 
 /// Animation that gets to play on {@link BRAnimationController}
 public class BRPlayingAnimation implements PlayingAnimation {
@@ -36,7 +37,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
     private float finishTime;
     /// Used for correct transition out interpolation calculation case when animation got finished during transition in
     private float transitionInProgress = 1;
-    public BRPlayingAnimation(AnimationData animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp, float startOffset) {
+    public BRPlayingAnimation(@NonNull AnimationData animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp, float startOffset) {
         this.animation = animation;
         this.transitionInTime = Math.max(0, transitionInTime);
         this.transitionOutTime = Math.max(0, transitionOutTime);

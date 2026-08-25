@@ -80,19 +80,20 @@ public abstract class BRAnimationController implements AnimationController {
     /// @param transitionInLerp animation transition in easing
     /// @param transitionOutLerp animation transition out easing
     public void playAnimation(String animation, float transitionInTime, float transitionOutTime, AnimationData.LerpMode transitionInLerp, AnimationData.LerpMode transitionOutLerp) {
-        if (animationFile == null) return;
-
         if (singleAnimation) {
             playingAnimations.forEach(((name, playingAnimation) -> {
                 if (!playingAnimation.isFinished() && !name.equals(animation)) playingAnimation.stop();
             }));
         }
 
+        AnimationData data = getAnimationData(animation);
+        if (data == null) return;
+
         if (playingAnimations.containsKey(animation)) {
             BRPlayingAnimation playingAnimation = playingAnimations.get(animation);
             if (playingAnimation.isTransitioningOut() && playingAnimation.canContinue()) {
                 BRPlayingAnimation resumedAnimation = new BRPlayingAnimation(
-                        getAnimationData(animation),
+                        data,
                         transitionInTime,
                         transitionOutTime,
                         transitionInLerp,
@@ -105,7 +106,7 @@ public abstract class BRAnimationController implements AnimationController {
             return;
         }
 
-        playAnimation(new BRPlayingAnimation(getAnimationData(animation), transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0));
+        playAnimation(new BRPlayingAnimation(data, transitionInTime, transitionOutTime, transitionInLerp, transitionOutLerp, 0));
     }
 
     /// Adds [BRPlayingAnimation] directly to the collection of playing animations. May override already playing animation if animation with same name is already playing
@@ -213,10 +214,11 @@ public abstract class BRAnimationController implements AnimationController {
     /// @param state animated model state
     protected abstract void onTimelineEffect(AnimationData.TimelineEffect timelineEffect, BRModel model, BRState state);
 
-    /// Gets {@link AnimationData} for animation to play from current {@link BRAnimationController#animationFile}. Make sure animationFile is not null before calling this
+    /// Gets {@link AnimationData} for animation to play from current {@link BRAnimationController#animationFile}
     /// @param animation animation name
     /// @return AnimationData for specified animation
+    @Nullable
     public AnimationData getAnimationData(String animation) {
-        return BRAnimationManager.getAnimationManager(true).getAnimation(animationFile, animation);
+        return animationFile == null ? null : BRAnimationManager.getAnimationManager(true).getAnimation(animationFile, animation);
     }
 }
