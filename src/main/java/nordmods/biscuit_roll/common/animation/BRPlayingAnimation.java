@@ -115,10 +115,6 @@ public class BRPlayingAnimation implements PlayingAnimation {
         this.time = time;
     }
 
-    public float getActualAnimationTime() {
-        return time;
-    }
-
     @Override
     public void setWeight(float weight) {
         this.weight = weight;
@@ -209,5 +205,13 @@ public class BRPlayingAnimation implements PlayingAnimation {
     /// @return transition out easing
     public AnimationData.LerpMode getTransitionOutLerp() {
         return transitionOutLerp;
+    }
+
+    public float getStartOffset() {
+        return startOffset;
+    }
+
+    public float getActualAnimationTime() {
+        return time;
     }
 }
