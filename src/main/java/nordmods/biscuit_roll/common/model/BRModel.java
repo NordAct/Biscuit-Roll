@@ -112,7 +112,7 @@ public class BRModel implements GeometryModel {
             environment.edit().setQuery("anim_time", localAnimationTime);
             for (AnimationData.BoneAnimation boneAnimation : animation.getAnimation().boneAnimations()) {
                 AnimatedBone bone = this.getBone(boneAnimation.name());
-                if (bone == null) return;
+                if (bone == null) continue;
                 GeometryModel.applyKeyframeAnimation(localAnimationTime, blendWeight, environment, bone.getAnimationPose(), boneAnimation);
             }
         });
