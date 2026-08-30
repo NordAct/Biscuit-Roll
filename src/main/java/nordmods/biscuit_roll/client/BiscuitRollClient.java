@@ -23,7 +23,6 @@ public class BiscuitRollClient implements ClientModInitializer {
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(BiscuitRoll.id("animation"), ClientAnimationManager.instance());
 
         ClientConfigurationNetworking.registerGlobalReceiver(SendServerData.TYPE, ((payload, _) -> {
-            ClientModelManager.instance().getRegistry().clear();
             ServerModelManager.instance().getRegistry().clear();
             ServerModelManager.instance().getRegistryRaw().clear();
             ServerModelManager.instance().getRegistryRaw().putAll(payload.modelData());
