@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 public abstract class BRAnimationManager extends SimplePreparableReloadListener<Map<Identifier, AnimationData[]>>{
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
     private final Map<Identifier, AnimationData[]> animationRegistry = new HashMap<>();
+    protected final Map<Identifier, Map<String, AnimationData>> resolvedAnimations = new HashMap<>();
 
     @Override
     protected Map<Identifier, AnimationData[]> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
@@ -52,6 +53,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     protected void apply(Map<Identifier, AnimationData[]> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         getRegistry().clear();
         getRegistry().putAll(map);
+        resolvedAnimations.clear();
     }
 
     /// @param animationId id of animation file
@@ -64,15 +66,32 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     /// @param animationId id of animation file
     /// @param animationName name of animation to get
     /// @return [AnimationData] for specified animation
-    /// @throws NoSuchElementException if specified animation doesn't exist in specified animation file or if specified animation file is not loaded
+    /// @throws NoSuchElementException if specified animation file is not loaded
     public AnimationData getAnimation(Identifier animationId, String animationName) {
-        AnimationData[] data = getAnimations(animationId);
-        if (data == null) throw new NoSuchElementException("Animation file " + "'" + animationId + "'" + " is not loaded. Check log for errors and ensure that specified animation file location is correct");
-        return Arrays
-                .stream(data)
-                .filter(animationData -> animationData.name().equals(animationName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Couldn't find animation " + "'" + animationName + "'" + " in " + "'" + animationId + "'. Ensure that specified animation name is correct"));
+        return resolvedAnimations
+                .computeIfAbsent(animationId, id -> {
+                    if (!hasAnimations(id)) throw new NoSuchElementException("Animation file " + "'" + id + "'" + " is not loaded. Check log for errors and ensure that specified animation file location is correct");
+                    return new HashMap<>();
+                })
+                .computeIfAbsent(animationName, name -> Arrays
+                        .stream(getAnimations(animationId))
+                        .filter(animationData -> animationData.name().equals(name))
+                        .findFirst()
+                        .orElseGet(() -> {
+                            BiscuitRoll.LOGGER.error("Couldn't find animation data for {}, it'll be filled with empty data instead", name);
+                            return new AnimationData(
+                                    name,
+                                    AnimationData.EMPTY.loop(),
+                                    AnimationData.EMPTY.blendWeight(),
+                                    AnimationData.EMPTY.animationLength(),
+                                    AnimationData.EMPTY.overridePreviousAnimation(),
+                                    AnimationData.EMPTY.boneAnimations(),
+                                    AnimationData.EMPTY.soundEffects(),
+                                    AnimationData.EMPTY.particleEffects(),
+                                    AnimationData.EMPTY.timelineEffects()
+                            );
+                        })
+                );
     }
 
     public Map<Identifier, AnimationData[]> getRegistry() {

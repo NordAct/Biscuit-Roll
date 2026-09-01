@@ -39,6 +39,7 @@ public class ClientAnimationManager extends BRAnimationManager {
 
     public void clearCache() {
         animationCache.clear();
+        resolvedAnimations.clear();
     }
 
     @Override
