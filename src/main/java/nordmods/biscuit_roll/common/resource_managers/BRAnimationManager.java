@@ -1,5 +1,7 @@
 package nordmods.biscuit_roll.common.resource_managers;
 
+import gg.moonflower.molangcompiler.api.MolangExpression;
+import gg.moonflower.molangcompiler.impl.node.MolangConstantNode;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.AnimationParser;
 import net.minecraft.resources.Identifier;
@@ -27,6 +29,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     private static final String FOLDER = BiscuitRoll.MOD_ID + "/animations";
     private final Map<Identifier, AnimationData[]> animationRegistry = new HashMap<>();
     protected final Map<Identifier, Map<String, AnimationData>> resolvedAnimations = new HashMap<>();
+    private static final MolangExpression ONE = MolangExpression.of(1);
 
     @Override
     protected Map<Identifier, AnimationData[]> prepare(ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
@@ -81,9 +84,9 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                             BiscuitRoll.LOGGER.error("Couldn't find animation data for {}, it'll be filled with empty data instead", name);
                             return new AnimationData(
                                     name,
-                                    AnimationData.EMPTY.loop(),
-                                    AnimationData.EMPTY.blendWeight(),
-                                    AnimationData.EMPTY.animationLength(),
+                                    AnimationData.Loop.LOOP,
+                                    ONE,
+                                    -1,
                                     AnimationData.EMPTY.overridePreviousAnimation(),
                                     AnimationData.EMPTY.boneAnimations(),
                                     AnimationData.EMPTY.soundEffects(),
