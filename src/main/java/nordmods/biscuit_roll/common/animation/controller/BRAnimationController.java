@@ -168,20 +168,20 @@ public abstract class BRAnimationController implements AnimationController {
 
             for (AnimationData.SoundEffect soundEffect : playingAnimation.getAnimation().soundEffects()) {
                 float triggerTime = soundEffect.time();
-                if ((triggerTime >= lastTime || lastTime >= newTime) && triggerTime <= newTime)
+                if ((triggerTime >= lastTime || lastTime >= newTime) && (triggerTime < newTime || triggerTime == newTime && newTime == playingAnimation.getAnimation().animationLength()))
                     onSoundEffect(soundEffect, model, state);
             }
 
             for (AnimationData.ParticleEffect particleEffect : playingAnimation.getAnimation().particleEffects()) {
                 float triggerTime = particleEffect.time();
-                if ((triggerTime >= lastTime || lastTime >= newTime) && triggerTime <= newTime) {
+                if ((triggerTime >= lastTime || lastTime >= newTime) && (triggerTime < newTime || triggerTime == newTime && newTime == playingAnimation.getAnimation().animationLength())) {
                     onParticleEffect(particleEffect, model, state);
                 }
             }
 
             for (AnimationData.TimelineEffect timelineEffect : playingAnimation.getAnimation().timelineEffects()) {
                 float triggerTime = timelineEffect.time();
-                if ((triggerTime >= lastTime || lastTime > newTime) && triggerTime <= newTime)
+                if ((triggerTime >= lastTime || lastTime > newTime) && (triggerTime < newTime || triggerTime == newTime && newTime == playingAnimation.getAnimation().animationLength()))
                     onTimelineEffect(timelineEffect, model, state);
             }
         });

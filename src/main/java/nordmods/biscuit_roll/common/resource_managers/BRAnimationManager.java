@@ -71,6 +71,15 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
     /// @return [AnimationData] for specified animation
     /// @throws NoSuchElementException if specified animation file is not loaded
     public AnimationData getAnimation(Identifier animationId, String animationName) {
+        return getAnimation(animationId, animationName, true);
+    }
+
+    /// @param animationId id of animation file
+    /// @param animationName name of animation to get
+    /// @param logError if error about missing animation should be logged
+    /// @return [AnimationData] for specified animation
+    /// @throws NoSuchElementException if specified animation file is not loaded
+    public AnimationData getAnimation(Identifier animationId, String animationName, boolean logError) {
         return resolvedAnimations
                 .computeIfAbsent(animationId, id -> {
                     if (!hasAnimations(id)) throw new NoSuchElementException("Animation file " + "'" + id + "'" + " is not loaded. Check log for errors and ensure that specified animation file location is correct");
@@ -81,7 +90,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                         .filter(animationData -> animationData.name().equals(name))
                         .findFirst()
                         .orElseGet(() -> {
-                            BiscuitRoll.LOGGER.error("Couldn't find animation data for {}, it'll be filled with empty data instead", name);
+                            if (logError) BiscuitRoll.LOGGER.error("Couldn't find animation data for {} in {}, it'll be filled with empty data instead", name, animationId);
                             return new AnimationData(
                                     name,
                                     AnimationData.Loop.LOOP,
