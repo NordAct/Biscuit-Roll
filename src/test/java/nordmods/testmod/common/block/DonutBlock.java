@@ -1,6 +1,5 @@
 package nordmods.testmod.common.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +19,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class DonutBlock extends BaseEntityBlock {
-    public static final MapCodec<DonutBlock> CODEC = simpleCodec(DonutBlock::new);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public DonutBlock(Properties properties) {
         super(properties);
@@ -35,11 +33,6 @@ public class DonutBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ACTIVE);
-    }
-
-    @Override
-    protected @NonNull MapCodec<? extends DonutBlock> codec() {
-        return CODEC;
     }
 
     @Override

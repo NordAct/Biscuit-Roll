@@ -16,7 +16,6 @@ import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Drone extends Mob implements BRAnimatedObject {

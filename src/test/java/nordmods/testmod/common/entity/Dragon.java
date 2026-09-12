@@ -28,7 +28,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Dragon extends Mob implements BRAnimatedObject {
@@ -117,8 +116,10 @@ public class Dragon extends Mob implements BRAnimatedObject {
         protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
             try {
                 if (level().isClientSide()) {
-                    playSound(
+                    level().playLocalSound(
+                          Dragon.this,
                             SoundEvent.createVariableRangeEvent(Identifier.tryParse(soundEffect.effect())),
+                            getSoundSource(),
                             DragonAnimationController.this.getEnvironment().resolve(soundEffect.pitch()),
                             DragonAnimationController.this.getEnvironment().resolve(soundEffect.volume())
                     );

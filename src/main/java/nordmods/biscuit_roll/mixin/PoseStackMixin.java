@@ -55,14 +55,14 @@ public abstract class PoseStackMixin implements BRMatrixStack {
     }
 
     @Override
-    public void rotate(Quaternionfc rotation) {
-        BRMatrixStack.super.rotate(rotation);
+    public void rotateNormal(Quaternionfc rotation) {
+        BRMatrixStack.super.rotateNormal(rotation);
         this.normal().rotate(rotation);
     }
 
     @Override
-    public void rotate(float amount, float x, float y, float z) {
-        BRMatrixStack.super.rotate(amount, x, y, z);
+    public void rotateNormal(float amount, float x, float y, float z) {
+        BRMatrixStack.super.rotateNormal(amount, x, y, z);
         this.normal().rotate(amount, x, y, z);
     }
 

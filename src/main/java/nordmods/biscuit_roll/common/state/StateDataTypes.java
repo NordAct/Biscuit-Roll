@@ -5,7 +5,6 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 

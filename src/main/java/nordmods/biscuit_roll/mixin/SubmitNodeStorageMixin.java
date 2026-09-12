@@ -19,6 +19,6 @@ public abstract class SubmitNodeStorageMixin implements BRModelSubmitStorage {
 
     @Override
     public void biscuit_roll$submit(PoseStack.Pose pose, BRModel model, BRState state, RenderTypeProvider renderTypeProvider, Identifier texture, @Nullable TextureAtlasSprite sprite) {
-        order(0).biscuit_roll$submit(pose, model, state, renderTypeProvider, texture, sprite);
+        if (order(0) instanceof BRModelSubmitStorage storage) storage.biscuit_roll$submit(pose, model, state, renderTypeProvider, texture, sprite);
     }
 }
