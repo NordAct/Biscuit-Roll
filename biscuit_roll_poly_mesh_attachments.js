@@ -98,6 +98,62 @@
         return undefined; // root
     }
 
+    function degToRad(deg) {
+    	if (typeof Math.degToRad === 'function') return Math.degToRad(deg);
+    	if (THREE.MathUtils && THREE.MathUtils.degToRad) return THREE.MathUtils.degToRad(deg);
+    	return deg * Math.PI / 180;
+    }
+
+    /**
+     * Vertex → parent/bone space (same space as locator.position when
+     * the locator is parented to the same group as the mesh).
+     * Uses the live THREE matrix so Euler order matches Blockbench exactly.
+     */
+    function getVertexElementSpacePos(mesh, vkey, vertsSource) {
+    	const verts = vertsSource || mesh[REST_KEY] || mesh.vertices;
+    	const local = verts && verts[vkey];
+    	if (!local) return null;
+
+    	const meshObj = mesh.mesh || mesh.scene_object;
+    	if (meshObj) {
+    		// Sync Object3D from element data (matrix may be stale)
+    		const o = mesh.origin || [0, 0, 0];
+    		const rot = mesh.rotation || [0, 0, 0];
+
+    		meshObj.position.set(o[0], o[1], o[2]);
+
+    		// Same order Blockbench uses on this node
+    		const order =
+    			meshObj.rotation.order ||
+    			(typeof Format !== 'undefined' && Format.euler_order) ||
+    			'ZYX';
+    		meshObj.rotation.order = order;
+    		meshObj.rotation.set(
+    			degToRad(rot[0]),
+    			degToRad(rot[1]),
+    			degToRad(rot[2])
+    		);
+
+    		if (mesh.scale) {
+    			meshObj.scale.set(
+    				mesh.scale[0] != null ? mesh.scale[0] : 1,
+    				mesh.scale[1] != null ? mesh.scale[1] : 1,
+    				mesh.scale[2] != null ? mesh.scale[2] : 1
+    			);
+    		}
+
+    		meshObj.updateMatrix(); // local matrix only (relative to parent)
+
+    		const v = new THREE.Vector3(local[0], local[1], local[2]);
+    		v.applyMatrix4(meshObj.matrix);
+    		return [v.x, v.y, v.z];
+    	}
+
+    	// Fallback without THREE
+    	const o = mesh.origin || [0, 0, 0];
+    	return [o[0] + local[0], o[1] + local[1], o[2] + local[2]];
+    }
+
     // ─── Rest pose ─────────────────────────────────────────────
 
     function captureRestPose(mesh) {
@@ -342,18 +398,19 @@
             if (!result[boneName]) result[boneName] = {};
 
             for (const [vkey, locatorUUID] of Object.entries(bindings)) {
-                const locator = getLocatorByUUID(locatorUUID);
-                if (!locator) continue;
+            	const locator = getLocatorByUUID(locatorUUID);
+            	if (!locator) continue;
 
-                const local = verts[vkey];
-                if (!local) continue;
-                const o = mesh.origin || [0, 0, 0];
-                const pos = [
-                    -(o[0] + local[0]),
-                         o[1] + local[1],
-                         o[2] + local[2]
-                ];
-                result[boneName][locator.name] = pos;
+            	const posLocal = getVertexElementSpacePos(
+            		mesh,
+            		vkey,
+            		mesh[REST_KEY] || mesh.vertices
+            	);
+            	if (!posLocal) continue;
+
+            	// X inverted on export (as before)
+            	const pos = [-posLocal[0], posLocal[1], posLocal[2]];
+            	result[boneName][locator.name] = pos;
             }
         });
 
@@ -382,41 +439,34 @@
             if (previewActive) restoreRestPose(mesh);
             captureRestPose(mesh);
 
-            const origin = mesh.origin || [0, 0, 0];
             const parent = getParentGroupForMesh(mesh);
             const bindings = ensureBindings(mesh);
             const meshName = mesh.name || 'mesh';
 
             vkeys.forEach((vkey, i) => {
-                const local = (mesh[REST_KEY] && mesh[REST_KEY][vkey]) || mesh.vertices[vkey];
-                if (!local) return;
+            	const pos = getVertexElementSpacePos(mesh, vkey);
+            	if (!pos) return;
 
-                const pos = [
-                    origin[0] + local[0],
-                    origin[1] + local[1],
-                    origin[2] + local[2]
-                ];
+            	const name = makeLocatorName(meshName, i + 1, nameSide);
 
-                const name = makeLocatorName(meshName, i + 1, nameSide);
+            	const locator = new Locator({
+            		name: name,
+            		position: pos.slice(),
+            		from: pos.slice(),
+            		visibility: true,
+            		export: true
+            	});
 
-                const locator = new Locator({
-                    name: name,
-                    position: pos.slice(),
-                                            from: pos.slice(), // compatibility with older BB if needed
-                                            visibility: true,
-                                            export: true
-                });
+            	locator.init();
+            	if (parent) {
+            		locator.addTo(parent);
+            	} else {
+            		locator.addTo();
+            	}
 
-                locator.init();
-                if (parent) {
-                    locator.addTo(parent);
-                } else {
-                    locator.addTo();
-                }
-
-                bindings[vkey] = locator.uuid;
-                created.push(locator);
-                totalVerts++;
+            	bindings[vkey] = locator.uuid;
+            	created.push(locator);
+            	totalVerts++;
             });
         });
 
@@ -736,7 +786,7 @@
         description:
         'Allows attaching vertices to locators and expirting attachments as poly mesh attachments for Biscuit Roll. Note: this is very much vibecoded plugin. Please do not throw your slippers at me',
         icon: 'link',
-        version: '1.1.0',
+        version: '1.2.0',
         variant: 'both',
         tags: ['Minecraft: Java Edition'],
         min_version: '5.0.0',
