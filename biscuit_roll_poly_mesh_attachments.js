@@ -53,7 +53,7 @@
             if (parent instanceof Group) return parent.name || 'unnamed';
             parent = parent.parent;
         }
-        return 'root';
+        return 'bb_main';
     }
 
     function getLocatorByUUID(uuid) {
@@ -786,7 +786,7 @@
         description:
         'Allows attaching vertices to locators and expirting attachments as poly mesh attachments for Biscuit Roll. Note: this is very much vibecoded plugin. Please do not throw your slippers at me',
         icon: 'link',
-        version: '1.2.0',
+        version: '1.2.1',
         variant: 'both',
         tags: ['Minecraft: Java Edition'],
         min_version: '5.0.0',
