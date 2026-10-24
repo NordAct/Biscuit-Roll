@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
-import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.testmod.TestMod;
 import nordmods.testmod.common.entity.WaterDragon;

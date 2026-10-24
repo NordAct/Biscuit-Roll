@@ -1,7 +1,6 @@
 package nordmods.biscuit_roll.common.resource_managers;
 
 import gg.moonflower.molangcompiler.api.MolangExpression;
-import gg.moonflower.molangcompiler.impl.node.MolangConstantNode;
 import gg.moonflower.pinwheel.api.animation.AnimationData;
 import gg.moonflower.pinwheel.api.animation.AnimationParser;
 import net.minecraft.resources.Identifier;
