@@ -8,11 +8,17 @@ import org.jetbrains.annotations.ApiStatus;
 /// Build in [StateDataType] that can be called from client side only.
 /// Attempting to call this class from server side will cause [ClassNotFoundException] on dedicated servers
 public class ClientStateDataTypes {
+    /// Crumbling overlay for blocks
     public static final StateDataType<ModelFeatureRenderer.CrumblingOverlay> CRUMBLING_OVERLAY = new StateDataType<>(BiscuitRoll.id("crumbling_overlay"));
+    /// Overlay texture
     public static final StateDataType<Integer> OVERLAY_TEXTURE = new StateDataType<>(BiscuitRoll.id("overlay_texture"));
+    /// Outline color
     public static final StateDataType<Integer> OUTLINE_COLOR = new StateDataType<>(BiscuitRoll.id("outline_color"));
+    /// Vertex color
     public static final StateDataType<Integer> COLOR = new StateDataType<>(BiscuitRoll.id("color"));
+    /// Light coordinates
     public static final StateDataType<Integer> LIGHT = new StateDataType<>(BiscuitRoll.id("light"));
+    /// If object is invisible
     public static final StateDataType<Boolean> INVISIBLE = new StateDataType<>(BiscuitRoll.id("invisible"));
     @ApiStatus.Internal
     public static final StateDataType<String> DEBUG_RENDERER_NAME = new StateDataType<>(BiscuitRoll.id("debug_renderer_name"));

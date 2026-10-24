@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Client instance of {@link BRModelManager}
 public class ClientModelManager extends BRModelManager {
     private static final ClientModelManager INSTANCE = new ClientModelManager();
     private final Map<Identifier, GeometryModelData> modelDataCache = new HashMap<>();

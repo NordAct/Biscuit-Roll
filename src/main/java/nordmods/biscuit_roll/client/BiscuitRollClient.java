@@ -10,7 +10,7 @@ import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
 import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.client.resource_managers.ClientPolyMeshAttachmentsManager;
-import nordmods.biscuit_roll.common.BRAttachments;
+import nordmods.biscuit_roll.common.util.BRAttachments;
 import nordmods.biscuit_roll.common.animation.BRBlockEntityWithAnimationProcessor;
 import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
 import nordmods.biscuit_roll.common.animation.processor.ControllerState;

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/// Stream codecs to assist with networking
 public class BRStreamCodecs {
     private static final byte LIKELY_COMPLEX_EXPRESSION_ID = -1;
     public static final StreamCodec<ByteBuf, MolangExpression> MOLANG_EXPRESSION = new StreamCodec<>() { //todo think about better looking solution

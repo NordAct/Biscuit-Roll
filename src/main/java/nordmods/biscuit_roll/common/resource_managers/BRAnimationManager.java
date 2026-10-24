@@ -105,6 +105,7 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
                 );
     }
 
+    /// @return all loaded animation data with file IDs
     public Map<Identifier, AnimationData[]> getRegistry() {
         return animationRegistry;
     }
@@ -115,6 +116,8 @@ public abstract class BRAnimationManager extends SimplePreparableReloadListener<
         return isClient ? ClientAnimationManager.instance() : ServerAnimationManager.instance();
     }
 
+    /// @param animationId animation file id
+    /// @return if file is loaded by mod
     public boolean hasAnimations(Identifier animationId) {
         return getRegistry().containsKey(animationId);
     }

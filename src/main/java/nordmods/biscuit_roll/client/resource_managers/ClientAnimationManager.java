@@ -5,6 +5,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
+import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -12,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Client instance of {@link BRAnimationManager}
 public class ClientAnimationManager extends BRAnimationManager {
     private static final ClientAnimationManager INSTANCE = new ClientAnimationManager();
     private final Map<Identifier, AnimationData[]> animationCache = new HashMap<>();

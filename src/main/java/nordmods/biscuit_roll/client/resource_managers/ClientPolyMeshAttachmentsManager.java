@@ -8,6 +8,7 @@ import nordmods.biscuit_roll.common.resource_managers.ServerPolyMeshAttachmentsM
 import java.util.HashMap;
 import java.util.Map;
 
+/// Client instance of {@link BRPolyMeshAttachmentsManager}
 public class ClientPolyMeshAttachmentsManager extends BRPolyMeshAttachmentsManager {
     private static final ClientPolyMeshAttachmentsManager INSTANCE = new ClientPolyMeshAttachmentsManager();
 

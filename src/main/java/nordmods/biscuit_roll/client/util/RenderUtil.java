@@ -10,8 +10,12 @@ import org.joml.Vector3fc;
 import java.util.function.Consumer;
 
 public class RenderUtil {
+    /// Helps with item rendering
+    /// @param model item model
+    /// @param poseStack extents stack
+    /// @param consumer where result will be written to
     public static void getExtentsForGui(BRModel model, PoseStack poseStack, Consumer<Vector3fc> consumer) {
-        model.render((matrixStack, polygon) -> {
+        model.render((_, polygon) -> {
             Matrix4f matrix4f = poseStack.last().pose();
             Vector3f vector3f = new Vector3f();
 
