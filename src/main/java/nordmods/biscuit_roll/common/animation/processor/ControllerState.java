@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/// Holds current state of animations for animated object's controller.
+/// Used for server-client animation synchronization
+/// @param controllerOrdinal ordinal of controller in controller list of animated object
+/// @param playingAnimations currently playing animations on the controller
 public record ControllerState(int controllerOrdinal, List<PlayingAnimation> playingAnimations) {
     public static final StreamCodec<ByteBuf, ControllerState> STREAM_CODEC = StreamCodec.of(
             (buf, s) -> {
@@ -27,6 +31,8 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 
     public static final StreamCodec<ByteBuf, List<ControllerState>> LIST_STREAM_CODEC = ControllerState.STREAM_CODEC.apply(ByteBufCodecs.list());
 
+    /// @param controllers animated object's controllers
+    /// @return controller states for given controllers
     public static List<ControllerState> collectControllerStates(List<BRAnimationController> controllers) {
         List<ControllerState> list = new ArrayList<>();
 
@@ -48,6 +54,10 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
         return list;
     }
 
+    /// Applies captured controller states back to controllers.
+    /// States must be applied to same set of controllers from which they were captured.
+    /// @param states controller states
+    /// @param controllers controllers to which states will be applied to
     public static void applyControllerStates(List<ControllerState> states, List<BRAnimationController> controllers) {
         for (ControllerState controllerState : states) {
             BRAnimationController controller = controllers.get(controllerState.controllerOrdinal());
@@ -68,6 +78,11 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
         }
     }
 
+    /// @param name animation name
+    /// @param time current animation play time
+    /// @param speed animation speed
+    /// @param paused if animation is paused
+    /// @param finished if animation is finished
     public record PlayingAnimation(
             String name,
             float time,

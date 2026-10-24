@@ -6,6 +6,8 @@ import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Server instance of {@link BRPolyMeshAttachmentsManager}
+/// Note: poly mesh attachments are not used on server side by default. This exists for purpose of server client synchronization
 public class ServerPolyMeshAttachmentsManager extends BRPolyMeshAttachmentsManager {
     private static final ServerPolyMeshAttachmentsManager INSTANCE = new ServerPolyMeshAttachmentsManager();
 

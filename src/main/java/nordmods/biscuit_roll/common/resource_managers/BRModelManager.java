@@ -77,18 +77,24 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         });
     }
 
+    /// @param modelId id of model file
+    /// @return polymesh attachments for specified model file
     @Nullable
     public abstract PolyMeshAttachments getPolymeshAttachments(Identifier modelId);
 
+    /// @param modelId id of model file
+    /// @return raw model data
     @Nullable
     public GeometryModelData getModelData(Identifier modelId) {
         return getRegistryRaw().get(modelId);
     }
 
+    /// @return loaded models by file id, already turned into ready to use objects
     public Map<Identifier, BRModel> getRegistry() {
         return modelRegistry;
     }
 
+    /// @return loaded raw model data by file id that can be used to make model
     public Map<Identifier, GeometryModelData> getRegistryRaw() {
         return modelRegistryRaw;
     }
@@ -99,6 +105,8 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         return isClient ? ClientModelManager.instance() : ServerModelManager.instance();
     }
 
+    /// @param modelId id of model file
+    /// @return if model is loaded by mod
     public boolean hasModel(Identifier modelId) {
         return getRegistryRaw().containsKey(modelId);
     }

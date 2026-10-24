@@ -8,8 +8,6 @@ import java.util.List;
 ///
 /// Object, that can be rendered using [nordmods.biscuit_roll.common.model.BRModel] and animated
 public interface BRAnimatedObject {
-    /**
-     * @return collection of object's {@link BRAnimationController}
-     */
+    /// @return collection of object's [BRAnimationController]
     List<BRAnimationController> getAnimationControllers();
 }

@@ -18,6 +18,10 @@ import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 import java.util.HashMap;
 import java.util.Map;
 
+/// Packet used to sync Biscuit Roll assets loaded by server with client
+/// @param modelData models loaded by server
+/// @param animationData animations loaded by server
+/// @param polyMeshAttachments poly mesh attachments loaded by server
 public record SendServerData(Map<Identifier, GeometryModelData> modelData, Map<Identifier, AnimationData[]> animationData, Map<Identifier, PolyMeshAttachments> polyMeshAttachments) implements CustomPacketPayload {
     public static final Type<SendServerData> TYPE = new Type<>(BiscuitRoll.id("send_server_data"));
     public static final StreamCodec<FriendlyByteBuf, SendServerData> STREAM_CODEC = new StreamCodec<>() {

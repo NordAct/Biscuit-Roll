@@ -11,7 +11,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import nordmods.biscuit_roll.common.BRAttachments;
+import nordmods.biscuit_roll.common.util.BRAttachments;
 import nordmods.biscuit_roll.common.networking.SendServerData;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;

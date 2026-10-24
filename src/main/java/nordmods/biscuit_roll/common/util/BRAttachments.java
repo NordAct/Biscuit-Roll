@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.common;
+package nordmods.biscuit_roll.common.util;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;

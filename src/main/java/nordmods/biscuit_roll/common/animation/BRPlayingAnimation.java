@@ -111,6 +111,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
         this.time += timeDifference * speed;
     }
 
+    /// @param time current animation time
     @Override
     public void setAnimationTime(float time) {
         this.time = time;
@@ -121,6 +122,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
         this.weight = weight;
     }
 
+    /// @return if animation is done playing
     @Override
     public boolean isDone() {
         return finished && (paused || !isTransitioningOut());
@@ -208,10 +210,12 @@ public class BRPlayingAnimation implements PlayingAnimation {
         return transitionOutLerp;
     }
 
+    /// @return animation time start offset
     public float getStartOffset() {
         return startOffset;
     }
 
+    /// @return animation time without accounting for animation length and transition times
     public float getActualAnimationTime() {
         return time;
     }
