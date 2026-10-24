@@ -2,7 +2,6 @@ package nordmods.biscuit_roll.common.animation.processor;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
-import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
