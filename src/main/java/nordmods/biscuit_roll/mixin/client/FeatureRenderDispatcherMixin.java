@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.mixin;
+package nordmods.biscuit_roll.mixin.client;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderBuffers;

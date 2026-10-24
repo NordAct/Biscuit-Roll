@@ -1,6 +1,8 @@
 package nordmods.biscuit_roll.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.packs.PackType;
@@ -8,6 +10,10 @@ import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
 import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.client.resource_managers.ClientPolyMeshAttachmentsManager;
+import nordmods.biscuit_roll.common.BRAttachments;
+import nordmods.biscuit_roll.common.animation.BRBlockEntityWithAnimationProcessor;
+import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
+import nordmods.biscuit_roll.common.animation.processor.ControllerState;
 import nordmods.biscuit_roll.common.networking.SendServerData;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
@@ -36,5 +42,25 @@ public class BiscuitRollClient implements ClientModInitializer {
             ClientModelManager.instance().clearCache();
             ClientAnimationManager.instance().clearCache();
         }));
+
+        ClientEntityEvents.ENTITY_LOAD.register((entity, _) -> {
+            if (entity instanceof BREntityWithAnimationProcessor<?> animationProcessorOwner)
+                entity.onAttachedSet(BRAttachments.CONTROLLER_STATES).register((_, newValue) -> {
+                    if (newValue != null) {
+                        ControllerState.applyControllerStates(newValue, animationProcessorOwner.getAnimationControllers());
+                        animationProcessorOwner.onAnimationControllersUpdated();
+                    }
+            });
+        });
+
+        ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register((entity, _) -> {
+            if (entity instanceof BRBlockEntityWithAnimationProcessor<?> animationProcessorOwner)
+                entity.onAttachedSet(BRAttachments.CONTROLLER_STATES).register((_, newValue) -> {
+                            if (newValue != null) {
+                                ControllerState.applyControllerStates(newValue, animationProcessorOwner.getAnimationControllers());
+                                animationProcessorOwner.onAnimationControllersUpdated();
+                            }
+                        });
+        });
     }
 }
