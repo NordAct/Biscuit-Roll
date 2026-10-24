@@ -31,20 +31,8 @@ import java.util.function.Consumer;
 // Also note that animating items separately is pain in the butt
 public class DonutRenderer extends BRBlockEntityRenderer<DonutBlockEntity, BlockEntityRenderState> implements NoDataSpecialModelRenderer {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/block/prismarine.png");
-    private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/donut.geo.json");
-    private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/animations/donut.animation.json");
     public DonutRenderer() {
-        super(new BRModelProvider() {
-            @Override
-            public Identifier getModelId(BRState state) {
-                return MODEL;
-            }
-
-            @Override
-            public Identifier getAnimationId(BRState state) {
-                return ANIMATION;
-            }
-        });
+        super(DonutBlockEntity.MODEL_PROVIDER);
     }
 
     @Override

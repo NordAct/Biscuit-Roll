@@ -58,13 +58,13 @@ public class DonutBlock extends BaseEntityBlock {
     }
 
     public static void tickDonut(Level level, BlockPos blockPos, BlockState blockState, DonutBlockEntity blockEntity) {
-        if (!level.isClientSide()) return;
+        blockEntity.ticks++;
+        if (level.isClientSide()) return;
         if (blockState.getValue(ACTIVE)) {
             blockEntity.controller.playAnimation("hover");
         } else {
             BRPlayingAnimation animation = blockEntity.controller.getAnimation("hover");
             if (animation != null) animation.stop();
         }
-        blockEntity.ticks++;
     }
 }

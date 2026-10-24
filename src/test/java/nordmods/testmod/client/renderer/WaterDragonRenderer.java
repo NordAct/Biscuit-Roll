@@ -14,21 +14,9 @@ import org.jspecify.annotations.NonNull;
 
 public class WaterDragonRenderer extends BREntityRenderer<WaterDragon, LivingEntityRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "textures/water_dragon.png");
-    private static final Identifier MODEL = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/models/water_dragon.geo.json");
-    private static final Identifier ANIMATION = Identifier.fromNamespaceAndPath(TestMod.MOD_ID, "biscuit_roll/animations/water_dragon.animation.json");
 
     public WaterDragonRenderer(EntityRendererProvider.Context context) {
-        super(context, new BRModelProvider() {
-            @Override
-            public Identifier getModelId(BRState state) {
-                return MODEL;
-            }
-
-            @Override
-            public Identifier getAnimationId(BRState state) {
-                return ANIMATION;
-            }
-        });
+        super(context, WaterDragon.MODEL_PROVIDER);
     }
 
     @Override

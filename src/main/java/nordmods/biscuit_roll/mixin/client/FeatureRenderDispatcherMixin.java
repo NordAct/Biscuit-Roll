@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.mixin;
+package nordmods.biscuit_roll.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.renderer.MultiBufferSource;
