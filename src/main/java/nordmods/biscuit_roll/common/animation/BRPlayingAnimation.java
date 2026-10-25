@@ -46,6 +46,7 @@ public class BRPlayingAnimation implements PlayingAnimation {
         this.startOffset = startOffset;
     }
 
+    /// @return animation time in seconds with account for transition and stop times
     @Override
     public float getAnimationTime() {
         return (isTransitioningIn() ? 0 : finished ? Math.max(finishTime - transitionInTime, 0) : time - transitionInTime) + startOffset;

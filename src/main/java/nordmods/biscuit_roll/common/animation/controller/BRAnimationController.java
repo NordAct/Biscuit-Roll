@@ -127,7 +127,7 @@ public abstract class BRAnimationController implements AnimationController {
         return playingAnimations.get(animation);
     }
 
-    /// @return controller's animation time
+    /// @return controller's animation time in seconds
     public float getAnimationTime() {
         return animationTime;
     }
@@ -151,7 +151,11 @@ public abstract class BRAnimationController implements AnimationController {
         float previousAnimationTime = this.animationTime;
         this.animationTime = time;
         float diff = animationTime - previousAnimationTime;
-        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.advanceAnimationTime(diff));
+        getPlayingAnimations().forEach(playingAnimation -> {
+            playingAnimation.advanceAnimationTime(diff);
+            float localAnimationTime = playingAnimation.getRenderAnimationTime();
+            environment.edit().setQuery("anim_time", localAnimationTime);
+        });
     }
 
     /// Triggers effect keyframes on playing animations

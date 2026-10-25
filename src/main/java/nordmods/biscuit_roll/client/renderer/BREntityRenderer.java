@@ -18,6 +18,7 @@ import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.QueryHelper;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -30,6 +31,7 @@ import java.util.List;
 
 /// Implementation of {@link BRRenderer} for {@link Entity}
 /// @see BRObjectRenderer
+/// @see BRBlockEntityRenderer
 public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter; // Some unintended way to use renderer to easily apply everything necessary from vanilla entity renderers
@@ -70,7 +72,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     }
 
     /// Updates variables and queries for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
-    /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection)} regardless
+    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
     /// @param builder provided by controller Molang environment
     /// @param entity entity from which data for queries and values is gotten
     /// @param tickDelta current tick progress
@@ -96,7 +98,12 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         state.setStateData(StateDataTypes.CONTROLLERS, entity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, state.ageInTicks / 20f);
+        state.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime(entity, state, tickDelta));
+    }
+
+    /// @return entity's reference animation time in seconds
+    public float getAnimationTime(E entity, S state, float tickDelta) {
+        return state.ageInTicks / 20f;
     }
 
     /// Setups rotation for living entities
