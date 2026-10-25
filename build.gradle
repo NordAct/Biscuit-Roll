@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
     id 'maven-publish'
     id 'com.gradleup.shadow' version "9.3.0"
 }
@@ -28,7 +28,9 @@ shadowJar {
 }
 
 repositories {
-    flatDir(dirs: "libs")
+    flatDir() {
+        dir "libs"
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -104,10 +106,13 @@ java {
 loom {
     accessWidenerPath = file("src/main/resources/biscuit_roll.accesswidener")
     runs {
+        configureEach {
+            getJvmArguments().add("-Dfabric.log.debug.level=off")
+        }
         testClient {
             inherit client
 
-            configName = "Test Minecraft Client"
+            getDisplayName().set("Test Minecraft Client")
             source = sourceSets.test
         }
     }
