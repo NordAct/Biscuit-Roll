@@ -72,7 +72,7 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
     }
 
     /// Updates variables and queries for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
-    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
+    /// Note: `query.anim_time` gets updated during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection) regardless
     /// @param builder provided by controller Molang environment
     /// @param entity entity from which data for queries and values is gotten
     /// @param tickDelta current tick progress

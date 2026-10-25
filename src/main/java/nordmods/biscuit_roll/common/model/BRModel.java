@@ -107,10 +107,12 @@ public class BRModel implements GeometryModel {
         animations.forEach(animation -> {
             float blendWeight = animation.getWeight(environment);
             if (Math.abs(blendWeight) <= 1E-6) return;
+            float localAnimationTime = animation.getRenderAnimationTime();
+            environment.edit().setQuery("anim_time", localAnimationTime);
             for (AnimationData.BoneAnimation boneAnimation : animation.getAnimation().boneAnimations()) {
                 AnimatedBone bone = this.getBone(boneAnimation.name());
                 if (bone == null) continue;
-                GeometryModel.applyKeyframeAnimation(animation.getRenderAnimationTime(), blendWeight, environment, bone.getAnimationPose(), boneAnimation);
+                GeometryModel.applyKeyframeAnimation(localAnimationTime, blendWeight, environment, bone.getAnimationPose(), boneAnimation);
             }
         });
     }
