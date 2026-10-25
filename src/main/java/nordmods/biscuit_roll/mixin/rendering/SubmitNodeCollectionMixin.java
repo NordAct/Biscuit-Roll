@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.mixin.client;
+package nordmods.biscuit_roll.mixin.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollection;
