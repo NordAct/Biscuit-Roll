@@ -1,4 +1,4 @@
-package nordmods.biscuit_roll.mixin.client;
+package nordmods.biscuit_roll.mixin.rendering;
 
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
