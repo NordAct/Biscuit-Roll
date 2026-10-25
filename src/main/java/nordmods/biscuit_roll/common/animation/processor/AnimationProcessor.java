@@ -52,7 +52,7 @@ public abstract class AnimationProcessor<T extends BRAnimationProcessorOwner<T>>
     }
 
     /// Updates variables and queries for each controller during {@link AnimationProcessor#updateBRState()}.
-    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
+    /// Note: `query.anim_time` gets updated during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection) regardless
     /// @param builder provided by controller Molang environment
     /// @param animatable animated object from which data for queries and values is gotten
     /// @param tickDelta current tick progress

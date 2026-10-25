@@ -1,6 +1,7 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -53,7 +54,7 @@ public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRS
     }
 
     /// Updates variables and queries for each controller during {@link BRObjectRenderer#extractRenderState(BRAnimatedObject, BRState, float)}.
-    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
+    /// Note: `query.anim_time` gets updated during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection) regardless
     /// @param builder provided by controller Molang environment
     /// @param object animated object from which data for queries and values is gotten
     /// @param tickDelta current tick progress

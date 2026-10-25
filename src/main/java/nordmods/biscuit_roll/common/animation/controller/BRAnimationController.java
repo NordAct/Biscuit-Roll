@@ -151,11 +151,7 @@ public abstract class BRAnimationController implements AnimationController {
         float previousAnimationTime = this.animationTime;
         this.animationTime = time;
         float diff = animationTime - previousAnimationTime;
-        getPlayingAnimations().forEach(playingAnimation -> {
-            playingAnimation.advanceAnimationTime(diff);
-            float localAnimationTime = playingAnimation.getRenderAnimationTime();
-            environment.edit().setQuery("anim_time", localAnimationTime);
-        });
+        getPlayingAnimations().forEach(playingAnimation -> playingAnimation.advanceAnimationTime(diff));
     }
 
     /// Triggers effect keyframes on playing animations
