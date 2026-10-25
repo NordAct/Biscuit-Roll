@@ -45,6 +45,6 @@ public interface BRAnimationProcessorOwner<T extends BRAnimationProcessorOwner<T
     /// Synchronizes controller states with client
     void updateControllerStates();
 
-    /// @return animated object's reference animation time
+    /// @return animated object's reference animation time in seconds
     float getAnimationTime();
 }

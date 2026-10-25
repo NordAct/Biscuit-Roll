@@ -51,8 +51,8 @@ public abstract class AnimationProcessor<T extends BRAnimationProcessorOwner<T>>
         state.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime());
     }
 
-    /// Updates variables and queries for each controller during {@link BREntityRenderer#extractRenderState(Entity, EntityRenderState, float)}.
-    /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection)} regardless
+    /// Updates variables and queries for each controller during {@link AnimationProcessor#updateBRState()}.
+    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
     /// @param builder provided by controller Molang environment
     /// @param animatable animated object from which data for queries and values is gotten
     /// @param tickDelta current tick progress
@@ -108,7 +108,7 @@ public abstract class AnimationProcessor<T extends BRAnimationProcessorOwner<T>>
     /// @return model provider
     public abstract BRModelProvider getModelProvider();
 
-    /// @return animated object's reference animation time
+    /// @return animated object's reference animation time in seconds
     public float getAnimationTime() {
         return animatable.getAnimationTime();
     }

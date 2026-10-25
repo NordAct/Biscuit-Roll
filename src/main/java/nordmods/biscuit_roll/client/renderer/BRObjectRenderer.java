@@ -1,12 +1,18 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.entity.Entity;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.QueryHelper;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +22,7 @@ import java.util.List;
 ///
 /// Use this if there's no existing implementation for your animated object
 /// @see BREntityRenderer
+/// @see BRBlockEntityRenderer
 public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRState> implements BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final List<BRRenderLayer> renderLayers = new ArrayList<>();
@@ -36,9 +43,22 @@ public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRS
 
     /// Fills state for render by getting information from object
     /// @param object object from which state data can be obtained
-    /// @param renderState state that needs to be filled
+    /// @param state state that needs to be filled
     /// @param tickDelta transition progress between game ticks
-    public abstract void extractRenderState(O object, S renderState, float tickDelta);
+    public void extractRenderState(O object, S state, float tickDelta) {
+        object.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), object, tickDelta));
+        state.setStateData(StateDataTypes.CONTROLLERS, object.getAnimationControllers());
+        state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
+        state.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime(object, state, tickDelta));
+    }
+
+    /// Updates variables and queries for each controller during {@link BRObjectRenderer#extractRenderState(BRAnimatedObject, BRState, float)}.
+    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
+    /// @param builder provided by controller Molang environment
+    /// @param object animated object from which data for queries and values is gotten
+    /// @param tickDelta current tick progress
+    /// @see QueryHelper
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, O object, float tickDelta) {}
 
     /// @return new {@link BRState}
     public abstract S createRenderState();
@@ -56,6 +76,9 @@ public abstract class BRObjectRenderer<O extends BRAnimatedObject, S extends BRS
         extractRenderState(object, state, tickDelta);
         submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
     }
+
+    /// @return object's reference animation time in seconds
+    public abstract float getAnimationTime(O object, S state, float tickDelta);
 
     @Override
     public String debugName() {

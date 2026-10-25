@@ -1,20 +1,25 @@
 package nordmods.biscuit_roll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.QueryHelper;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jspecify.annotations.NonNull;
@@ -26,6 +31,7 @@ import java.util.List;
 
 /// Implementation of {@link BRRenderer} for {@link BlockEntity}
 /// @see BRObjectRenderer
+/// @see BREntityRenderer
 public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedObject, S extends BlockEntityRenderState> implements BlockEntityRenderer<@NonNull T, S>, BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final List<BRRenderLayer> renderLayers = new ArrayList<>();
@@ -57,15 +63,31 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
 
     @Override
     public void extractRenderState(@NonNull T blockEntity, @NonNull S state, float tickDelta, @NonNull Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+        blockEntity.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), blockEntity, tickDelta));
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickDelta, cameraPos, crumblingOverlay);
         state.setStateData(StateDataTypes.CONTROLLERS, blockEntity.getAnimationControllers());
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, ((getCurrentTick(blockEntity) + tickDelta) / 20f));
+        state.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime(blockEntity, state, tickDelta));
         state.setStateData(ClientStateDataTypes.CRUMBLING_OVERLAY, crumblingOverlay);
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
     }
 
+    /// Updates variables and queries for each controller during {@link BRBlockEntityRenderer#extractRenderState(BlockEntity, BlockEntityRenderState, float, Vec3, ModelFeatureRenderer.CrumblingOverlay)}.
+    /// Note: `query.anim_time` gets updated during {@link BRAnimationController#setAnimationTime(float)} regardless
+    /// @param builder provided by controller Molang environment
+    /// @param blockEntity block entity from which data for queries and values is gotten
+    /// @param tickDelta current tick progress
+    /// @see QueryHelper
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T blockEntity, float tickDelta) {}
+
+    /// @param blockEntity block entity
+    /// @return BE's current tick time
     public abstract int getCurrentTick(T blockEntity);
+
+    /// @return block entity reference animation time in seconds
+    public float getAnimationTime(T blockEntity, S state, float tickDelta) {
+        return  (getCurrentTick(blockEntity) + tickDelta) / 20f;
+    }
 
     @Override
     public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
