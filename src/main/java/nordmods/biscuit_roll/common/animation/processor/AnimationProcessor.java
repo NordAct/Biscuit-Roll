@@ -2,12 +2,7 @@ package nordmods.biscuit_roll.common.animation.processor;
 
 import gg.moonflower.molangcompiler.api.MolangEnvironment;
 import gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.world.entity.Entity;
-import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
 import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
-import nordmods.biscuit_roll.common.animation.QueryHelper;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -52,7 +47,7 @@ public abstract class AnimationProcessor<T extends BRAnimationProcessorOwner<T>>
     }
 
     /// Updates variables and queries for each controller during {@link AnimationProcessor#updateBRState()}.
-    /// Note: `query.anim_time` gets updated during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection) regardless
+    /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection) regardless
     /// @param builder provided by controller Molang environment
     /// @param animatable animated object from which data for queries and values is gotten
     /// @param tickDelta current tick progress
@@ -90,11 +85,8 @@ public abstract class AnimationProcessor<T extends BRAnimationProcessorOwner<T>>
         if (model == null) {
             BRModelProvider modelProvider = state.getStateData(StateDataTypes.MODEL_PROVIDER);
             if (modelProvider == null) throw new IllegalStateException("Cannot get model before model provider is provided");
-            try {
-                model = new BRModel(BRModelManager.getModelManager(false).getModelData(modelProvider.getModelId(state)), null);
-            } catch (GeometryCompileException e) {
-                throw new RuntimeException(e);
-            }
+            model = BRModelManager.getModelManager(false).getModel(modelProvider.getModelId(state));
+            if (model == null) throw new IllegalStateException("Could not find model" + modelProvider.getModelId(state) + ". Check if specified location is correct");
         }
         return model;
     }
