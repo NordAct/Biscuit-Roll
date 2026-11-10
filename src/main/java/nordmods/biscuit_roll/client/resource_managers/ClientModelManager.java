@@ -1,10 +1,13 @@
 package nordmods.biscuit_roll.client.resource_managers;
 
+import gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
 import gg.moonflower.pinwheel.api.geometry.GeometryModelData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.PolyMeshAttachments;
+import nordmods.biscuit_roll.common.model.RenderableModel;
 import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.resource_managers.BRPolyMeshAttachmentsManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
@@ -48,6 +51,11 @@ public class ClientModelManager extends BRModelManager {
     protected void apply(Map<Identifier, GeometryModelData> map, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profilerFiller) {
         super.apply(map, resourceManager, profilerFiller);
         clearCache();
+    }
+
+    @Override
+    protected BRModel makeModel(Identifier modelId, GeometryModelData data) throws GeometryCompileException {
+        return new RenderableModel(data, getPolymeshAttachments(modelId));
     }
 
     public void clearCache() {

@@ -7,21 +7,18 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.biscuit_roll.common.animation.QueryHelper;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -73,8 +70,8 @@ public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedOb
         state.setStateData(ClientStateDataTypes.LIGHT, state.lightCoords);
     }
 
-    /// Updates variables and queries for each controller during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection)}.
-    /// Note: `query.anim_time` gets updated during {@link nordmods.biscuit_roll.common.model.BRModel#applyAnimations(MolangEnvironment, Collection) regardless
+    /// Updates variables and queries for each controller during {@link BRModel#applyAnimations(MolangEnvironment, Collection)}.
+    /// Note: `query.anim_time` gets updated during {@link BRModel#applyAnimations(MolangEnvironment, Collection) regardless
     /// @param builder provided by controller Molang environment
     /// @param blockEntity block entity from which data for queries and values is gotten
     /// @param tickDelta current tick progress

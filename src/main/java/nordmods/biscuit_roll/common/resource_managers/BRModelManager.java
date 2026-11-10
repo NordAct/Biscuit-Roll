@@ -70,12 +70,14 @@ public abstract class BRModelManager extends SimplePreparableReloadListener<Map<
         return getRegistry().computeIfAbsent(modelId, id -> {
             GeometryModelData data = getModelData(id);
             try {
-                return data == null ? null : new BRModel(data, getPolymeshAttachments(id));
+                return data == null ? null : makeModel(id, data);
             } catch (GeometryCompileException e) {
                 throw new RuntimeException(e);
             }
         });
     }
+
+    protected abstract BRModel makeModel(Identifier modelId, GeometryModelData data) throws GeometryCompileException;
 
     /// @param modelId id of model file
     /// @return polymesh attachments for specified model file
