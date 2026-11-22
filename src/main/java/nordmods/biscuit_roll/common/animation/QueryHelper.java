@@ -20,10 +20,6 @@ public final class QueryHelper {
         builder.setQuery("can_climb", entity.onClimbable() ? 1 : 0);
     }
 
-    public static void addCanFly(MolangEnvironmentBuilder<?> builder, LivingEntity entity) {
-        builder.setQuery("can_fly", entity.canGlide() ? 1 : 0);
-    }
-
     public static void addBlocking(MolangEnvironmentBuilder<?> builder, LivingEntity entity) {
         builder.setQuery("blocking", entity.isBlocking() ? 1 : 0);
     }

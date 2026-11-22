@@ -1,0 +1,26 @@
+modLoader = "javafml" #mandatory
+loaderVersion = "[4,)" #mandatory
+license = "All-Rights-Reserved"
+[[mods]] #mandatory
+modId = "biscuit_roll" #mandatory
+version = "${version}" #mandatory
+displayName = "Biscuit Roll Lib" #mandatory
+logoFile= "assets/biscuit_roll/icon.png" #optional
+authors = "Nord_Act"
+description = '''An animation library'''
+
+[[mixins]]
+config = "biscuit_roll.mixins.json"
+
+[[mixins]]
+config = "biscuit_roll_debug.mixins.json"
+
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
+
+[[dependencies."biscuit_roll"]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version_min}, ${minecraft_version_max}]"
+ordering = "NONE"
+side = "BOTH"

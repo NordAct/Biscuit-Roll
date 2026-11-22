@@ -1,46 +1,38 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
-    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'com.gradleup.shadow' version "9.3.0"
 }
 
-version = project.mod_version + "-" + project.minecraft_version
+version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 base {
-    archivesName = project.archives_base_name
+    archivesName = "${project.archives_base_name}-neoforge"
 }
+
+//testmod is made for fabirc, so it'll shit itself on neo
+test.enabled = false
+compileTestJava.enabled = false
+processTestResources.enabled = false
 
 configurations {
     shade
 }
-
 configurations.implementation.extendsFrom(configurations.shade)
 
 shadowJar {
     configurations = [project.configurations.shade]
     relocate('gg.moonflower.molangcompiler', 'libs.gg.moonflower.molangcompiler')
     relocate('gg.moonflower.pinwheel', 'libs.gg.moonflower.pinwheel')
-    from(".") {
+    from(rootProject.file(".")) {
         include 'LICENSE*'
     }
     archiveClassifier = ''
 }
 
 repositories {
-    flatDir() {
-        dir "libs"
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
-        }
-        filter {
-            includeGroup "maven.modrinth"
-        }
+    flatDir {
+        dir rootProject.file("libs")
     }
 }
 
@@ -49,24 +41,6 @@ configurations {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    // maybe later
-    ////todo do something to remove this as dependency completely
-    //Set<String> apiModules = [
-    //        "fabric-api-base",
-    //        "fabric-resource-loader-v1",
-    //        "fabric-object-builder-api-v1",
-    //        "fabric-rendering-v1"
-    //]
-//
-    //apiModules.forEach {
-    //    implementation(fabricApi.module(it, project.fabric_version))
-    //}
-
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
     shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
     shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
 
@@ -77,22 +51,24 @@ dependencies {
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
     filteringCharset "UTF-8"
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand "version": project.version,
                 "minecraft_version": project.minecraft_version,
+                "minecraft_version_min": project.minecraft_version_min,
+                "minecraft_version_max": project.minecraft_version_max,
                 "loader_version": project.loader_version
     }
+
+    exclude "fabric.mod.json"
+    exclude "biscuit_roll.accesswidener"
 }
 
 def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release.set(targetJavaVersion)
-    }
+    it.options.release.set(targetJavaVersion)
 }
 
 java {
@@ -102,19 +78,12 @@ java {
     }
     withSourcesJar()
 }
-
-loom {
-    accessWidenerPath = file("src/main/resources/biscuit_roll.accesswidener")
-    runs {
-        configureEach {
-            getJvmArguments().add("-Dfabric.log.debug.level=off")
-        }
-        testClient {
-            inherit client
-
-            getDisplayName().set("Test Minecraft Client")
-            source = sourceSets.test
-        }
+neoForge {
+    version = project.neoforge_version
+    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+    interfaceInjectionData.from "src/main/resources/META-INF/interfaces.json"
+    interfaceInjectionData {
+        publish file("src/main/resources/META-INF/interfaces.json")
     }
 }
 
@@ -124,8 +93,8 @@ tasks.withType(AbstractTestTask).configureEach {
 
 // don't judge, I vibecoded 90% of it
 // it works and it's all that matters
-tasks.register('fatSourcesJar', Jar) {
-    archiveClassifier.set('sources')
+tasks.register("fatSourcesJar", Jar) {
+    archiveClassifier.set("sources")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from {
@@ -184,37 +153,9 @@ tasks.register('fatSourcesJar', Jar) {
         allSourceDirs
     }
 
-    from(".") {
+    from(rootProject.file(".")) {
         include 'LICENSE*'
     }
 }
 
 sourcesJar.finalizedBy fatSourcesJar
-
-publishing {
-    //publications {
-    //    mavenJava(MavenPublication) {
-    //        groupId = rootProject.properties.get("maven_group")
-    //        artifactId = rootProject.properties.get("archives_base_name")
-    //        version = rootProject.properties.get("mod_version")
-    //        artifact(fatSourcesJar) {
-    //            classifier = 'sources'
-    //        }
-    //        artifact(shadowJar) {
-    //            classifier = ''
-    //        }
-    //    }
-    //}
-
-    //repositories {
-    //    maven {
-    //        allowInsecureProtocol = true //todo fix this once done setting up maven
-    //        name = 'nordact-repo'
-    //        url = uri('http://192.168.2.57:8080/releases/')
-    //        credentials {
-    //            username = providers.environmentVariable("MAVEN_USERNAME").get()
-    //            password = providers.environmentVariable("MAVEN_TOKEN").get()
-    //        }
-    //    }
-    //}
-}

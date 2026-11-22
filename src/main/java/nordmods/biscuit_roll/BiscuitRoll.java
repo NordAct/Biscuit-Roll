@@ -3,44 +3,18 @@ package nordmods.biscuit_roll;
 import com.mojang.logging.LogUtils;
 import gg.moonflower.molangcompiler.api.MolangCompiler;
 import gg.moonflower.pinwheel.api.PinwheelMolangCompiler;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
-import nordmods.biscuit_roll.common.util.BRAttachments;
-import nordmods.biscuit_roll.common.networking.SendServerData;
-import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
-import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
-import nordmods.biscuit_roll.common.resource_managers.ServerPolyMeshAttachmentsManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 /// Initializer class for both sides
 //reminder to self - change license once done
-public class BiscuitRoll implements ModInitializer {
+public class BiscuitRoll{
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "biscuit_roll";
 
-    @Override
-    public void onInitialize() {
-        BRAttachments.init();
+    public static void commonInit() {
         PinwheelMolangCompiler.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, BiscuitRoll.class.getClassLoader())); //what
-
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("poly_mesh_attachments"), ServerPolyMeshAttachmentsManager.instance());
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("model"), ServerModelManager.instance());
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(BiscuitRoll.id("animation"), ServerAnimationManager.instance());
-
-        PayloadTypeRegistry.clientboundConfiguration().register(SendServerData.TYPE, SendServerData.STREAM_CODEC);
-
-        ServerConfigurationConnectionEvents.CONFIGURE.register((listener, _) -> {
-            if (ServerConfigurationNetworking.canSend(listener, SendServerData.TYPE)) {
-                listener.send(new ClientboundCustomPayloadPacket(new SendServerData()));
-            }
-        });
     }
 
     @ApiStatus.Internal

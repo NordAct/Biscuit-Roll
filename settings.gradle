@@ -4,6 +4,26 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        maven {
+            name = 'NeoForge'
+            url = "https://maven.neoforged.net/releases/"
+        }
         gradlePluginPortal()
     }
 }
+
+plugins {
+    id "dev.kikugie.stonecutter" version "0.10"
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+stonecutter {
+    create(getRootProject()) {
+        def loaders = List.of("fabric", "neoforge")
+        loaders.forEach {loader -> {
+            version("${loader}").buildscript("build.${loader}.gradle")
+        }}
+    }
+}
+
+rootProject.name = "biscuit_roll"

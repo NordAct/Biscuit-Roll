@@ -19,7 +19,9 @@ import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.biscuit_roll.mixin.rendering.LivingEntityRendererAccessor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 
@@ -30,7 +32,7 @@ import java.util.List;
 /// Implementation of {@link BRRenderer} for {@link Entity}
 /// @see BRObjectRenderer
 /// @see BRBlockEntityRenderer
-public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState> extends EntityRenderer<E, S> implements BRRenderer<S> {
+public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S extends EntityRenderState & BRState> extends EntityRenderer<E, S> implements BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final LivingRenderStateGetter<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> livingEntityStateGetter; // Some unintended way to use renderer to easily apply everything necessary from vanilla entity renderers
     private final MobRenderStateGetter<Mob, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> mobRenderStateGetter;
@@ -140,11 +142,11 @@ public abstract class BREntityRenderer<E extends Entity & BRAnimatedObject, S ex
         }
 
         public float getWhiteOverlayProgress(S state) {
-            return renderer.getWhiteOverlayProgress(state);
+            return ((LivingEntityRendererAccessor<S>)renderer).invokeGetWhiteOverlayProgress(state);
         }
 
         public void rotate(S livingEntityRenderState, PoseStack poseStack, float bodyYaw, float scale) {
-            renderer.setupRotations(livingEntityRenderState, poseStack, bodyYaw, scale);
+            ((LivingEntityRendererAccessor<S>)renderer).invokeSetupRotations(livingEntityRenderState, poseStack, bodyYaw, scale);
         }
     }
 

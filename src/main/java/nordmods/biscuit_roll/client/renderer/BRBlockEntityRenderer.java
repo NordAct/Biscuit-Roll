@@ -19,6 +19,7 @@ import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -30,7 +31,7 @@ import java.util.List;
 /// Implementation of {@link BRRenderer} for {@link BlockEntity}
 /// @see BRObjectRenderer
 /// @see BREntityRenderer
-public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedObject, S extends BlockEntityRenderState> implements BlockEntityRenderer<@NonNull T, S>, BRRenderer<S> {
+public abstract class BRBlockEntityRenderer<T extends BlockEntity & BRAnimatedObject, S extends BlockEntityRenderState & BRState> implements BlockEntityRenderer<@NonNull T, S>, BRRenderer<S> {
     private final BRModelProvider modelProvider;
     private final List<BRRenderLayer> renderLayers = new ArrayList<>();
 
