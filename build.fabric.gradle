@@ -1,0 +1,167 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
+    id 'com.gradleup.shadow' version "9.3.0"
+}
+
+version = "${project.mod_version}-${project.minecraft_version}"
+group = project.maven_group
+
+base {
+    archivesName = "${project.archives_base_name}-fabric"
+}
+
+configurations {
+    shade
+}
+configurations.implementation.extendsFrom(configurations.shade)
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate('gg.moonflower.molangcompiler', 'libs.gg.moonflower.molangcompiler')
+    relocate('gg.moonflower.pinwheel', 'libs.gg.moonflower.pinwheel')
+    from(rootProject.file(".")) {
+        include 'LICENSE*'
+    }
+    archiveClassifier = ''
+}
+
+repositories {
+    flatDir {
+        dir rootProject.file("libs")
+    }
+}
+
+configurations {
+    shadeSources
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    shade("gg.moonflower:pinwheel:${project.pinwheel_version}") // based upon commit 77565323f7
+    shade("gg.moonflower:molang-compiler:${project.molang_compiler_version}") // based upon ver 3.1.1.19
+
+    shadeSources("gg.moonflower:pinwheel:${project.pinwheel_version}-sources")
+    shadeSources("gg.moonflower:molang-compiler:${project.molang_compiler_version}-sources")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "minecraft_version_min": project.minecraft_version_min,
+                "minecraft_version_max": project.minecraft_version_max,
+                "fabric_version": project.fabric_version
+    }
+
+    exclude "META-INF/*" //neo things
+}
+
+def targetJavaVersion = 25
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release.set(targetJavaVersion)
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    withSourcesJar()
+}
+
+loom {
+    accessWidenerPath = rootProject.file("src/main/resources/biscuit_roll.accesswidener")
+    runs {
+        configureEach {
+            getJvmArguments().add("-Dfabric.log.debug.level=off")
+        }
+        testClient {
+            inherit client
+
+            getDisplayName().set("Test Minecraft Client")
+            source = sourceSets.test
+        }
+    }
+}
+
+tasks.withType(AbstractTestTask).configureEach {
+    failOnNoDiscoveredTests = false
+}
+
+// don't judge, I vibecoded 90% of it
+// it works and it's all that matters
+tasks.register("fatSourcesJar", Jar) {
+    archiveClassifier.set("sources")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        def allSourceDirs = []
+        allSourceDirs += configurations.shadeSources.collect { dep ->
+            if (dep.isDirectory()) return dep
+
+            def tempDir = layout.buildDirectory.dir("tmp/sources/dep-${dep.name}").get().asFile
+            copy {
+                from zipTree(dep)
+                into tempDir
+            }
+            tempDir
+        }
+        def projectSourcesTemp = layout.buildDirectory.dir("tmp/sources/project-main").get().asFile
+        copy {
+            from sourceSets.main.allSource
+            into projectSourcesTemp
+        }
+        allSourceDirs += projectSourcesTemp
+
+        def oldPackage = 'gg.moonflower'
+        def newPackage = 'libs.gg.moonflower'
+        def oldPath = oldPackage.replace('.', '/')
+        def newPath = newPackage.replace('.', '/')
+
+        allSourceDirs.each { dir ->
+            if (!dir.exists()) return
+
+            fileTree(dir).matching {
+                include '**/*.java'
+            }.each { file ->
+                def relativePath = dir.toPath().relativize(file.toPath()).toString()
+
+                def currentFile = file
+                def text = file.text
+
+                if (relativePath.startsWith(oldPath)) {
+                    def newRelative = relativePath.replaceFirst(oldPath, newPath)
+                    def newFile = new File(dir, newRelative)
+
+                    newFile.parentFile.mkdirs()
+                    file.renameTo(newFile)
+
+                    currentFile = newFile
+                    text = newFile.text
+                }
+
+                text = text.replaceAll(~/(?m)^package\s+${oldPackage.replace('.', '\\.')}(\.[^\s;]+)?\s*;?/, 'package ' + newPackage + '$1;')
+                text = text.replaceAll(~/(?m)^import\s+(static\s+)?${oldPackage.replace('.', '\\.')}(\.[^\s;]+)?\s*;?/, 'import $1' + newPackage + '$2;')
+                text = text.replaceAll(~/(?m)^import\s+(static\s+)?${oldPackage.replace('.', '\\.')}\b/, 'import $1' + newPackage)
+
+                currentFile.text = text
+            }
+        }
+        allSourceDirs
+    }
+
+    from(rootProject.file(".")) {
+        include 'LICENSE*'
+    }
+}
+
+sourcesJar.finalizedBy fatSourcesJar

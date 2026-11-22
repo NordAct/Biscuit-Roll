@@ -12,10 +12,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "nordmods.biscuit_roll.client.BiscuitRollClient"
+      "nordmods.biscuit_roll.platform.FabricClientEntrypoint"
     ],
     "main": [
-      "nordmods.biscuit_roll.BiscuitRoll"
+      "nordmods.biscuit_roll.platform.FabricEntrypoint"
     ]
   },
   "mixins": [
@@ -24,8 +24,8 @@
   ],
   "depends": {
     "fabricloader": "*",
-    "fabric-resource-loader-v1": "*",
-    "minecraft": "*"
+    "fabric-api": ">=${fabric_version}",
+    "minecraft": ">=${minecraft_version_min} <=${minecraft_version_max}"
   },
   "custom": {
     "loom:injected_interfaces": {

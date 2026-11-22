@@ -15,6 +15,11 @@ public interface BRBlockEntityWithAnimationProcessor<T extends BlockEntity & BRA
 
     @Override
     default void updateControllerStates() {
+        //? if =fabric {
         getThis().setAttached(BRAttachments.CONTROLLER_STATES, ControllerState.collectControllerStates(getAnimationControllers()));
+        //?}
+        //? if =neoforge {
+        /*getThis().setData(BRAttachments.CONTROLLER_STATES, ControllerState.collectControllerStates(getAnimationControllers()));
+        *///?}
     }
 }
